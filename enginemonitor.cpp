@@ -53,6 +53,7 @@ void EngineMonitor::setupExhaustGasTemperature()
 void EngineMonitor::setupCylinderHeadTemperature()
 {
 	cylinderHeadTemperature.setPos(-200, 295);
+	cylinderHeadTemperature.setBorders(100.0, 250.0, 200.0, 230.0);
 	cylinderHeadTemperature.addBetweenValue(120);
 	cylinderHeadTemperature.addBetweenValue(160);
 	cylinderHeadTemperature.addBetweenValue(200);
