@@ -21,6 +21,8 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
+	QPen pen(Qt::transparent, 0);
+	painter->setPen(pen);
 	//Draw bar
 	if(colorStops.isEmpty())
 	{
