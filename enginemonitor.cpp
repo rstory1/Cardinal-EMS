@@ -4,7 +4,6 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
 {
 	setWindowFlags(Qt::FramelessWindowHint);
-
 	graphicsScene.setBackgroundBrush(Qt::black);
 	setScene(&graphicsScene);
 
