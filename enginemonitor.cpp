@@ -46,13 +46,17 @@ void EngineMonitor::setupRpmIndicator()
 
 void EngineMonitor::setupExhaustGasTemperature()
 {
-	exhaustGasTemperature.setPos(-475, 275);
+	exhaustGasTemperature.setPos(-475, 295);
 	graphicsScene.addItem(&exhaustGasTemperature);
 }
 
 void EngineMonitor::setupCylinderHeadTemperature()
 {
-	cylinderHeadTemperature.setPos(-200, 275);
+	cylinderHeadTemperature.setPos(-200, 295);
+	cylinderHeadTemperature.addBetweenValue(120);
+	cylinderHeadTemperature.addBetweenValue(160);
+	cylinderHeadTemperature.addBetweenValue(200);
+	cylinderHeadTemperature.addBetweenValue(230);
 	graphicsScene.addItem(&cylinderHeadTemperature);
 }
 
@@ -116,6 +120,22 @@ void EngineMonitor::setupBarGraphs()
 
 void EngineMonitor::demoFunction()
 {
+	static double rpm = 2400.0;
+	if(rpm > 2750.0)
+	{
+		rpm = 2400.0;
+	}
+	rpm += 1.0;
+	rpmIndicator.setValue(rpm);
+
+	static double basicCHT = 110.0;
+	if(basicCHT > 220.0)
+	{
+		basicCHT = 110.0;
+	}
+	basicCHT += 1.0;
+	cylinderHeadTemperature.setValues(basicCHT+20.0, basicCHT+10.0, basicCHT+5.0, basicCHT+30.0);
+
 	static double oilTemp = 160.0;
 	if(oilTemp < 120.0)
 	{
@@ -163,12 +183,4 @@ void EngineMonitor::demoFunction()
 	}
 	airTemp += 0.01;
 	outsideAirTemperature.setValue(airTemp);
-
-	static double rpm = 2400.0;
-	if(rpm > 2750.0)
-	{
-		rpm = 2400.0;
-	}
-	rpm += 1.0;
-	rpmIndicator.setValue(rpm);
 }
