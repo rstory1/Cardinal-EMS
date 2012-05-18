@@ -19,6 +19,8 @@ private:
 	double greenYellowValue, yellowRedValue;
 	double leanWindow, leanMinValue;
 	bool leanAssistActive;
+	QList<double> peakValues;
+	QList<bool> peakFound;
 	QList<double> currentValues;
 	QList<double> betweenValues;
 protected:
@@ -30,6 +32,9 @@ protected:
 			QList<double> egts = currentValues;
 			qSort(egts.begin(), egts.end());
 			leanMinValue = qMax(egts.first() - 50.0, minValue);
+			peakValues = currentValues;
+			peakFound.clear();
+			peakFound << false << false << false << false;
 		}
 	}
 };
