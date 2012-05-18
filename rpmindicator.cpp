@@ -81,7 +81,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	{
 		painter->setPen(Qt::white);
 	}
-	QString rpm = QString::number(currentValue, 'f', 0);
+	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
 	if(rpm.size() > 3)
 	{
 		rpm.insert(1, '\'');
