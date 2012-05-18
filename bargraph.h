@@ -25,7 +25,7 @@ public:
 	void addColorStop(ColorStop stop);
 	void setValue(double value);
 private:
-	double calculateLocalValue(double value);
+	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
 	double minValue, maxValue, currentValue;
 	QList<double> beetweenValues;

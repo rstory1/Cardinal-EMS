@@ -97,7 +97,7 @@ void BarGraph::addBetweenValue(double value)
 	beetweenValues.append(value);
 }
 
-double BarGraph::calculateLocalValue(double value)
+double BarGraph::calculateLocalValue(double value) const
 {
 	return -(value-minValue)/(maxValue-minValue)*100.0+50.0;
 }
