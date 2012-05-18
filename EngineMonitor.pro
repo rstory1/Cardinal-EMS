@@ -14,8 +14,12 @@ DESTDIR = ./bin
 SOURCES += main.cpp\
         enginemonitor.cpp \
     bargraph.cpp \
-    rpmindicator.cpp
+    rpmindicator.cpp \
+    cylinderheadtemperature.cpp \
+    exhaustgastemperature.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
-    rpmindicator.h
+    rpmindicator.h \
+    cylinderheadtemperature.h \
+    exhaustgastemperature.h
