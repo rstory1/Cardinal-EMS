@@ -82,12 +82,38 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 		else
 		{
-			painter->setBrush(Qt::blue);
+			painter->setBrush(Qt::green);
 		}
 		painter->setPen(QPen(Qt::transparent, 0));
-		if((currentValues.at(i) > minValue) &&
+		if(!leanAssistActive && (currentValues.at(i) > minValue) &&
 				(currentValues.at(i) < maxValue))
 		{
+			painter->drawRect(barRect);
+		}
+		else if(leanAssistActive)
+		{
+			if(currentValues.at(i) < leanMinValue)
+			{
+				if((currentValues.at(i) < peakValues.at(0)-leanWindow) ||
+						(currentValues.at(i) < peakValues.at(1)-leanWindow) ||
+						(currentValues.at(i) < peakValues.at(2)-leanWindow) ||
+						(currentValues.at(i) < peakValues.at(3)-leanWindow))
+				{
+					leanAssistActive = false;
+				}
+				else
+				{
+					leanMinValue = currentValues.at(i);
+				}
+			}
+			else if(currentValues.at(i) > (leanMinValue + leanWindow))
+			{
+				leanMinValue = currentValues.at(i) - leanWindow;
+			}
+			if(leanAssistActive && peakFound.at(i))
+			{
+				painter->setBrush(Qt::blue);
+			}
 			painter->drawRect(barRect);
 		}
 		else
@@ -97,7 +123,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			painter->drawLine(barRect.left(), -125, barRect.right(), 125);
 		}
 		painter->setPen(painter->brush().color());
-		if(painter->brush().color() == Qt::blue)
+		if(painter->brush().color() == Qt::green)
 		{
 			painter->setPen(Qt::white);
 		}
@@ -107,7 +133,18 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		{
 			textRect.translate(QPointF(0.0, -25.0));
 		}
-		painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+		if(leanAssistActive && peakFound.at(i))
+		{
+			painter->setPen(Qt::blue);
+			painter->drawLine(barRect.left(), calculateLocalValue(peakValues.at(i)), barRect.right(), calculateLocalValue(peakValues.at(i)));
+			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i)-peakValues.at(i), 'f', 0), &textRect);
+			painter->setBrush(Qt::transparent);
+			painter->drawRect(textRect);
+		}
+		else
+		{
+			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+		}
 	}
 }
 
@@ -140,6 +177,20 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 			val4 > greenYellowValue)
 	{
 		leanAssistActive = false;
+	}
+	if(leanAssistActive)
+	{
+		peakValues.replace(0, qMax(peakValues.at(0), val1));
+		peakValues.replace(1, qMax(peakValues.at(1), val2));
+		peakValues.replace(2, qMax(peakValues.at(2), val3));
+		peakValues.replace(3, qMax(peakValues.at(3), val4));
+		for(int i = 0; i < 4; i++)
+		{
+			if(peakValues.at(i)-5.0 > currentValues.at(i))
+			{
+				peakFound.replace(i, true);
+			}
+		}
 	}
 	update();
 }
