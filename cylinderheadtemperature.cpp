@@ -1,12 +1,12 @@
 #include "cylinderheadtemperature.h"
 
 CylinderHeadTemperature::CylinderHeadTemperature(QGraphicsItem *parent) : QGraphicsItem(parent)
-  , minValue(100.0)
-  , maxValue(250.0)
-  , greenYellowValue(200.0)
-  , yellowRedValue(230.0)
+  , minValue(0.0)
+  , maxValue(0.0)
+  , greenYellowValue(0.0)
+  , yellowRedValue(0.0)
 {
-	currentValues << 210.0 << 185.0 << 170.0 << 190.0;
+	currentValues << 0.0 << 0.0 << 0.0 << 0.0;
 }
 
 QRectF CylinderHeadTemperature::boundingRect() const
