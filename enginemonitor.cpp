@@ -8,7 +8,6 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	graphicsScene.setBackgroundBrush(Qt::black);
 	setScene(&graphicsScene);
 
-
 	setupBarGraphs();
 
 	oilTemperature.setValue(149.0);
@@ -17,6 +16,11 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	ampereMeter.setValue(0.0);
 	fuelFlow.setValue(14.9);
 	outsideAirTemperature.setValue(24.0);
+
+	QTimer *demoTimer = new QTimer(this);
+	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+	demoTimer->setSingleShot(false);
+	demoTimer->start(300);
 }
 
 EngineMonitor::~EngineMonitor()
@@ -79,4 +83,55 @@ void EngineMonitor::setupBarGraphs()
 	outsideAirTemperature.addBetweenValue(20.0);
 	outsideAirTemperature.addBetweenValue(30.0);
 	graphicsScene.addItem(&outsideAirTemperature);
+}
+
+void EngineMonitor::demoFunction()
+{
+	static double oilTemp = 160.0;
+	if(oilTemp < 120.0)
+	{
+		oilTemp = 160.0;
+	}
+	oilTemp -= 1.0;
+	oilTemperature.setValue(oilTemp);
+
+	static double oilPress = 15.0;
+	if(oilPress > 35.0)
+	{
+		oilPress = 15.0;
+	}
+	oilPress += 0.5;
+	oilPressure.setValue(oilPress);
+
+	static double volts = 12.0;
+	if(volts > 16.0)
+	{
+		volts = 12.0;
+	}
+	volts += 0.1;
+	voltMeter.setValue(volts);
+
+	static double amperes = -5.0;
+	if(amperes > 27.0)
+	{
+		amperes = -5.0;
+	}
+	amperes += 1.0;
+	ampereMeter.setValue(amperes);
+
+	static double flow = 25.0;
+	if(flow < 5.0)
+	{
+		flow = 25.0;
+	}
+	flow -= 0.5;
+	fuelFlow.setValue(flow);
+
+	static double airTemp = 0.0;
+	if(airTemp > 27.0)
+	{
+		airTemp = 0.0;
+	}
+	airTemp += 0.1;
+	outsideAirTemperature.setValue(airTemp);
 }

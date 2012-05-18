@@ -20,6 +20,8 @@ private:
 	BarGraph ampereMeter;
 	BarGraph fuelFlow;
 	BarGraph outsideAirTemperature;
+private slots:
+	void demoFunction();
 };
 
 #endif // ENGINEMONITOR_H
