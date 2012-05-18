@@ -104,3 +104,11 @@ void CylinderHeadTemperature::setValues(double val1, double val2, double val3, d
 	currentValues.replace(3, val4);
 	update();
 }
+
+void CylinderHeadTemperature::setBorders(double minimum, double maximum, double yellowBorder, double redBorder)
+{
+	minValue = minimum;
+	maxValue = maximum;
+	greenYellowValue = yellowBorder;
+	yellowRedValue = redBorder;
+}
