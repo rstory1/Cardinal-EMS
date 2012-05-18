@@ -9,6 +9,7 @@ QT       += core gui
 TARGET = EngineMonitor
 TEMPLATE = app
 
+DESTDIR = ./bin
 
 SOURCES += main.cpp\
         enginemonitor.cpp \
