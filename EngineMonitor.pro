@@ -11,6 +11,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        enginemonitor.cpp
+        enginemonitor.cpp \
+    bargraph.cpp
 
-HEADERS  += enginemonitor.h
+HEADERS  += enginemonitor.h \
+    bargraph.h
