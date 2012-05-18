@@ -13,7 +13,9 @@ DESTDIR = ./bin
 
 SOURCES += main.cpp\
         enginemonitor.cpp \
-    bargraph.cpp
+    bargraph.cpp \
+    rpmindicator.cpp
 
 HEADERS  += enginemonitor.h \
-    bargraph.h
+    bargraph.h \
+    rpmindicator.h
