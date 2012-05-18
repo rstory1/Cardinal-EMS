@@ -13,8 +13,7 @@ BarGraph::BarGraph(QGraphicsItem *parent) : QGraphicsItem(parent)
 
 QRectF BarGraph::boundingRect() const
 {
-	qreal penWidth = 1;
-	return QRectF(-10 - penWidth / 2, -10 - penWidth / 2, 20 + penWidth, 20 + penWidth);
+	return QRectF(-20, -70, 40, 140);
 }
 
 void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
