@@ -65,7 +65,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 		marker.append(QPointF(-10.0, 0.0));
 		marker.append(QPointF(20.0, -7.0));
 		marker.append(QPointF(20.0, 7.0));
-		painter->translate(0.0, calculateLocalValue(currentValue));
+		painter->translate(QPointF(0.0, calculateLocalValue(currentValue)));
 		painter->drawPolygon(marker);
 	}
 }
