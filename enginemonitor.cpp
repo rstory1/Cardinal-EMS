@@ -135,10 +135,18 @@ void EngineMonitor::demoFunction()
 	rpm += 1.0;
 	rpmIndicator.setValue(rpm);
 
-	static double basicCHT = 110.0;
+	static double basicEGT = 0.0;
+	if(basicEGT > 1650.0)
+	{
+		basicEGT = 0.0;
+	}
+	basicEGT += 10.0;
+	exhaustGasTemperature.setValues(basicEGT+20.0, basicEGT+10.0, basicEGT+5.0, basicEGT+30.0);
+
+	static double basicCHT = 50.0;
 	if(basicCHT > 220.0)
 	{
-		basicCHT = 110.0;
+		basicCHT = 50.0;
 	}
 	basicCHT += 1.0;
 	cylinderHeadTemperature.setValues(basicCHT+20.0, basicCHT+10.0, basicCHT+5.0, basicCHT+30.0);
