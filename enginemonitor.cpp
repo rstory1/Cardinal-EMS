@@ -47,6 +47,12 @@ void EngineMonitor::setupRpmIndicator()
 void EngineMonitor::setupExhaustGasTemperature()
 {
 	exhaustGasTemperature.setPos(-475, 295);
+	exhaustGasTemperature.setBorders(200.0, 1700.0, 1600.0, 1650.0);
+	exhaustGasTemperature.addBetweenValue(400);
+	exhaustGasTemperature.addBetweenValue(800);
+	exhaustGasTemperature.addBetweenValue(1200);
+	exhaustGasTemperature.addBetweenValue(1600);
+	exhaustGasTemperature.addBetweenValue(1650);
 	graphicsScene.addItem(&exhaustGasTemperature);
 }
 
