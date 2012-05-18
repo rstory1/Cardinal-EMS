@@ -8,6 +8,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setScene(&graphicsScene);
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
+	setupRpmIndicator();
 	setupBarGraphs();
 
 	oilTemperature.setValue(149.0);
@@ -25,6 +26,20 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 EngineMonitor::~EngineMonitor()
 {
+}
+
+void EngineMonitor::setupRpmIndicator()
+{
+	rpmIndicator.setPos(-350, 0);
+	rpmIndicator.addBetweenValue(0.0);
+	rpmIndicator.addBetweenValue(600.0);
+	rpmIndicator.addBetweenValue(1200.0);
+	rpmIndicator.addBetweenValue(1500.0);
+	rpmIndicator.addBetweenValue(1800.0);
+	rpmIndicator.addBetweenValue(2100.0);
+	rpmIndicator.addBetweenValue(2400.0);
+	rpmIndicator.addBetweenValue(2700.0);
+	graphicsScene.addItem(&rpmIndicator);
 }
 
 void EngineMonitor::setupBarGraphs()
@@ -134,4 +149,12 @@ void EngineMonitor::demoFunction()
 	}
 	airTemp += 0.01;
 	outsideAirTemperature.setValue(airTemp);
+
+	static double rpm = 2400.0;
+	if(rpm > 2750.0)
+	{
+		rpm = 2400.0;
+	}
+	rpm += 1.0;
+	rpmIndicator.setValue(rpm);
 }

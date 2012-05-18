@@ -3,6 +3,7 @@
 
 #include <QtGui>
 
+#include "rpmindicator.h"
 #include "bargraph.h"
 
 class EngineMonitor : public QGraphicsView
@@ -12,8 +13,10 @@ public:
 	EngineMonitor(QWidget *parent = 0);
 	~EngineMonitor();
 private:
+	void setupRpmIndicator();
 	void setupBarGraphs();
 	QGraphicsScene graphicsScene;
+	RpmIndicator rpmIndicator;
 	BarGraph oilTemperature;
 	BarGraph oilPressure;
 	BarGraph voltMeter;
