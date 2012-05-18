@@ -5,17 +5,20 @@ ExhaustGasTemperature::ExhaustGasTemperature(QGraphicsItem *parent) : QGraphicsI
   , maxValue(0.0)
   , greenYellowValue(0.0)
   , yellowRedValue(0.0)
+  , leanWindow(0.0)
+  , leanAssistActive(false)
 {
 	currentValues << 0.0 << 0.0 << 0.0 << 0.0;
 }
 
 QRectF ExhaustGasTemperature::boundingRect() const
 {
-	return QRectF(-125, -175, 250, 300);
+	return QRectF(-130, -175, 255, 300);
 }
 
 void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	painter->setClipRect(boundingRect());
 	painter->setPen(QPen(Qt::transparent, 0));
 
 	//Draw the side legend
@@ -35,10 +38,22 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	painter->drawText(QRectF(-130.0, 105.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "°C");
 
 	//Draw the numbers
-	foreach(double value, betweenValues)
+	if(leanAssistActive)
 	{
-		painter->drawLine(-80, calculateLocalValue(value), -90, calculateLocalValue(value));
-		painter->drawText(QRectF(-130.0, calculateLocalValue(value)-10.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, QString::number(value, 'f', 0));
+		double start = leanMinValue - fmod(leanMinValue, leanWindow/4.0);
+		for(double value = start; value < leanMinValue + leanWindow; value += leanWindow/4.0)
+		{
+			painter->drawLine(-80, calculateLocalValue(value), -90, calculateLocalValue(value));
+			painter->drawText(QRectF(-130.0, calculateLocalValue(value)-10.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, QString::number(value, 'f', 0));
+		}
+	}
+	else
+	{
+		foreach(double value, betweenValues)
+		{
+			painter->drawLine(-80, calculateLocalValue(value), -90, calculateLocalValue(value));
+			painter->drawText(QRectF(-130.0, calculateLocalValue(value)-10.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, QString::number(value, 'f', 0));
+		}
 	}
 
 	//Draw the red line
@@ -98,7 +113,14 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 double ExhaustGasTemperature::calculateLocalValue(double value) const
 {
-	return -(value-minValue)/(maxValue-minValue)*250.0+125.0;
+	if(leanAssistActive)
+	{
+		return -(value-leanMinValue)/(leanWindow)*250.0+125.0;
+	}
+	else
+	{
+		return -(value-minValue)/(maxValue-minValue)*250.0+125.0;
+	}
 }
 
 void ExhaustGasTemperature::addBetweenValue(double value)
@@ -112,6 +134,13 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 	currentValues.replace(1, val2);
 	currentValues.replace(2, val3);
 	currentValues.replace(3, val4);
+	if(val1 > greenYellowValue ||
+			val2 > greenYellowValue ||
+			val3 > greenYellowValue ||
+			val4 > greenYellowValue)
+	{
+		leanAssistActive = false;
+	}
 	update();
 }
 
@@ -121,4 +150,9 @@ void ExhaustGasTemperature::setBorders(double minimum, double maximum, double ye
 	maxValue = maximum;
 	greenYellowValue = yellowBorder;
 	yellowRedValue = redBorder;
+}
+
+void ExhaustGasTemperature::setLeanWindow(double value)
+{
+	leanWindow = value;
 }
