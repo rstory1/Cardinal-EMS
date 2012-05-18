@@ -21,6 +21,7 @@ private:
 	bool leanAssistActive;
 	QList<double> peakValues;
 	QList<bool> peakFound;
+	QList<quint8> peakOrder;
 	QList<double> currentValues;
 	QList<double> betweenValues;
 protected:
@@ -35,6 +36,8 @@ protected:
 			peakValues = currentValues;
 			peakFound.clear();
 			peakFound << false << false << false << false;
+			peakOrder.clear();
+			peakOrder << 0 << 0 << 0 << 0;
 		}
 	}
 };

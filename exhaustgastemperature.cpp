@@ -140,6 +140,11 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i)-peakValues.at(i), 'f', 0), &textRect);
 			painter->setBrush(Qt::transparent);
 			painter->drawRect(textRect);
+
+			QRectF peakRect(-30, -20, 60, 40);
+			peakRect.moveCenter(QPointF(i*40-15, 115));
+			painter->setPen(Qt::white);
+			painter->drawText(peakRect, Qt::AlignCenter, QString::number(peakOrder.at(i)));
 		}
 		else
 		{
@@ -186,9 +191,11 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 		peakValues.replace(3, qMax(peakValues.at(3), val4));
 		for(int i = 0; i < 4; i++)
 		{
-			if(peakValues.at(i)-5.0 > currentValues.at(i))
+			if(!peakFound.at(i) &&
+					(peakValues.at(i)-5.0 > currentValues.at(i)))
 			{
 				peakFound.replace(i, true);
+				peakOrder.replace(i, peakFound.count(true));
 			}
 		}
 	}
