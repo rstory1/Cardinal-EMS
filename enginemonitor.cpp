@@ -6,6 +6,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setWindowFlags(Qt::FramelessWindowHint);
 	graphicsScene.setBackgroundBrush(Qt::black);
 	setScene(&graphicsScene);
+	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	setupBarGraphs();
 
