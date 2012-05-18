@@ -4,6 +4,8 @@
 #include <QtGui>
 
 #include "rpmindicator.h"
+#include "exhaustgastemperature.h"
+#include "cylinderheadtemperature.h"
 #include "bargraph.h"
 
 class EngineMonitor : public QGraphicsView
@@ -15,8 +17,12 @@ public:
 private:
 	void setupRpmIndicator();
 	void setupBarGraphs();
+	void setupExhaustGasTemperature();
+	void setupCylinderHeadTemperature();
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
+	ExhaustGasTemperature exhaustGasTemperature;
+	CylinderHeadTemperature cylinderHeadTemperature;
 	BarGraph oilTemperature;
 	BarGraph oilPressure;
 	BarGraph voltMeter;

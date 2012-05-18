@@ -9,6 +9,8 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	setupRpmIndicator();
+	setupExhaustGasTemperature();
+	setupCylinderHeadTemperature();
 	setupBarGraphs();
 
 	oilTemperature.setValue(149.0);
@@ -40,6 +42,18 @@ void EngineMonitor::setupRpmIndicator()
 	rpmIndicator.addBetweenValue(2400.0);
 	rpmIndicator.addBetweenValue(2700.0);
 	graphicsScene.addItem(&rpmIndicator);
+}
+
+void EngineMonitor::setupExhaustGasTemperature()
+{
+	exhaustGasTemperature.setPos(-475, 275);
+	graphicsScene.addItem(&exhaustGasTemperature);
+}
+
+void EngineMonitor::setupCylinderHeadTemperature()
+{
+	cylinderHeadTemperature.setPos(-200, 275);
+	graphicsScene.addItem(&cylinderHeadTemperature);
 }
 
 void EngineMonitor::setupBarGraphs()
