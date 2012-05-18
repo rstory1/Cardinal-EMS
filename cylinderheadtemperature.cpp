@@ -70,7 +70,17 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 			painter->setBrush(Qt::green);
 		}
 		painter->setPen(QPen(Qt::transparent, 0));
-		painter->drawRect(barRect);
+		if((currentValues.at(i) > minValue) &&
+				(currentValues.at(i) < maxValue))
+		{
+			painter->drawRect(barRect);
+		}
+		else
+		{
+			painter->setPen(QPen(Qt::red, 2));
+			painter->drawLine(barRect.left(), 125, barRect.right(), -125);
+			painter->drawLine(barRect.left(), -125, barRect.right(), 125);
+		}
 		painter->setPen(painter->brush().color());
 		if(painter->brush().color() == Qt::green)
 		{
