@@ -20,7 +20,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	QTimer *demoTimer = new QTimer(this);
 	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
 	demoTimer->setSingleShot(false);
-	demoTimer->start(300);
+	demoTimer->start(50);
 }
 
 EngineMonitor::~EngineMonitor()
@@ -92,7 +92,7 @@ void EngineMonitor::demoFunction()
 	{
 		oilTemp = 160.0;
 	}
-	oilTemp -= 1.0;
+	oilTemp -= 0.1;
 	oilTemperature.setValue(oilTemp);
 
 	static double oilPress = 15.0;
@@ -100,7 +100,7 @@ void EngineMonitor::demoFunction()
 	{
 		oilPress = 15.0;
 	}
-	oilPress += 0.5;
+	oilPress += 0.05;
 	oilPressure.setValue(oilPress);
 
 	static double volts = 12.0;
@@ -108,7 +108,7 @@ void EngineMonitor::demoFunction()
 	{
 		volts = 12.0;
 	}
-	volts += 0.1;
+	volts += 0.01;
 	voltMeter.setValue(volts);
 
 	static double amperes = -5.0;
@@ -116,7 +116,7 @@ void EngineMonitor::demoFunction()
 	{
 		amperes = -5.0;
 	}
-	amperes += 1.0;
+	amperes += 0.1;
 	ampereMeter.setValue(amperes);
 
 	static double flow = 25.0;
@@ -124,7 +124,7 @@ void EngineMonitor::demoFunction()
 	{
 		flow = 25.0;
 	}
-	flow -= 0.5;
+	flow -= 0.05;
 	fuelFlow.setValue(flow);
 
 	static double airTemp = 0.0;
@@ -132,6 +132,6 @@ void EngineMonitor::demoFunction()
 	{
 		airTemp = 0.0;
 	}
-	airTemp += 0.1;
+	airTemp += 0.01;
 	outsideAirTemperature.setValue(airTemp);
 }
