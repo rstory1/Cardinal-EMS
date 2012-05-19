@@ -187,12 +187,12 @@ void EngineMonitor::demoFunction()
 	volts += 0.01;
 	voltMeter.setValue(volts);
 
-	static double amperes = -5.0;
-	if(amperes > 27.0)
+	static double amperes = 50.0;
+	amperes -= 0.1;
+	if(amperes < -50.0)
 	{
-		amperes = -5.0;
+		amperes = 50.0;
 	}
-	amperes += 0.1;
 	ampereMeter.setValue(amperes);
 
 	static double flow = 30.0;
