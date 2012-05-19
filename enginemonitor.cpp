@@ -126,6 +126,7 @@ void EngineMonitor::setupBarGraphs()
 
 void EngineMonitor::demoFunction()
 {
+	qsrand(QDateTime::currentDateTime().toTime_t());
 	static double rpm = 2400.0;
 	if(rpm > 2750.0)
 	{
@@ -161,7 +162,6 @@ void EngineMonitor::demoFunction()
 	{
 		basicCHT = 0.0;
 	}
-	qsrand(QDateTime::currentDateTime().toTime_t());
 	static double offset1 = double(qrand())/double(RAND_MAX)*25.0;
 	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
 	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
