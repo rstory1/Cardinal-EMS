@@ -32,7 +32,9 @@ void EngineMonitor::setupRpmIndicator()
 	rpmIndicator.setPos(-350, 0);
 	rpmIndicator.setBorders(0.0, 2800.0, 300.0, 2550.0);
 	rpmIndicator.addBetweenValue(0.0);
+	rpmIndicator.addBetweenValue(300.0);
 	rpmIndicator.addBetweenValue(600.0);
+	rpmIndicator.addBetweenValue(900.0);
 	rpmIndicator.addBetweenValue(1200.0);
 	rpmIndicator.addBetweenValue(1500.0);
 	rpmIndicator.addBetweenValue(1800.0);
