@@ -3,24 +3,20 @@
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
 {
+	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
 	graphicsScene.setBackgroundBrush(Qt::black);
 	setScene(&graphicsScene);
 	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
+	//Setting up the items to be displayed
 	setupRpmIndicator();
 	setupExhaustGasTemperature();
 	setupCylinderHeadTemperature();
 	setupBarGraphs();
 	graphicsScene.update();
 
-	oilTemperature.setValue(149.0);
-	oilPressure.setValue(49.0);
-	voltMeter.setValue(14.0);
-	ampereMeter.setValue(0.0);
-	fuelFlow.setValue(14.9);
-	outsideAirTemperature.setValue(24.0);
-
+	//Demo timer, for testing purposes only
 	QTimer *demoTimer = new QTimer(this);
 	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
 	demoTimer->setSingleShot(false);
