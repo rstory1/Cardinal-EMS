@@ -15,7 +15,7 @@ RpmIndicator::~RpmIndicator()
 
 QRectF RpmIndicator::boundingRect() const
 {
-	return QRectF(-200.0, -150.0, 400.0, 300.0);
+	return QRectF(-200.0, -160.0, 400.0, 310.0);
 }
 
 void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
