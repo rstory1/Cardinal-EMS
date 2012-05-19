@@ -16,9 +16,8 @@ QRectF CylinderHeadTemperature::boundingRect() const
 
 void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	painter->setPen(QPen(Qt::transparent, 0));
-
 	//Draw the side legend
+	painter->setPen(QPen(Qt::transparent, 0));
 	painter->setBrush(Qt::green);
 	painter->drawRect(QRectF(QPointF(50.0, calculateLocalValue(minValue)), QPointF(80.0, calculateLocalValue(greenYellowValue))));
 	painter->setBrush(Qt::yellow);
@@ -45,9 +44,8 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 	painter->setPen(Qt::red);
 	painter->drawLine(-125, calculateLocalValue(yellowRedValue), 35, calculateLocalValue(yellowRedValue));
 
-	//Draw center dashed line
-	QPen middleLinePen(Qt::white, 1, Qt::DashLine);
-	painter->setPen(middleLinePen);
+	//Draw center dashed lines
+	painter->setPen(QPen(Qt::white, 1, Qt::DashLine));
 	for(int i = 0; i < 4; i++)
 	{
 		painter->drawLine(i*40-105, -125, i*40-105, 125);
