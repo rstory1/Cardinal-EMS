@@ -29,8 +29,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	int whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	int greenRedAngle = calculateLocalValue(greenRedBorder);
 	int maxAngle = 10.0;
-	QPen pen(Qt::transparent, 0);
-	painter->setPen(pen);
+	painter->setPen(QPen(Qt::transparent, 0));
 	painter->setBrush(Qt::green);
 	painter->drawPie(circle, 230*16.0, -240.0*16.0);
 	painter->setBrush(Qt::white);
