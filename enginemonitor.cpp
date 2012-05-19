@@ -20,7 +20,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	QTimer *demoTimer = new QTimer(this);
 	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
 	demoTimer->setSingleShot(false);
-	demoTimer->start(20);
+	demoTimer->start(200);
 }
 
 EngineMonitor::~EngineMonitor()
@@ -137,9 +137,20 @@ void EngineMonitor::demoFunction()
 	}
 	rpmIndicator.setValue(rpm);
 
-	static double basicEGT = 800.0;
+	static double basicEGT = 1000.0;
 	static bool egtUp = true;
-	if(egtUp)
+	static bool leaned = false;
+	static double off13 = 0.0;
+	static double off24 = 0.0;
+	if(leaned)
+	{
+		if(basicEGT < 1190.0)
+		{
+			off13 = double(qrand())/double(RAND_MAX)*3.0;
+			off24 = double(qrand())/double(RAND_MAX)*5.0;
+		}
+	}
+	else if(egtUp)
 	{
 		basicEGT += 1.0;
 	}
@@ -151,11 +162,12 @@ void EngineMonitor::demoFunction()
 	{
 		egtUp = false;
 	}
-	if(basicEGT < 1000.0 && !egtUp)
+	if(basicEGT < 1150.0 && !egtUp)
 	{
+		leaned = true;
 		egtUp = true;
 	}
-	exhaustGasTemperature.setValues(basicEGT+20.0, basicEGT+10.0, basicEGT+5.0, basicEGT+30.0);
+	exhaustGasTemperature.setValues(basicEGT+20.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
 	static double basicCHT = 0.0;
 	basicCHT += 1.0;
