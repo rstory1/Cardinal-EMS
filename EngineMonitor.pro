@@ -25,6 +25,8 @@ TEMPLATE = app
 
 DESTDIR = ./bin
 
+RC_FILE = ./res/icon.rc
+
 SOURCES += main.cpp\
         enginemonitor.cpp \
     bargraph.cpp \
