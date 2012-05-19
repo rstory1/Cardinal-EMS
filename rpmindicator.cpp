@@ -97,6 +97,14 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "rpm");
 }
 
+void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
+{
+	minValue = minimum;
+	maxValue = maximum;
+	whiteGreenBorder = greenBorder;
+	greenRedBorder = redBorder;
+}
+
 double RpmIndicator::calculateLocalValue(double value) const
 {
 	return ((value-maxValue)/(maxValue-minValue)*220.0)+10.0;
