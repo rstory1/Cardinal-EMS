@@ -2,10 +2,10 @@
 
 RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
   , minValue(0.0)
-  , maxValue(2800.0)
-  , currentValue(2100.0)
-  , whiteGreenBorder(300.0)
-  , greenRedBorder(2700.0)
+  , maxValue(0.0)
+  , currentValue(0.0)
+  , whiteGreenBorder(0.0)
+  , greenRedBorder(0.0)
 {
 }
 
