@@ -179,12 +179,12 @@ void EngineMonitor::demoFunction()
 	oilPress += 0.05;
 	oilPressure.setValue(oilPress);
 
-	static double volts = 12.0;
-	if(volts > 16.0)
-	{
-		volts = 12.0;
-	}
+	static double volts = 11.5;
 	volts += 0.01;
+	if(volts > 18.0)
+	{
+		volts = 11.5;
+	}
 	voltMeter.setValue(volts);
 
 	static double amperes = 50.0;
