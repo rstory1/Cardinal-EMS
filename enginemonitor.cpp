@@ -203,11 +203,11 @@ void EngineMonitor::demoFunction()
 	}
 	fuelFlow.setValue(flow);
 
-	static double airTemp = 0.0;
-	if(airTemp > 27.0)
-	{
-		airTemp = 0.0;
-	}
+	static double airTemp = -10.0;
 	airTemp += 0.01;
+	if(airTemp > 40.0)
+	{
+		airTemp = -10.0;
+	}
 	outsideAirTemperature.setValue(airTemp);
 }
