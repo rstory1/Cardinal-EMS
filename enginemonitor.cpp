@@ -195,12 +195,12 @@ void EngineMonitor::demoFunction()
 	amperes += 0.1;
 	ampereMeter.setValue(amperes);
 
-	static double flow = 25.0;
-	if(flow < 5.0)
-	{
-		flow = 25.0;
-	}
+	static double flow = 30.0;
 	flow -= 0.05;
+	if(flow < 0.0)
+	{
+		flow = 30.0;
+	}
 	fuelFlow.setValue(flow);
 
 	static double airTemp = 0.0;
