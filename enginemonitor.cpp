@@ -127,12 +127,12 @@ void EngineMonitor::setupBarGraphs()
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
-	static double rpm = 2400.0;
-	if(rpm > 2750.0)
+	static double rpm = 0.0;
+	rpm += 5.0;
+	if(rpm > 2800.0)
 	{
-		rpm = 2400.0;
+		rpm = 0.0;
 	}
-	rpm += 1.0;
 	rpmIndicator.setValue(rpm);
 
 	static double basicEGT = 800.0;
