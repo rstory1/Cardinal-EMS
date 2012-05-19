@@ -171,12 +171,12 @@ void EngineMonitor::demoFunction()
 	oilTemp -= 0.1;
 	oilTemperature.setValue(oilTemp);
 
-	static double oilPress = 15.0;
-	if(oilPress > 35.0)
-	{
-		oilPress = 15.0;
-	}
+	static double oilPress = 0.0;
 	oilPress += 0.05;
+	if(oilPress > 60.0)
+	{
+		oilPress = 0.0;
+	}
 	oilPressure.setValue(oilPress);
 
 	static double volts = 11.5;
