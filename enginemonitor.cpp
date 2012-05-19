@@ -155,13 +155,21 @@ void EngineMonitor::demoFunction()
 	}
 	exhaustGasTemperature.setValues(basicEGT+20.0, basicEGT+10.0, basicEGT+5.0, basicEGT+30.0);
 
-	static double basicCHT = 50.0;
-	if(basicCHT > 220.0)
-	{
-		basicCHT = 50.0;
-	}
+	static double basicCHT = 0.0;
 	basicCHT += 1.0;
-	cylinderHeadTemperature.setValues(basicCHT+20.0, basicCHT+10.0, basicCHT+5.0, basicCHT+30.0);
+	if(basicCHT > 250.0)
+	{
+		basicCHT = 0.0;
+	}
+	qsrand(QDateTime::currentDateTime().toTime_t());
+	static double offset1 = double(qrand())/double(RAND_MAX)*25.0;
+	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
+	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
+	static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
+	cylinderHeadTemperature.setValues(basicCHT+offset1,
+									  basicCHT+offset2,
+									  basicCHT+offset3,
+									  basicCHT+offset4);
 
 	static double oilTemp = 160.0;
 	if(oilTemp < 120.0)
