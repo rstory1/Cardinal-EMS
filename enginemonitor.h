@@ -19,6 +19,7 @@ private:
 	void setupBarGraphs();
 	void setupExhaustGasTemperature();
 	void setupCylinderHeadTemperature();
+	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
 	ExhaustGasTemperature exhaustGasTemperature;
