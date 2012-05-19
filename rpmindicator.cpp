@@ -60,6 +60,9 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->drawText(centerTextRect, Qt::AlignCenter, "x 100 rpm");
 
 	//Draw the needle
+	if((currentValue > minValue) &&
+			(currentValue < maxValue))
+	{
 	painter->setPen(Qt::black);
 	painter->setBrush(Qt::white);
 	QPolygonF marker;
@@ -70,6 +73,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->rotate(calculateLocalValue(currentValue));
 	painter->drawPolygon(marker);
 	painter->restore();
+	}
 
 	//Draw the readout
 	QRectF textRect(-100, 35, 170, 65);
