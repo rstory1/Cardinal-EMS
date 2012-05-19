@@ -137,15 +137,6 @@ void EngineMonitor::demoFunction()
 
 	static double basicEGT = 800.0;
 	static bool egtUp = true;
-	if(basicEGT > 1200.0 && egtUp)
-	{
-		egtUp = false;
-	}
-	if(basicEGT < 1000.0 && !egtUp)
-	{
-		egtUp = true;
-		basicEGT = 800.0;
-	}
 	if(egtUp)
 	{
 		basicEGT += 1.0;
@@ -153,6 +144,14 @@ void EngineMonitor::demoFunction()
 	else
 	{
 		basicEGT -= 1.0;
+	}
+	if(basicEGT > 1200.0 && egtUp)
+	{
+		egtUp = false;
+	}
+	if(basicEGT < 1000.0 && !egtUp)
+	{
+		egtUp = true;
 	}
 	exhaustGasTemperature.setValues(basicEGT+20.0, basicEGT+10.0, basicEGT+5.0, basicEGT+30.0);
 
