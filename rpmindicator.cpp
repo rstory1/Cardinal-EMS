@@ -25,14 +25,14 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 	//Draw the arc
 	QRectF circle = QRectF(-150.0, -150.0, 300.0, 300.0);
-	int minAngle = -210.0;
+	int minAngle = -230.0;
 	int whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	int greenRedAngle = calculateLocalValue(greenRedBorder);
 	int maxAngle = 10.0;
 	QPen pen(Qt::transparent, 0);
 	painter->setPen(pen);
 	painter->setBrush(Qt::green);
-	painter->drawPie(circle, 210*16.0, -220.0*16.0);
+	painter->drawPie(circle, 230*16.0, -240.0*16.0);
 	painter->setBrush(Qt::white);
 	painter->drawPie(circle, -minAngle*16.0, -fabs(whiteGreenAngle-minAngle)*16.0);
 	painter->setBrush(Qt::red);
@@ -107,7 +107,7 @@ void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder
 
 double RpmIndicator::calculateLocalValue(double value) const
 {
-	return ((value-maxValue)/(maxValue-minValue)*220.0)+10.0;
+	return ((value-maxValue)/(maxValue-minValue)*240.0)+10.0;
 }
 
 void RpmIndicator::addBetweenValue(double value)
