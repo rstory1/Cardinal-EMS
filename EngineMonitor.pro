@@ -37,3 +37,6 @@ HEADERS  += enginemonitor.h \
     rpmindicator.h \
     cylinderheadtemperature.h \
     exhaustgastemperature.h
+
+RESOURCES += \
+    res/res.qrc
