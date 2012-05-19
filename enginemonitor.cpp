@@ -133,6 +133,7 @@ void EngineMonitor::demoFunction()
 	rpm += 5.0;
 	if(rpm > 2800.0)
 	{
+		saveSceneToSvg("./out/maxRPM.svg");
 		rpm = 0.0;
 	}
 	rpmIndicator.setValue(rpm);
@@ -231,4 +232,18 @@ void EngineMonitor::demoFunction()
 		airTemp = -10.0;
 	}
 	outsideAirTemperature.setValue(airTemp);
+}
+
+void EngineMonitor::saveSceneToSvg(const QString fileName)
+{
+	QSvgGenerator generator;
+	generator.setFileName(fileName);
+	generator.setSize(QSize(800, 600));
+	generator.setViewBox(QRect(0, 0, 800, 600));
+	generator.setTitle(tr("SVG Generator Example Drawing"));
+	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
+	QPainter painter;
+	painter.begin(&generator);
+	graphicsScene.render(&painter);
+	painter.end();
 }
