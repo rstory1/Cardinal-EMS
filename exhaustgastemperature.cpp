@@ -84,8 +84,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	painter->drawLine(-35, calculateLocalValue(yellowRedValue), 125, calculateLocalValue(yellowRedValue));
 
 	//Draw center dashed line where the graphs are running
-	QPen middleLinePen(Qt::white, 1, Qt::DashLine);
-	painter->setPen(middleLinePen);
+	painter->setPen(QPen(Qt::white, 1, Qt::DashLine));
 	for(int i = 0; i < 4; i++)
 	{
 		painter->drawLine(i*40-15, -125, i*40-15, 125);
