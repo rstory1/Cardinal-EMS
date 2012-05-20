@@ -44,10 +44,13 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 	//Draw the side legend
 	painter->setBrush(Qt::green);
+	painter->setPen(QPen(Qt::green, 0));
 	painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(minValue)), QPointF(-50.0, calculateLocalValue(greenYellowValue))));
 	painter->setBrush(Qt::yellow);
+	painter->setPen(QPen(Qt::yellow, 0));
 	painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(greenYellowValue)), QPointF(-50.0, calculateLocalValue(yellowRedValue))));
 	painter->setBrush(Qt::red);
+	painter->setPen(QPen(Qt::red, 0));
 	painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(yellowRedValue)), QPointF(-50.0, calculateLocalValue(maxValue))));
 
 	//Set painter for texts

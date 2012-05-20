@@ -37,12 +37,14 @@ QRectF CylinderHeadTemperature::boundingRect() const
 void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	//Draw the side legend
-	painter->setPen(QPen(Qt::transparent, 0));
 	painter->setBrush(Qt::green);
+	painter->setPen(QPen(Qt::green, 0));
 	painter->drawRect(QRectF(QPointF(50.0, calculateLocalValue(minValue)), QPointF(80.0, calculateLocalValue(greenYellowValue))));
 	painter->setBrush(Qt::yellow);
+	painter->setPen(QPen(Qt::yellow, 0));
 	painter->drawRect(QRectF(QPointF(50.0, calculateLocalValue(greenYellowValue)), QPointF(80.0, calculateLocalValue(yellowRedValue))));
 	painter->setBrush(Qt::red);
+	painter->setPen(QPen(Qt::red, 0));
 	painter->drawRect(QRectF(QPointF(50.0, calculateLocalValue(yellowRedValue)), QPointF(80.0, calculateLocalValue(maxValue))));
 
 	//Set painter for texts
