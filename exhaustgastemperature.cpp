@@ -109,63 +109,77 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
 		}
-		painter->setPen(QPen(Qt::transparent, 0));
-		if(!leanAssistActive && (currentValues.at(i) > minValue) &&
-				(currentValues.at(i) < maxValue))
+		if(leanAssistActive)
 		{
-			painter->drawRect(barRect);
-		}
-		else if(leanAssistActive)
-		{
+			//If lean assis is active, check what display should occur
 			if(currentValues.at(i) < leanMinValue)
 			{
+				//If current value is below minimum value, check if window is adjustable
 				if((currentValues.at(i) < peakValues.at(0)-leanWindow) ||
 						(currentValues.at(i) < peakValues.at(1)-leanWindow) ||
 						(currentValues.at(i) < peakValues.at(2)-leanWindow) ||
 						(currentValues.at(i) < peakValues.at(3)-leanWindow))
 				{
+					//If value drops below maximum displayable window, disable lean assistant
 					leanAssistActive = false;
 				}
 				else
 				{
+					//If window is adjustable to keep all peaks in display, adjust the minimum
 					leanMinValue = currentValues.at(i);
 				}
 			}
 			else if(currentValues.at(i) > (leanMinValue + leanWindow))
 			{
+				//If value is above the maximum value adjust the window to display new peak
 				leanMinValue = currentValues.at(i) - leanWindow;
 			}
 			if(leanAssistActive && peakFound.at(i))
 			{
+				//If peak has already been found, adjust the color to blue
 				painter->setBrush(Qt::blue);
 			}
+		}
+		if((currentValues.at(i) > minValue) &&
+				(currentValues.at(i) < maxValue))
+		{
+			//If value is in visible range, draw the bar
+			painter->setPen(painter->brush().color());
 			painter->drawRect(barRect);
 		}
 		else
 		{
+			//If value is outside the displayed range, draw a red cross
 			painter->setPen(QPen(Qt::red, 2));
 			painter->drawLine(barRect.left(), 125, barRect.right(), -125);
 			painter->drawLine(barRect.left(), -125, barRect.right(), 125);
 		}
+		//Set the pen to the brush color
 		painter->setPen(painter->brush().color());
 		if(painter->brush().color() == Qt::green)
 		{
+			//If brush was green, pen should be white
 			painter->setPen(Qt::white);
 		}
+		//Define text position and move to correct column
 		QRectF textRect(-30, -20, 60, 40);
 		textRect.moveCenter(QPointF(i*40-15, -140));
 		if(i%2)
 		{
 			textRect.translate(QPointF(0.0, -20.0));
 		}
+		//Draw the readout
 		if(leanAssistActive && peakFound.at(i))
 		{
-			painter->setPen(Qt::blue);
+			//If peak was found in lean assist draw line at peak temperature
 			painter->drawLine(barRect.left(), calculateLocalValue(peakValues.at(i)), barRect.right(), calculateLocalValue(peakValues.at(i)));
+			//Draw the difference to the peak temperature
 			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i)-peakValues.at(i), 'f', 0), &textRect);
+			//Draw a box around the text with transparent brush
 			painter->setBrush(Qt::transparent);
 			painter->drawRect(textRect);
 
+			//Define rect and move it to correct column to write the peak order
 			QRectF peakRect(-30, -20, 60, 40);
 			peakRect.moveCenter(QPointF(i*40-15, 115));
 			painter->setPen(Qt::white);
@@ -173,6 +187,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 		else
 		{
+			//If in normal mode, just draw the readout
 			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
 		}
 	}
@@ -182,10 +197,12 @@ double ExhaustGasTemperature::calculateLocalValue(double value) const
 {
 	if(leanAssistActive)
 	{
+		//If lean assist is active, calculate based on reduced window
 		return -(value-leanMinValue)/(leanWindow)*250.0+125.0;
 	}
 	else
 	{
+		//Otherwise the full range is used for calculation
 		return -(value-minValue)/(maxValue-minValue)*250.0+125.0;
 	}
 }
@@ -206,10 +223,12 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 			val3 > greenYellowValue ||
 			val4 > greenYellowValue)
 	{
+		//If any value exceeds vaution range, deactivate lean assist
 		leanAssistActive = false;
 	}
 	if(leanAssistActive)
 	{
+		//If lean assist is active, check if peak values are exceeded
 		peakValues.replace(0, qMax(peakValues.at(0), val1));
 		peakValues.replace(1, qMax(peakValues.at(1), val2));
 		peakValues.replace(2, qMax(peakValues.at(2), val3));
@@ -217,9 +236,11 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 		for(int i = 0; i < 4; i++)
 		{
 			if(!peakFound.at(i) &&
-					(peakValues.at(i)-5.0 > currentValues.at(i)))
+					(peakValues.at(i) - 5.0 > currentValues.at(i)))
 			{
+				//If current temperature is 5K lower than peak value, define peak as found
 				peakFound.replace(i, true);
+				//Set the count of found peak
 				peakOrder.replace(i, peakFound.count(true));
 			}
 		}
