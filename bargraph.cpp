@@ -41,32 +41,43 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
-	//Draw bar
-	painter->setPen(QPen(Qt::transparent, 0));
+	//Save thje painter and deactivate Antialising for rectangle drawing
+	painter->save();
+	painter->setRenderHint(QPainter::Antialiasing, false);
+	painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+
+	//Draw ticks with values
+	painter->setPen(Qt::white);
+	foreach(double value, beetweenValues)
+	{
+		painter->drawLine(QPointF(-20.0, calculateLocalValue(value)), QPointF(-10.0, calculateLocalValue(value)));
+		painter->drawText(QRectF(-50, calculateLocalValue(value)-10.0, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(value, 'f', barPrecision));
+	}
+
+	//Define pen, brush and rect for the bar
+	painter->setPen(Qt::green);
 	painter->setBrush(Qt::green);
-	painter->drawRect(-10, -50, 20, 100);
+	painter->drawRect(QRectF(QPointF(-10.0, -50.0), QPointF(10.0, 50.0)));
 	if(!colorStops.isEmpty())
 	{
+		//If there are color stops, go through them
 		foreach(ColorStop colorStop, colorStops)
 		{
-			QRectF rect(QPointF(-10, calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue))), QPointF(10, calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue))));
+			//Set pen and brish to color and draw the bar
+			painter->setPen(colorStop.color);
 			painter->setBrush(colorStop.color);
-			painter->drawRect(rect);
+			painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue))), QPointF(10.0, calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)))));
 		}
 	}
+
+	//Restore the painter with antialising
+	painter->restore();
 
 	//Draw Texts around
 	painter->setPen(Qt::white);
 	painter->drawText(QRectF(-20, -70, 40, 20), Qt::AlignCenter, titleText);
 	painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
 	painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
-
-	//Draw ticks with values
-	foreach(double value, beetweenValues)
-	{
-		painter->drawLine(QPointF(-20.0, calculateLocalValue(value)), QPointF(-10.0, calculateLocalValue(value)));
-		painter->drawText(QRectF(-50, calculateLocalValue(value)-10.0, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(value, 'f', barPrecision));
-	}
 
 	//Draw readout
 	painter->drawText(QRectF(-20, 50, 40, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
