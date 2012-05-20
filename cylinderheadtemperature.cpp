@@ -90,10 +90,11 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
 		}
-		painter->setPen(QPen(Qt::transparent, 0));
 		if((currentValues.at(i) > minValue) &&
 				(currentValues.at(i) < maxValue))
 		{
+			//If value is in visible range, draw the bar
+			painter->setPen(painter->brush().color());
 			painter->drawRect(barRect);
 		}
 		else
@@ -103,7 +104,6 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 			painter->drawLine(barRect.left(), 125, barRect.right(), -125);
 			painter->drawLine(barRect.left(), -125, barRect.right(), 125);
 		}
-		painter->setPen(painter->brush().color());
 		if(painter->brush().color() == Qt::green)
 		{
 			//If value is in normal range, draw text in white
