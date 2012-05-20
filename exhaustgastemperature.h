@@ -33,6 +33,7 @@ public:
 	void addBetweenValue(double value);
 	void setValues(double val1, double val2, double val3, double val4);
 	void setLeanWindow(double value);
+	bool isLeanAssistActive() const;
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue;
