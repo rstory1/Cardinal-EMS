@@ -260,3 +260,8 @@ void ExhaustGasTemperature::setLeanWindow(double value)
 {
 	leanWindow = value;
 }
+
+bool ExhaustGasTemperature::isLeanAssistActive() const
+{
+	return leanAssistActive;
+}
