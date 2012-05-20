@@ -38,6 +38,7 @@ QRectF ExhaustGasTemperature::boundingRect() const
 
 void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	//Set clipping rectangle to avoid overdrawing
 	painter->setClipRect(boundingRect());
 	painter->setPen(QPen(Qt::transparent, 0));
 
@@ -57,9 +58,10 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	painter->drawText(QRectF(-130.0, -162.5, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
 	painter->drawText(QRectF(-130.0, 105.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "°C");
 
-	//Draw the numbers
+	//Draw the ticks and numbers at the legend
 	if(leanAssistActive)
 	{
+		//If lean assist is active, draw ticks in quarters of the lean window, tick start is below the graph
 		double start = leanMinValue - fmod(leanMinValue, leanWindow/4.0);
 		for(double value = start; value < leanMinValue + leanWindow; value += leanWindow/4.0)
 		{
@@ -69,6 +71,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	}
 	else
 	{
+		//In normal mode, draw values at the defined between values
 		foreach(double value, betweenValues)
 		{
 			painter->drawLine(-80, calculateLocalValue(value), -90, calculateLocalValue(value));
@@ -76,11 +79,11 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 	}
 
-	//Draw the red line
+	//Draw the red line to define warning area
 	painter->setPen(Qt::red);
 	painter->drawLine(-35, calculateLocalValue(yellowRedValue), 125, calculateLocalValue(yellowRedValue));
 
-	//Draw center dashed line
+	//Draw center dashed line where the graphs are running
 	QPen middleLinePen(Qt::white, 1, Qt::DashLine);
 	painter->setPen(middleLinePen);
 	for(int i = 0; i < 4; i++)
@@ -88,20 +91,23 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		painter->drawLine(i*40-15, -125, i*40-15, 125);
 	}
 
-	//Draw the bar graphes
+	//Draw the bar graphs
 	for(int i = 0; i < 4; i++)
 	{
 		QRectF barRect = QRectF(QPointF(i*40-30, 125), QPointF(i*40-0, calculateLocalValue(currentValues.value(i))));
 		if(currentValues.at(i) > yellowRedValue)
 		{
+			//If value is in warning area, bar is drawn red
 			painter->setBrush(Qt::red);
 		}
 		else if(currentValues.at(i) > greenYellowValue)
 		{
+			//If value is in caution area, bar is drawn yellow
 			painter->setBrush(Qt::yellow);
 		}
 		else
 		{
+			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
 		}
 		painter->setPen(QPen(Qt::transparent, 0));
