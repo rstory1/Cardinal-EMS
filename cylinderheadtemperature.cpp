@@ -31,7 +31,7 @@ CylinderHeadTemperature::CylinderHeadTemperature(QGraphicsItem *parent) : QGraph
 
 QRectF CylinderHeadTemperature::boundingRect() const
 {
-	return QRectF(-125, -175, 250, 300);
+	return QRectF(-125, -170, 250, 300);
 }
 
 void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -108,7 +108,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		textRect.moveCenter(QPointF(i*40-105, -140));
 		if(i%2)
 		{
-			textRect.translate(QPointF(0.0, -25.0));
+			textRect.translate(QPointF(0.0, -20.0));
 		}
 		painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
 	}
