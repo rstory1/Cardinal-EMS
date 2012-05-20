@@ -37,6 +37,7 @@ private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;
 	double whiteGreenBorder, greenRedBorder;
+	double startAngle, spanAngle;
 	QList<double> beetweenValues;
 };
 
