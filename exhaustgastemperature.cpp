@@ -33,7 +33,7 @@ ExhaustGasTemperature::ExhaustGasTemperature(QGraphicsItem *parent) : QGraphicsI
 
 QRectF ExhaustGasTemperature::boundingRect() const
 {
-	return QRectF(-130, -175, 255, 300);
+	return QRectF(-130, -170, 255, 300);
 }
 
 void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -157,7 +157,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		textRect.moveCenter(QPointF(i*40-15, -140));
 		if(i%2)
 		{
-			textRect.translate(QPointF(0.0, -25.0));
+			textRect.translate(QPointF(0.0, -20.0));
 		}
 		if(leanAssistActive && peakFound.at(i))
 		{
