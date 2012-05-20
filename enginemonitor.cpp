@@ -52,6 +52,7 @@ EngineMonitor::~EngineMonitor()
 void EngineMonitor::setupRpmIndicator()
 {
 	rpmIndicator.setPos(-350, 0);
+	rpmIndicator.setStartSpan(230.0, 240.0);
 	rpmIndicator.setBorders(0.0, 2800.0, 300.0, 2550.0);
 	rpmIndicator.addBetweenValue(0.0);
 	rpmIndicator.addBetweenValue(300.0);

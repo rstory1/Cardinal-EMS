@@ -30,6 +30,7 @@ public:
 	~RpmIndicator();
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void setStartSpan(double start, double span);
 	void setBorders(double minimum, double maximum, double greenBorder, double redBorder);
 	void addBetweenValue(double value);
 	void setValue(double value);

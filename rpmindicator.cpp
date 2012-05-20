@@ -26,8 +26,8 @@ RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
   , currentValue(0.0)
   , whiteGreenBorder(0.0)
   , greenRedBorder(0.0)
-  , startAngle(230.0)
-  , spanAngle(240.0)
+  , startAngle(0.0)
+  , spanAngle(0.0)
 {
 }
 
@@ -130,6 +130,12 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	QRectF unitRect(90, 35, 100, 65);
 	painter->setFont(QFont("Arial", 20, 1));
 	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "rpm");
+}
+
+void RpmIndicator::setStartSpan(double start, double span)
+{
+	startAngle = start;
+	spanAngle = span;
 }
 
 void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
