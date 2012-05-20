@@ -34,17 +34,21 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
+	//Create splashscreen and show it
 	QPixmap pixmap(":/splashscreen.png");
 	QSplashScreen splash(pixmap);
 	splash.show();
 	a.processEvents();
 
+	//Create the engine monitor and show after splashscreen delay
 	EngineMonitor engineMonitor;
 	SplashScreenDelay::sleep(5);
 	engineMonitor.show();
 	engineMonitor.move(0, 0);
 	engineMonitor.resize(800, 600);
-//	splash.finish(&engineMonitor);
+	splash.finish(&engineMonitor);
+
+	//Alternative for other resolutions
 //	engineMonitor.showFullScreen();
 //	engineMonitor.scale(1.28, 1.28);
 	return a.exec();
