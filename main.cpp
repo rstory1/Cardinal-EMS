@@ -21,7 +21,7 @@
 #include <QtGui/QApplication>
 #include "enginemonitor.h"
 
-class I : public QThread
+class SplashScreenDelay : public QThread
 {
 public:
 	static void sleep(unsigned long secs)
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 	a.processEvents();
 
 	EngineMonitor engineMonitor;
-	I::sleep(5);
+	SplashScreenDelay::sleep(5);
 	engineMonitor.show();
 	engineMonitor.move(0, 0);
 	engineMonitor.resize(800, 600);
