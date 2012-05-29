@@ -37,7 +37,7 @@ RpmIndicator::~RpmIndicator()
 
 QRectF RpmIndicator::boundingRect() const
 {
-	return QRectF(-200.0, -160.0, 400.0, 320.0);
+	return QRectF(-200.0, -140.0, 400.0, 280.0);
 }
 
 void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -46,7 +46,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	Q_UNUSED(widget);
 
 	//Draw the arc
-	QRectF circle = QRectF(-150.0, -150.0, 300.0, 300.0);
+	QRectF circle = QRectF(-130.0, -130.0, 260.0, 260.0);
 	//Calculate angles for white and red arc part
 	double whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	double greenRedAngle = calculateLocalValue(greenRedBorder);
@@ -65,7 +65,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	//Overlay the center with a black circle
 	painter->setPen(QPen(Qt::black, 0));
 	painter->setBrush(Qt::black);
-	painter->drawEllipse(circle.center(), 130.0, 130.0);
+	painter->drawEllipse(circle.center(), 110.0, 110.0);
 
 	//Set the pen and font to draw the ticks
 	painter->setPen(QPen(Qt::white, 2));
@@ -75,11 +75,11 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 		//Rotate painter and draw the ticks
 		painter->save();
 		painter->rotate(-calculateLocalValue(value));
-		painter->drawLine(120, 0, 150, 0);
+		painter->drawLine(100, 0, 130, 0);
 		painter->restore();
 		//Define a box, move it and draw the text centered to this position
 		QRectF textRect(-10, -10, 20, 20);
-		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*110.0, -sin(calculateLocalValue(value)/180.0*M_PI)*110.0));
+		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*85.0, -sin(calculateLocalValue(value)/180.0*M_PI)*85.0));
 		painter->drawText(textRect, Qt::AlignCenter, QString::number(value/100.0, 'f', 0));
 	}
 
@@ -96,9 +96,9 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 		painter->setBrush(Qt::white);
 		//Define the shape
 		QPolygonF marker;
-		marker.append(QPointF(130.0, 0.0));
-		marker.append(QPointF(160.0, -7.0));
-		marker.append(QPointF(160.0, 7.0));
+		marker.append(QPointF(110.0, 0.0));
+		marker.append(QPointF(140.0, -7.0));
+		marker.append(QPointF(140.0, 7.0));
 		//Rotate the painter and draw the needle
 		painter->save();
 		painter->rotate(-calculateLocalValue(currentValue));

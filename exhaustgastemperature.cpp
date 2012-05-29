@@ -33,7 +33,7 @@ ExhaustGasTemperature::ExhaustGasTemperature(QGraphicsItem *parent) : QGraphicsI
 
 QRectF ExhaustGasTemperature::boundingRect() const
 {
-	return QRectF(-130, -170, 255, 300);
+	return QRectF(-130, -170, 255, 230);
 }
 
 void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -58,8 +58,8 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	painter->setFont(QFont("Arial", 12));
 
 	//Draw the static texts
-	painter->drawText(QRectF(-130.0, -162.5, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
-	painter->drawText(QRectF(-130.0, 105.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "°C");
+	painter->drawText(QRectF(-130.0, -165.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
+	painter->drawText(QRectF(-130.0, 40.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignBottom, "°C");
 
 	//Draw the ticks and numbers at the legend
 	if(leanAssistActive)
@@ -90,13 +90,13 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	painter->setPen(QPen(Qt::white, 1, Qt::DashLine));
 	for(int i = 0; i < 4; i++)
 	{
-		painter->drawLine(i*40-15, -125, i*40-15, 125);
+		painter->drawLine(i*40-15, -120, i*40-15, 60);
 	}
 
 	//Draw the bar graphs
 	for(int i = 0; i < 4; i++)
 	{
-		QRectF barRect = QRectF(QPointF(i*40-30, 125), QPointF(i*40-0, calculateLocalValue(currentValues.value(i))));
+		QRectF barRect = QRectF(QPointF(i*40-30, 60), QPointF(i*40-0, calculateLocalValue(currentValues.value(i))));
 		if(currentValues.at(i) > yellowRedValue)
 		{
 			//If value is in warning area, bar is drawn red
@@ -154,8 +154,8 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		{
 			//If value is outside the displayed range, draw a red cross
 			painter->setPen(QPen(Qt::red, 2));
-			painter->drawLine(barRect.left(), 125, barRect.right(), -125);
-			painter->drawLine(barRect.left(), -125, barRect.right(), 125);
+			painter->drawLine(barRect.left(), 60, barRect.right(), -120);
+			painter->drawLine(barRect.left(), -120, barRect.right(), 60);
 		}
 		//Set the pen to the brush color
 		painter->setPen(painter->brush().color());
@@ -166,7 +166,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 		//Define text position and move to correct column
 		QRectF textRect(-30, -20, 60, 40);
-		textRect.moveCenter(QPointF(i*40-15, -140));
+		textRect.moveCenter(QPointF(i*40-15, -135));
 		if(i%2)
 		{
 			textRect.translate(QPointF(0.0, -20.0));
@@ -184,9 +184,9 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 			//Define rect and move it to correct column to write the peak order
 			QRectF peakRect(-30, -20, 60, 40);
-			peakRect.moveCenter(QPointF(i*40-15, 115));
+			peakRect.moveCenter(QPointF(i*40-15, 40));
 			painter->setPen(Qt::white);
-			painter->drawText(peakRect, Qt::AlignCenter, QString::number(peakOrder.at(i)));
+			painter->drawText(peakRect, Qt::AlignHCenter | Qt::AlignBottom, QString::number(peakOrder.at(i)));
 		}
 		else
 		{
@@ -201,12 +201,12 @@ double ExhaustGasTemperature::calculateLocalValue(double value) const
 	if(leanAssistActive)
 	{
 		//If lean assist is active, calculate based on reduced window
-		return -(value-leanMinValue)/(leanWindow)*250.0+125.0;
+		return -(value-leanMinValue)/(leanWindow)*180.0+60.0;
 	}
 	else
 	{
 		//Otherwise the full range is used for calculation
-		return -(value-minValue)/(maxValue-minValue)*250.0+125.0;
+		return -(value-minValue)/(maxValue-minValue)*180.0+60.0;
 	}
 }
 

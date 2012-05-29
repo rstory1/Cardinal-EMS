@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 	SplashScreenDelay::sleep(5);
 	engineMonitor.show();
 	engineMonitor.move(0, 0);
-	engineMonitor.resize(800, 600);
+	engineMonitor.resize(800, 480);
 	splash.finish(&engineMonitor);
 
 	//Alternative for other resolutions
