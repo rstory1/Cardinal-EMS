@@ -73,7 +73,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	//Restore the painter with antialising
 	painter->restore();
 
-	//Draw Texts around
+	//Draw Texts around (title, min and max value)
 	painter->setPen(Qt::white);
 	painter->drawText(QRectF(-20, -70, 40, 20), Qt::AlignCenter, titleText);
 	painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
