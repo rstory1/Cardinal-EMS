@@ -51,7 +51,7 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupRpmIndicator()
 {
-	rpmIndicator.setPos(-350, 0);
+	rpmIndicator.setPos(-350, -100);
 	rpmIndicator.setStartSpan(230.0, 240.0);
 	rpmIndicator.setBorders(0.0, 2800.0, 300.0, 2550.0);
 	rpmIndicator.addBetweenValue(0.0);
@@ -69,20 +69,21 @@ void EngineMonitor::setupRpmIndicator()
 
 void EngineMonitor::setupExhaustGasTemperature()
 {
-	exhaustGasTemperature.setPos(-475, 295);
+	exhaustGasTemperature.setPos(-475, 175);
 	exhaustGasTemperature.setBorders(200.0, 1700.0, 1600.0, 1650.0);
 	exhaustGasTemperature.addBetweenValue(400);
 	exhaustGasTemperature.addBetweenValue(800);
 	exhaustGasTemperature.addBetweenValue(1200);
 	exhaustGasTemperature.addBetweenValue(1600);
-	exhaustGasTemperature.addBetweenValue(1650);
+//	exhaustGasTemperature.addBetweenValue(1650);
+	exhaustGasTemperature.addBetweenValue(1700);
 	exhaustGasTemperature.setLeanWindow(200.0);
 	graphicsScene.addItem(&exhaustGasTemperature);
 }
 
 void EngineMonitor::setupCylinderHeadTemperature()
 {
-	cylinderHeadTemperature.setPos(-200, 295);
+	cylinderHeadTemperature.setPos(-200, 175);
 	cylinderHeadTemperature.setBorders(100.0, 250.0, 200.0, 230.0);
 	cylinderHeadTemperature.addBetweenValue(120);
 	cylinderHeadTemperature.addBetweenValue(160);
@@ -93,7 +94,7 @@ void EngineMonitor::setupCylinderHeadTemperature()
 
 void EngineMonitor::setupBarGraphs()
 {
-	oilTemperature.setPos(0, 0);
+	oilTemperature.setPos(0, -150);
 	oilTemperature.setTitle("OIL T");
 	oilTemperature.setUnit("°C");
 	oilTemperature.setBorders(80.0, 180.0);
@@ -101,7 +102,7 @@ void EngineMonitor::setupBarGraphs()
 	oilTemperature.addColorStop(ColorStop(Qt::yellow, 160.0, 180.0));
 	graphicsScene.addItem(&oilTemperature);
 
-	oilPressure.setPos(100, 0);
+	oilPressure.setPos(100, -150);
 	oilPressure.setTitle("OIL P");
 	oilPressure.setUnit("psi");
 	oilPressure.setBorders(0.0, 60.0);
@@ -112,7 +113,7 @@ void EngineMonitor::setupBarGraphs()
 	oilPressure.addBetweenValue(50.0);
 	graphicsScene.addItem(&oilPressure);
 
-	voltMeter.setPos(0, 150);
+	voltMeter.setPos(0, 0);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
 	voltMeter.setBorders(11.5, 18.0);
@@ -120,7 +121,7 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.setPrecision(1, 1);
 	graphicsScene.addItem(&voltMeter);
 
-	ampereMeter.setPos(100, 150);
+	ampereMeter.setPos(100, 0);
 	ampereMeter.setTitle("AMPS");
 	ampereMeter.setUnit("A");
 	ampereMeter.setBorders(-50.0, 50.0);
@@ -129,7 +130,7 @@ void EngineMonitor::setupBarGraphs()
 	ampereMeter.addBetweenValue(0.0);
 	graphicsScene.addItem(&ampereMeter);
 
-	fuelFlow.setPos(0, 300);
+	fuelFlow.setPos(0, 150);
 	fuelFlow.setTitle("FF");
 	fuelFlow.setUnit("lph");
 	fuelFlow.setBorders(0, 30);
@@ -138,7 +139,7 @@ void EngineMonitor::setupBarGraphs()
 	fuelFlow.addBetweenValue(20.0);
 	graphicsScene.addItem(&fuelFlow);
 
-	outsideAirTemperature.setPos(100, 300);
+	outsideAirTemperature.setPos(100, 150);
 	outsideAirTemperature.setTitle("OAT");
 	outsideAirTemperature.setUnit("°C");
 	outsideAirTemperature.setBorders(-10.0, 40);
@@ -161,7 +162,7 @@ void EngineMonitor::demoFunction()
 	}
 	rpmIndicator.setValue(rpm);
 
-	static double basicEGT = 1000.0;
+	static double basicEGT = 0.0;
 	static bool egtUp = true;
 	static bool leaned = false;
 	static double off13 = 0.0;

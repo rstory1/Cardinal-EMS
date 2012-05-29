@@ -31,11 +31,14 @@ CylinderHeadTemperature::CylinderHeadTemperature(QGraphicsItem *parent) : QGraph
 
 QRectF CylinderHeadTemperature::boundingRect() const
 {
-	return QRectF(-125, -170, 250, 300);
+	return QRectF(-125, -170, 250, 230);
 }
 
 void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+	//Set Clipping Rect
+	painter->setClipRect(boundingRect());
+
 	//Draw the side legend
 	painter->setBrush(Qt::green);
 	painter->setPen(QPen(Qt::green, 0));
@@ -52,8 +55,8 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 	painter->setFont(QFont("Arial", 12));
 
 	//Draw the static texts
-	painter->drawText(QRectF(90.0, -162.5, 35.0, 20.0), Qt::AlignRight | Qt::AlignVCenter, "CHT");
-	painter->drawText(QRectF(90.0, 105.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignVCenter, "°C");
+	painter->drawText(QRectF(90.0, -165.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignVCenter, "CHT");
+	painter->drawText(QRectF(90.0, 40.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignBottom, "°C");
 
 	//Draw the ticks and numbers
 	foreach(double value, betweenValues)
@@ -70,13 +73,13 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 	painter->setPen(QPen(Qt::white, 1, Qt::DashLine));
 	for(int i = 0; i < 4; i++)
 	{
-		painter->drawLine(i*40-105, -125, i*40-105, 125);
+		painter->drawLine(i*40-105, -120, i*40-105, 60);
 	}
 
 	//Draw the bar graphes
 	for(int i = 0; i < 4; i++)
 	{
-		QRectF barRect = QRectF(QPointF(i*40-120, 125), QPointF(i*40-90, calculateLocalValue(currentValues.value(i))));
+		QRectF barRect = QRectF(QPointF(i*40-120, 60), QPointF(i*40-90, calculateLocalValue(currentValues.value(i))));
 		if(currentValues.at(i) > yellowRedValue)
 		{
 			//If value is in warning area, bar is drawn red
@@ -103,8 +106,8 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		{
 			//If value is outside the displayed range, draw a red cross
 			painter->setPen(QPen(Qt::red, 2));
-			painter->drawLine(barRect.left(), 125, barRect.right(), -125);
-			painter->drawLine(barRect.left(), -125, barRect.right(), 125);
+			painter->drawLine(barRect.left(), 60, barRect.right(), -120);
+			painter->drawLine(barRect.left(), -120, barRect.right(), 60);
 		}
 		if(painter->brush().color() == Qt::green)
 		{
@@ -113,7 +116,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		}
 		//Define text position and move to current column
 		QRectF textRect(-30, -20, 60, 40);
-		textRect.moveCenter(QPointF(i*40-105, -140));
+		textRect.moveCenter(QPointF(i*40-105, -135));
 		if(i%2)
 		{
 			//All odd values should be raised
@@ -126,7 +129,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 
 double CylinderHeadTemperature::calculateLocalValue(double value) const
 {
-	return -(value-minValue)/(maxValue-minValue)*250.0+125.0;
+	return -(value-minValue)/(maxValue-minValue)*180.0+60.0;
 }
 
 void CylinderHeadTemperature::addBetweenValue(double value)
