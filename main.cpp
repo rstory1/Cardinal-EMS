@@ -21,6 +21,36 @@
 #include <QtGui/QApplication>
 #include "enginemonitor.h"
 
+void messageToFileHandler(QtMsgType type, const char *msg)
+{
+	QFile debugfile("EngineMon.log");
+	if(debugfile.open(QIODevice::Append | QIODevice::Text))
+	{
+		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
+		switch (type)
+		{
+		case QtDebugMsg:
+			debugString.append("Debug: ");
+			break;
+		case QtWarningMsg:
+			debugString.append("Warning: ");
+			break;
+		case QtCriticalMsg:
+			debugString.append("Critical: ");
+			break;
+		case QtFatalMsg:
+			debugString.append("Fatal: ");
+			abort();
+		}
+		debugfile.write(debugString.append(msg).replace('\n', ", ").append('\n').toAscii());
+		debugfile.close();
+	}
+	else
+	{
+		QMessageBox::warning(NULL, "No debug output", "Unable to open 'TerrainOnNavigationDisplay.debug', therefore no debug output available.");
+	}
+}
+
 class SplashScreenDelay : public QThread
 {
 public:
@@ -33,6 +63,20 @@ public:
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
+
+#ifdef QT_NO_DEBUG
+	QFile debugfile("EngineMon.log");
+	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toAscii());
+		debugfile.close();
+		qInstallMsgHandler(messageToFileHandler);
+	}
+	else
+	{
+		QMessageBox::warning(NULL, "No debug output", "Unable to open 'EngineMon.log', therefore no debug output available.");
+	}
+#endif
 
 	//Create splashscreen and show it
 	QPixmap pixmap(":/splashscreen.png");
