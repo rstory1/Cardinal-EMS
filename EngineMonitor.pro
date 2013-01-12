@@ -32,13 +32,15 @@ SOURCES += main.cpp\
     bargraph.cpp \
     rpmindicator.cpp \
     cylinderheadtemperature.cpp \
-    exhaustgastemperature.cpp
+    exhaustgastemperature.cpp \
+    rdacconnect.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
     rpmindicator.h \
     cylinderheadtemperature.h \
-    exhaustgastemperature.h
+    exhaustgastemperature.h \
+    rdacconnect.h
 
 RESOURCES += \
     res/res.qrc

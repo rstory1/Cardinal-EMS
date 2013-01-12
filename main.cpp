@@ -20,6 +20,7 @@
 
 #include <QtGui/QApplication>
 #include "enginemonitor.h"
+#include "rdacconnect.h"
 
 void messageToFileHandler(QtMsgType type, const char *msg)
 {
@@ -91,6 +92,10 @@ int main(int argc, char *argv[])
 	engineMonitor.move(0, 0);
 	engineMonitor.resize(800, 480);
 	splash.finish(&engineMonitor);
+
+	//Create the RDAC connector
+	RDACconnect rdacConnect;
+	rdacConnect.start();
 
 	//Alternative for other resolutions
 //	engineMonitor.showFullScreen();
