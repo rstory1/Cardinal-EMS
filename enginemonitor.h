@@ -54,6 +54,7 @@ private slots:
 	void demoFunction();
 public slots:
 	void setDataMessage1(double fuelFlowValue);
+	void setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 };
 
 #endif // ENGINEMONITOR_H
