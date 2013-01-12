@@ -23,7 +23,7 @@ QT       += core gui svg
 TARGET = EngineMonitor
 TEMPLATE = app
 
-DESTDIR = ./bin
+DESTDIR = ../bin
 
 RC_FILE = ./res/icon.rc
 
