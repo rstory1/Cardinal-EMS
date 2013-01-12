@@ -155,6 +155,13 @@ void EngineMonitor::setDataMessage1(double fuelFlowValue)
 	fuelFlow.setValue(fuelFlowValue);
 }
 
+void EngineMonitor::setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue)
+{
+	oilTemperature.setValue(oilTemperatureValue);
+	oilPressure.setValue(oilPressureValue);
+	voltMeter.setValue(voltageValue);
+}
+
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());

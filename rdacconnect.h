@@ -30,6 +30,7 @@ public:
 	void run();
 signals:
 	void updateDataMessage1(double fuelFlowValue);
+	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 };
 
 #endif // RDACCONNECT_H
