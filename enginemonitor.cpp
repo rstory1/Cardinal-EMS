@@ -150,6 +150,11 @@ void EngineMonitor::setupBarGraphs()
 	graphicsScene.addItem(&outsideAirTemperature);
 }
 
+void EngineMonitor::setDataMessage1(double fuelFlowValue)
+{
+	fuelFlow.setValue(fuelFlowValue);
+}
+
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());

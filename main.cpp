@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
 
 	//Create the RDAC connector
 	RDACconnect rdacConnect;
+	a.connect(&rdacConnect, SIGNAL(updateDataMessage1(double)), &engineMonitor, SLOT(setDataMessage1(double)));
 	rdacConnect.start();
 
 	//Alternative for other resolutions

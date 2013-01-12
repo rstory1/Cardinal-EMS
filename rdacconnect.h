@@ -28,6 +28,8 @@ class RDACconnect : public QThread
 	Q_OBJECT
 public:
 	void run();
+signals:
+	void updateDataMessage1(double fuelFlowValue);
 };
 
 #endif // RDACCONNECT_H
