@@ -52,6 +52,8 @@ private:
 	BarGraph outsideAirTemperature;
 private slots:
 	void demoFunction();
+public slots:
+	void setDataMessage1(double fuelFlowValue);
 };
 
 #endif // ENGINEMONITOR_H
