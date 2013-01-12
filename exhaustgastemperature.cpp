@@ -194,6 +194,12 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
 		}
 	}
+	if(leanAssistActive)
+	{
+		painter->setBrush(Qt::transparent);
+		painter->setPen(QPen(Qt::red, 6.0));
+		painter->drawRect(boundingRect());
+	}
 }
 
 double ExhaustGasTemperature::calculateLocalValue(double value) const
