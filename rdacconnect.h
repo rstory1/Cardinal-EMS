@@ -28,6 +28,8 @@ class RDACconnect : public QThread
 	Q_OBJECT
 public:
 	void run();
+	static quint8 calculateChecksum1(QByteArray data);
+	static quint8 calculateChecksum2(QByteArray data);
 private:
 	bool searchStart(QByteArray *data);
 signals:
