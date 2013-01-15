@@ -24,3 +24,22 @@ void RDACconnect::run()
 {
 	exec();
 }
+
+bool RDACconnect::searchStart(QByteArray *data)
+{
+	while(data->size() >= 3)
+	{
+		if(quint8(data->at(0)) == 0xD5)
+		{
+			if(quint8(data->at(1)) == 0x02)
+			{
+				if((quint8(data->at(2)) >= 0x01) && (quint8(data->at(2)) <= 0x04))
+				{
+					return true;
+				}
+			}
+		}
+		data->remove(0, 1);
+	}
+	return false;
+}
