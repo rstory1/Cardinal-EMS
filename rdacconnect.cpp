@@ -63,3 +63,50 @@ bool RDACconnect::searchStart(QByteArray *data)
 	}
 	return false;
 }
+
+bool RDACconnect::checkPatternValidity(QByteArray *data)
+{
+	// Determine and check neccessary size of data
+	quint8 requiredSize = 0;
+	switch(quint8(data->at(2)))
+	{
+	case 0x01:
+		requiredSize = 9;
+		break;
+	case 0x02:
+		requiredSize = 23;
+		break;
+	case 0x03:
+		requiredSize = 7;
+		break;
+	case 0x04:
+		requiredSize = 29;
+		break;
+	default:
+		return false;
+	}
+	if(data->size() < requiredSize)
+	{
+		return false;
+	}
+
+	// Calculate and check checksums
+	if(quint8(data->at(requiredSize - 2)) == calculateChecksum1(data->mid(2, requiredSize - 4)))
+	{
+		if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(2, requiredSize - 4)))
+		{
+			return true;
+		}
+		else
+		{
+			qWarning() << "Checksum 2 incorrect" << quint8(data->at(requiredSize - 1));
+			return false;
+		}
+	}
+	else
+	{
+		qWarning() << "Checksum 1 incorrect" << quint8(data->at(requiredSize - 2));
+		return false;
+	}
+	return false;
+}

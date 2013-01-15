@@ -32,6 +32,7 @@ public:
 	static quint8 calculateChecksum2(QByteArray data);
 private:
 	bool searchStart(QByteArray *data);
+	bool checkPatternValidity(QByteArray *data);
 signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
