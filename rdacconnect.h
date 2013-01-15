@@ -28,6 +28,8 @@ class RDACconnect : public QThread
 	Q_OBJECT
 public:
 	void run();
+private:
+	bool searchStart(QByteArray *data);
 signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
