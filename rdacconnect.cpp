@@ -26,6 +26,42 @@ RDACmessage1::RDACmessage1() : pulses(0), timing(0)
 
 void RDACconnect::run()
 {
+	forever
+	{
+		static double oilT = 180.0;
+		static double oilP = 0.0;
+		static double flow = 0.0;
+		static double volt = 24.0;
+		oilT -= 1.0;
+		oilP += 0.5;
+		flow += 0.1;
+		volt -= 0.3;
+		emit updateDataMessage1(flow);
+		emit updateDataMessage2(oilT, oilP, volt);
+		QByteArray datatest;
+		datatest.resize(12);
+		datatest[0] = quint8(0x3c);
+		datatest[1] = quint8(0xb8);
+		datatest[2] = quint8(0xD5);
+		datatest[3] = quint8(0x02);
+		datatest[4] = quint8(0x01);
+		datatest[5] = quint8(0xff);
+		datatest[6] = quint8(0xff);
+		datatest[7] = quint8(0xff);
+		datatest[8] = quint8(0xff);
+		datatest[9] = quint8(calculateChecksum1(datatest.mid(4, 5)));
+		datatest[10] = quint8(calculateChecksum2(datatest.mid(4, 5)));
+		datatest[11] = quint8(0x05);
+
+		if(searchStart(&datatest))
+		{
+			if(checkPatternValidity(&datatest))
+			{
+				handleMessage1(&datatest);
+			}
+		}
+		sleep(1);
+	}
 	exec();
 }
 
