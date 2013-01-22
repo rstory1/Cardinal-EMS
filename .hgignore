@@ -1,0 +1,8 @@
+syntax: glob
+Makefile*
+debug/*
+release/*
+*.user
+bin/*
+*.Debug
+*.Release
