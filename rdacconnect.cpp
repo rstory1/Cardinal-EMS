@@ -20,6 +20,10 @@
 
 #include "rdacconnect.h"
 
+RDACmessage1::RDACmessage1() : pulses(0), timing(0)
+{
+}
+
 void RDACconnect::run()
 {
 	exec();

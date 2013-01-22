@@ -23,6 +23,16 @@
 
 #include <QtCore>
 
+#pragma pack(1)
+struct RDACmessage1
+{
+public:
+	RDACmessage1();
+	quint16 pulses;
+	quint16 timing;
+};
+#pragma pack()
+
 class RDACconnect : public QThread
 {
 	Q_OBJECT
