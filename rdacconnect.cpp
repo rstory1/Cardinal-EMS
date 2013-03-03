@@ -55,9 +55,17 @@ void RDACconnect::run()
 
 		if(searchStart(&datatest))
 		{
-			if(checkPatternValidity(&datatest))
+			quint8 messageType = 0x00;
+			if(checkPatternValidity(&datatest, messageType))
 			{
-				handleMessage1(&datatest);
+				switch(messageType)
+				{
+				case 0x01:
+					handleMessage1(&datatest);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		sleep(1);
@@ -104,11 +112,12 @@ bool RDACconnect::searchStart(QByteArray *data)
 	return false;
 }
 
-bool RDACconnect::checkPatternValidity(QByteArray *data)
+bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 {
 	// Determine and check neccessary size of data
 	quint8 requiredSize = 0;
-	switch(quint8(data->at(2)))
+	messageType = quint8(data->at(2));
+	switch(messageType)
 	{
 	case 0x01:
 		requiredSize = 9;
