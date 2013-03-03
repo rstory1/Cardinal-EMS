@@ -182,8 +182,9 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	data->remove(0, 9);
 
 	quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
+	lastMessage1 = QDateTime::currentDateTime();
 
-	qreal k_factor;
+	qreal k_factor = 1.0;
 	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
 }
 
