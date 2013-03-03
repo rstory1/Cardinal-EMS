@@ -42,7 +42,7 @@ public:
 	static quint8 calculateChecksum2(QByteArray data);
 private:
 	bool searchStart(QByteArray *data);
-	bool checkPatternValidity(QByteArray *data);
+	bool checkPatternValidity(QByteArray *data, quint8 &messageType);
 	QDateTime lastMessage1;
 	void handleMessage1(QByteArray *data);
 signals:
