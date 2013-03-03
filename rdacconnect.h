@@ -31,6 +31,22 @@ public:
 	quint16 pulses;
 	quint16 timing;
 };
+
+struct RDACmessage2
+{
+public:
+	RDACmessage2();
+	quint16 oilTemperature;
+	quint16 oilPressure;
+	quint16 fuelLevel1;
+	quint16 fuelLevel2;
+	quint16 voltage;
+	quint16 internalTemperature;
+	quint16 cht1;
+	quint16 cht2;
+	quint16 manifoldPressure;
+};
+
 #pragma pack()
 
 class RDACconnect : public QThread
@@ -45,6 +61,7 @@ private:
 	bool checkPatternValidity(QByteArray *data, quint8 &messageType);
 	QDateTime lastMessage1;
 	void handleMessage1(QByteArray *data);
+	void handleMessage2(QByteArray *data);
 signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
