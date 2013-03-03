@@ -162,17 +162,12 @@ bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 
 void RDACconnect::handleMessage1(QByteArray *data)
 {
-	if(data->size() < 9)
-	{
-		return;
-	}
-	else
-	{
-		RDACmessage1 message;
-		memcpy(&message, data->mid(3, 4).constData(), 4);
+	RDACmessage1 message;
+	memcpy(&message, data->mid(3, 4).constData(), 4);
 
-		quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
-		qreal k_factor;
-		qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
-	}
+	quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
+
+	qreal k_factor;
+	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
+	data->remove(0, 9);
 }
