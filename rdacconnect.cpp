@@ -24,6 +24,18 @@ RDACmessage1::RDACmessage1() : pulses(0), timing(0)
 {
 }
 
+RDACmessage2::RDACmessage2() : oilTemperature(0)
+  , oilPressure(0)
+  , fuelLevel1(0)
+  , fuelLevel2(0)
+  , voltage(0)
+  , internalTemperature(0)
+  , cht1(0)
+  , cht2(0)
+  , manifoldPressure(0)
+{
+}
+
 void RDACconnect::run()
 {
 	forever
@@ -62,6 +74,9 @@ void RDACconnect::run()
 				{
 				case 0x01:
 					handleMessage1(&datatest);
+					break;
+				case 0x02:
+					handleMessage2(&datatest);
 					break;
 				default:
 					break;
@@ -170,4 +185,11 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	qreal k_factor;
 	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
 	data->remove(0, 9);
+}
+
+void RDACconnect::handleMessage2(QByteArray *data)
+{
+	RDACmessage2 message;
+	memcpy(&message, data->mid(3, 4).constData(), 18);
+	data->remove(0, 23);
 }
