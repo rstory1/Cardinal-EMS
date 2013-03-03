@@ -179,12 +179,12 @@ void RDACconnect::handleMessage1(QByteArray *data)
 {
 	RDACmessage1 message;
 	memcpy(&message, data->mid(3, 4).constData(), 4);
+	data->remove(0, 9);
 
 	quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
 
 	qreal k_factor;
 	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
-	data->remove(0, 9);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)
