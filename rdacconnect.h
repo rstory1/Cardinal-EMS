@@ -22,6 +22,7 @@
 #define RDACCONNECT_H
 
 #include <QtCore>
+#include <QtGui>
 #include <windows.h>
 
 #pragma pack(1)
