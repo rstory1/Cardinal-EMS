@@ -38,6 +38,17 @@ RDACmessage2::RDACmessage2() : oilTemperature(0)
 
 void RDACconnect::run()
 {
+	HANDLE serialhCom = CreateFile(L"\\\\.\\COM10", GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
+	if (serialhCom != INVALID_HANDLE_VALUE)
+	{
+		qDebug() << "Succesful opening";
+	}
+	else
+	{
+		qDebug() << "Could not open COM10";
+	}
+
+	QByteArray data;
 	forever
 	{
 		static double oilT = 180.0;
@@ -50,40 +61,35 @@ void RDACconnect::run()
 		volt -= 0.3;
 		emit updateDataMessage1(flow);
 		emit updateDataMessage2(oilT, oilP, volt);
-		QByteArray datatest;
-		datatest.resize(12);
-		datatest[0] = quint8(0x3c);
-		datatest[1] = quint8(0xb8);
-		datatest[2] = quint8(0xD5);
-		datatest[3] = quint8(0x02);
-		datatest[4] = quint8(0x01);
-		datatest[5] = quint8(0xff);
-		datatest[6] = quint8(0xff);
-		datatest[7] = quint8(0xff);
-		datatest[8] = quint8(0xff);
-		datatest[9] = quint8(calculateChecksum1(datatest.mid(4, 5)));
-		datatest[10] = quint8(calculateChecksum2(datatest.mid(4, 5)));
-		datatest[11] = quint8(0x05);
 
-		if(searchStart(&datatest))
+		quint8 byte;
+		DWORD nrBytes = 0;
+		ReadFile(serialhCom, &byte, 1, &nrBytes, NULL);
+		if(nrBytes == 1)
+		{
+			data.append(byte);
+			qDebug() << QString::number(byte, 16);
+		}
+
+		if(searchStart(&data))
 		{
 			quint8 messageType = 0x00;
-			if(checkPatternValidity(&datatest, messageType))
+			if(checkPatternValidity(&data, messageType))
 			{
 				switch(messageType)
 				{
-				case 0x01:
-					handleMessage1(&datatest);
-					break;
-				case 0x02:
-					handleMessage2(&datatest);
-					break;
-				default:
-					break;
+					case 0x01:
+						handleMessage1(&data);
+						break;
+					case 0x02:
+						handleMessage2(&data);
+						break;
+					default:
+						data.remove(0, 1);
+						break;
 				}
 			}
 		}
-		sleep(1);
 	}
 	exec();
 }
@@ -134,20 +140,20 @@ bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 	messageType = quint8(data->at(2));
 	switch(messageType)
 	{
-	case 0x01:
-		requiredSize = 9;
-		break;
-	case 0x02:
-		requiredSize = 23;
-		break;
-	case 0x03:
-		requiredSize = 7;
-		break;
-	case 0x04:
-		requiredSize = 29;
-		break;
-	default:
-		return false;
+		case 0x01:
+			requiredSize = 9;
+			break;
+		case 0x02:
+			requiredSize = 23;
+			break;
+		case 0x03:
+			requiredSize = 7;
+			break;
+		case 0x04:
+			requiredSize = 29;
+			break;
+		default:
+			return false;
 	}
 	if(data->size() < requiredSize)
 	{

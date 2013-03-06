@@ -22,6 +22,7 @@
 #define RDACCONNECT_H
 
 #include <QtCore>
+#include <windows.h>
 
 #pragma pack(1)
 struct RDACmessage1
