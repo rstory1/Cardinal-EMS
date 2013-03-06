@@ -48,6 +48,12 @@ public:
 	quint16 manifoldPressure;
 };
 
+struct RDACmessage4
+{
+public:
+	RDACmessage4();
+	quint16 thermocouple[12];
+};
 #pragma pack()
 
 class RDACconnect : public QThread
@@ -63,9 +69,11 @@ private:
 	QDateTime lastMessage1;
 	void handleMessage1(QByteArray *data);
 	void handleMessage2(QByteArray *data);
+	void handleMessage4(QByteArray *data);
 signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
+	void updateDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
 };
 
 #endif // RDACCONNECT_H

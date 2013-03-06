@@ -36,6 +36,10 @@ RDACmessage2::RDACmessage2() : oilTemperature(0)
 {
 }
 
+RDACmessage4::RDACmessage4()
+{
+}
+
 void RDACconnect::run()
 {
 	HANDLE serialhCom = CreateFile(L"\\\\.\\COM10", GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
@@ -83,6 +87,9 @@ void RDACconnect::run()
 						break;
 					case 0x02:
 						handleMessage2(&data);
+						break;
+					case 0x04:
+						handleMessage4(&data);
 						break;
 					default:
 						data.remove(0, 1);
@@ -202,4 +209,14 @@ void RDACconnect::handleMessage2(QByteArray *data)
 	RDACmessage2 message;
 	memcpy(&message, data->mid(3, 4).constData(), 18);
 	data->remove(0, 23);
+}
+
+void RDACconnect::handleMessage4(QByteArray *data)
+{
+	RDACmessage4 message;
+	memcpy(&message, data->mid(3, 24).constData(), 24);
+
+	data->remove(0, 29);
+
+	emit updateDataMessage4egt(message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3]);
 }
