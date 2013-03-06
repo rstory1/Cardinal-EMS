@@ -96,7 +96,7 @@ void RDACconnect::run()
 
 quint8 RDACconnect::calculateChecksum1(QByteArray data)
 {
-	quint8 checksum = 0x55;
+	quint8 checksum = 0xAA;
 	for(int i = 0; i < data.size(); ++i)
 	{
 		checksum += quint8(data.at(i));
@@ -106,7 +106,7 @@ quint8 RDACconnect::calculateChecksum1(QByteArray data)
 
 quint8 RDACconnect::calculateChecksum2(QByteArray data)
 {
-	quint8 checksum = 0xAA;
+	quint8 checksum = 0x55;
 	for(int i = 0; i < data.size(); ++i)
 	{
 		checksum ^= quint8(data.at(i));
