@@ -56,7 +56,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 
 	//Draw the static texts
 	painter->drawText(QRectF(90.0, -165.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignVCenter, "CHT");
-	painter->drawText(QRectF(90.0, 40.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignBottom, "°C");
+	painter->drawText(QRectF(90.0, 40.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignBottom, QString::fromUtf8("Â°C"));
 
 	//Draw the ticks and numbers
 	foreach(double value, betweenValues)
