@@ -55,24 +55,12 @@ void RDACconnect::run()
 	QByteArray data;
 	forever
 	{
-		static double oilT = 180.0;
-		static double oilP = 0.0;
-		static double flow = 0.0;
-		static double volt = 24.0;
-		oilT -= 1.0;
-		oilP += 0.5;
-		flow += 0.1;
-		volt -= 0.3;
-		emit updateDataMessage1(flow);
-		emit updateDataMessage2(oilT, oilP, volt);
-
 		quint8 byte;
 		DWORD nrBytes = 0;
 		ReadFile(serialhCom, &byte, 1, &nrBytes, NULL);
 		if(nrBytes == 1)
 		{
 			data.append(byte);
-			qDebug() << QString::number(byte, 16);
 		}
 
 		if(searchStart(&data))
