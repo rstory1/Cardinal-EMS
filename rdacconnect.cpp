@@ -40,16 +40,29 @@ RDACmessage4::RDACmessage4()
 {
 }
 
+RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
+  , settings("./settings.ini", QSettings::IniFormat, parent)
+{
+}
+
 void RDACconnect::run()
 {
-	HANDLE serialhCom = CreateFile(L"\\\\.\\COM10", GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
+	settings.setValue("Access/LastRead", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+	QString portString = "\\\\.\\";
+	portString.append(settings.value("Communication/Port", "COM1").toString());
+	wchar_t portArray[portString.length() + 1];
+	portString.toWCharArray(portArray);
+	portArray[portString.length()] = '\0';
+	portString.replace("\\\\.\\", "");
+
+	HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
 	if (serialhCom != INVALID_HANDLE_VALUE)
 	{
-		qDebug() << "Succesful opening";
+		qDebug() << "Succesful opening" << portString;
 	}
 	else
 	{
-		qDebug() << "Could not open COM10";
+		qDebug() << "Could not open" << portString;
 	}
 
 	QByteArray data;
