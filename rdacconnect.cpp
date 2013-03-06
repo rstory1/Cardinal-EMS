@@ -153,6 +153,7 @@ bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 			requiredSize = 29;
 			break;
 		default:
+			data->remove(0, 1);
 			return false;
 	}
 	if(data->size() < requiredSize)
@@ -170,12 +171,14 @@ bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 		else
 		{
 			qWarning() << "Checksum 2 incorrect" << quint8(data->at(requiredSize - 1));
+			data->remove(0, 1);
 			return false;
 		}
 	}
 	else
 	{
 		qWarning() << "Checksum 1 incorrect" << quint8(data->at(requiredSize - 2));
+		data->remove(0, 1);
 		return false;
 	}
 	return false;
