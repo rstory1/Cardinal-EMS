@@ -96,7 +96,7 @@ void EngineMonitor::setupBarGraphs()
 {
 	oilTemperature.setPos(0, -150);
 	oilTemperature.setTitle("OIL T");
-	oilTemperature.setUnit("°C");
+	oilTemperature.setUnit(QString::fromUtf8("Â°C"));
 	oilTemperature.setBorders(80.0, 180.0);
 	oilTemperature.addColorStop(ColorStop(Qt::green, 80.0, 160.0));
 	oilTemperature.addColorStop(ColorStop(Qt::yellow, 160.0, 180.0));
@@ -141,7 +141,7 @@ void EngineMonitor::setupBarGraphs()
 
 	outsideAirTemperature.setPos(100, 150);
 	outsideAirTemperature.setTitle("OAT");
-	outsideAirTemperature.setUnit("°C");
+	outsideAirTemperature.setUnit(QString::fromUtf8("Â°C"));
 	outsideAirTemperature.setBorders(-10.0, 40);
 	outsideAirTemperature.addBetweenValue(0.0);
 	outsideAirTemperature.addBetweenValue(10.0);

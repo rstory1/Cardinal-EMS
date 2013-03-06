@@ -59,7 +59,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 	//Draw the static texts
 	painter->drawText(QRectF(-130.0, -165.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
-	painter->drawText(QRectF(-130.0, 40.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignBottom, "°C");
+	painter->drawText(QRectF(-130.0, 40.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignBottom, QString::fromUtf8("Â°C"));
 
 	//Draw the ticks and numbers at the legend
 	if(leanAssistActive)
