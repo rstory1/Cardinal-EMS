@@ -98,6 +98,7 @@ int main(int argc, char *argv[])
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage1(double)), &engineMonitor, SLOT(setDataMessage1(double)));
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage2(double,double,double)), &engineMonitor, SLOT(setDataMessage2(double,double,double)));
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage4egt(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setDataMessage4egt(quint16,quint16,quint16,quint16)));
+	a.connect(&rdacConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
 	rdacConnect.start();
 
 	//Alternative for other resolutions

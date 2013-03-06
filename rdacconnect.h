@@ -22,7 +22,6 @@
 #define RDACCONNECT_H
 
 #include <QtCore>
-#include <QtGui>
 #include <windows.h>
 
 #pragma pack(1)
@@ -77,6 +76,7 @@ signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 	void updateDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
+	void userMessage(QString title, QString content, bool endApplication);
 };
 
 #endif // RDACCONNECT_H

@@ -63,8 +63,8 @@ void RDACconnect::run()
 	else
 	{
 		qDebug() << "Could not open" << portString;
-		QMessageBox::warning(0, "COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName());
-		qApp->quit();
+		emit userMessage("COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
+		exec();
 	}
 
 	QByteArray data;
@@ -77,12 +77,13 @@ void RDACconnect::run()
 			if(nrBytes == 1)
 			{
 				data.append(byte);
+				qDebug() << QString::number(byte, 16);
 			}
 		}
 		else
 		{
-			QMessageBox::warning(0, "COM error", "Error reading data, closing application");
-			qApp->quit();
+			emit userMessage("COM error", "Error reading data, closing application", true);
+			exec();
 		}
 
 		if(searchStart(&data))

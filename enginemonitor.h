@@ -56,6 +56,7 @@ public slots:
 	void setDataMessage1(double fuelFlowValue);
 	void setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
+	void userMessageHandler(QString title, QString content, bool endApplication);
 };
 
 #endif // ENGINEMONITOR_H
