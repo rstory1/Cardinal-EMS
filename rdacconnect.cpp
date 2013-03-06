@@ -202,6 +202,7 @@ void RDACconnect::handleMessage1(QByteArray *data)
 
 	qreal k_factor = 1.0;
 	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
+	emit updateDataMessage1(fuelflow);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)
@@ -209,6 +210,8 @@ void RDACconnect::handleMessage2(QByteArray *data)
 	RDACmessage2 message;
 	memcpy(&message, data->mid(3, 4).constData(), 18);
 	data->remove(0, 23);
+
+	emit updateDataMessage2(message.oilTemperature, message.oilPressure, message.voltage / 1000.0);
 }
 
 void RDACconnect::handleMessage4(QByteArray *data)
