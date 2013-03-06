@@ -167,6 +167,15 @@ void EngineMonitor::setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3,
 	exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
 }
 
+void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
+{
+	QMessageBox::warning(this, title, content);
+	if(endApplication)
+	{
+		qApp->quit();
+	}
+}
+
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
