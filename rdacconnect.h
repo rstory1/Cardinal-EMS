@@ -60,6 +60,7 @@ class RDACconnect : public QThread
 {
 	Q_OBJECT
 public:
+	RDACconnect(QObject *parent = 0);
 	void run();
 	static quint8 calculateChecksum1(QByteArray data);
 	static quint8 calculateChecksum2(QByteArray data);
@@ -70,6 +71,7 @@ private:
 	void handleMessage1(QByteArray *data);
 	void handleMessage2(QByteArray *data);
 	void handleMessage4(QByteArray *data);
+	QSettings settings;
 signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
