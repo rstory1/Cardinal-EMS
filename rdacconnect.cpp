@@ -68,6 +68,7 @@ void RDACconnect::run()
 	}
 
 	QByteArray data;
+	bool startPatternFound = false;
 	forever
 	{
 		quint8 byte;
@@ -88,9 +89,11 @@ void RDACconnect::run()
 
 		if(searchStart(&data))
 		{
+			startPatternFound = true;
 			quint8 messageType = 0x00;
 			if(checkPatternValidity(&data, messageType))
 			{
+				emit statusMessage("Everything OK", Qt::white);
 				switch(messageType)
 				{
 					case 0x01:
@@ -107,6 +110,14 @@ void RDACconnect::run()
 						break;
 				}
 			}
+			else
+			{
+				emit statusMessage("Found pattern not valid", Qt::yellow);
+			}
+		}
+		if(!startPatternFound)
+		{
+			emit statusMessage("No start pattern found yet", Qt::red);
 		}
 	}
 	exec();

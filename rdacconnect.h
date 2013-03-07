@@ -22,6 +22,7 @@
 #define RDACCONNECT_H
 
 #include <QtCore>
+#include <QtGui/QColor>
 #include <windows.h>
 
 #pragma pack(1)
@@ -77,6 +78,7 @@ signals:
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 	void updateDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
 	void userMessage(QString title, QString content, bool endApplication);
+	void statusMessage(QString text, QColor color);
 };
 
 #endif // RDACCONNECT_H
