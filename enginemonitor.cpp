@@ -36,6 +36,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupExhaustGasTemperature();
 	setupCylinderHeadTemperature();
 	setupBarGraphs();
+	setupStatusItem();
 	graphicsScene.update();
 
 //	//Demo timer, for testing purposes only
@@ -150,6 +151,12 @@ void EngineMonitor::setupBarGraphs()
 	graphicsScene.addItem(&outsideAirTemperature);
 }
 
+void EngineMonitor::setupStatusItem()
+{
+	statusItem.setPos(-200, -240);
+	graphicsScene.addItem(&statusItem);
+}
+
 void EngineMonitor::setDataMessage1(double fuelFlowValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
@@ -174,6 +181,12 @@ void EngineMonitor::userMessageHandler(QString title, QString content, bool endA
 	{
 		qApp->quit();
 	}
+}
+
+void EngineMonitor::showStatusMessage(QString text, QColor color)
+{
+	statusItem.setPlainText(text);
+	statusItem.setDefaultTextColor(color);
 }
 
 void EngineMonitor::demoFunction()

@@ -39,6 +39,7 @@ private:
 	void setupBarGraphs();
 	void setupExhaustGasTemperature();
 	void setupCylinderHeadTemperature();
+	void setupStatusItem();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
@@ -50,6 +51,7 @@ private:
 	BarGraph ampereMeter;
 	BarGraph fuelFlow;
 	BarGraph outsideAirTemperature;
+	QGraphicsTextItem statusItem;
 private slots:
 	void demoFunction();
 public slots:
@@ -57,6 +59,7 @@ public slots:
 	void setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
 	void userMessageHandler(QString title, QString content, bool endApplication);
+	void showStatusMessage(QString text, QColor color);
 };
 
 #endif // ENGINEMONITOR_H
