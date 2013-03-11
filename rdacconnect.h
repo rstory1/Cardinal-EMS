@@ -65,9 +65,16 @@ public:
 	void run();
 	static quint8 calculateChecksum1(QByteArray data);
 	static quint8 calculateChecksum2(QByteArray data);
+	enum rdacResults {
+		rdacResultMessageComplete,
+		rdacResultMessageIncomplete,
+		rdacResultMessageInvalidChecksum1,
+		rdacResultMessageInvalidChecksum2,
+		rdacResultMessageIllegalDatatype
+	};
 private:
 	bool searchStart(QByteArray *data);
-	bool checkPatternValidity(QByteArray *data, quint8 &messageType);
+	rdacResults checkPatternValidity(QByteArray *data, quint8 &messageType);
 	QDateTime lastMessage1;
 	void handleMessage1(QByteArray *data);
 	void handleMessage2(QByteArray *data);
