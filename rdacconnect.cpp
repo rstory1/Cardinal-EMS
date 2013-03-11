@@ -56,7 +56,7 @@ void RDACconnect::run()
 	portString.replace("\\\\.\\", "");
 
 	HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
-	if (serialhCom != INVALID_HANDLE_VALUE)
+	if(serialhCom != INVALID_HANDLE_VALUE)
 	{
 		qDebug() << "Succesful opening" << portString;
 	}
