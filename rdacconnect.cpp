@@ -232,7 +232,7 @@ void RDACconnect::handleMessage1(QByteArray *data)
 void RDACconnect::handleMessage2(QByteArray *data)
 {
 	RDACmessage2 message;
-	memcpy(&message, data->mid(3, 4).constData(), 18);
+	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
 
 	emit updateDataMessage2(message.oilTemperature, message.oilPressure, message.voltage / 1000.0);
