@@ -69,6 +69,15 @@ void RDACconnect::run()
 
 	QByteArray data;
 	bool startPatternFound = false;
+	QFile serialStream("serialstram.log");
+	if(serialStream.open(QIODevice::WriteOnly))
+	{
+		qDebug() << serialStream.fileName() << "opened";
+	}
+	else
+	{
+		qDebug() << serialStream.fileName() << "failed";
+	}
 	forever
 	{
 		quint8 byte;
@@ -78,7 +87,8 @@ void RDACconnect::run()
 			if(nrBytes == 1)
 			{
 				data.append(byte);
-				qDebug() << QString::number(byte, 16);
+				serialStream.write(QString::number(byte, 16).rightJustified(2, '0').prepend("0x").append("\r\n").toLatin1());
+				serialStream.flush();
 			}
 		}
 		else
