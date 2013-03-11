@@ -91,8 +91,9 @@ void RDACconnect::run()
 		{
 			startPatternFound = true;
 			quint8 messageType = 0x00;
-			if(checkPatternValidity(&data, messageType))
+			switch(checkPatternValidity(&data, messageType))
 			{
+			case rdacResultMessageComplete:
 				emit statusMessage("Everything OK", Qt::white);
 				switch(messageType)
 				{
@@ -109,10 +110,12 @@ void RDACconnect::run()
 						data.remove(0, 1);
 						break;
 				}
-			}
-			else
-			{
+				break;
+			case rdacResultMessageIncomplete:
+				break;
+			default:
 				emit statusMessage("Found pattern not valid", Qt::yellow);
+				break;
 			}
 		}
 		if(!startPatternFound)
@@ -162,7 +165,7 @@ bool RDACconnect::searchStart(QByteArray *data)
 	return false;
 }
 
-bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
+RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 {
 	// Determine and check neccessary size of data
 	quint8 requiredSize = 0;
@@ -183,11 +186,11 @@ bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 			break;
 		default:
 			data->remove(0, 1);
-			return false;
+			return rdacResultMessageIllegalDatatype;
 	}
 	if(data->size() < requiredSize)
 	{
-		return false;
+		return rdacResultMessageIncomplete;
 	}
 
 	// Calculate and check checksums
@@ -195,22 +198,21 @@ bool RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 	{
 		if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(2, requiredSize - 4)))
 		{
-			return true;
+			return rdacResultMessageComplete;
 		}
 		else
 		{
 			qWarning() << "Checksum 2 incorrect" << quint8(data->at(requiredSize - 1));
 			data->remove(0, 1);
-			return false;
+			return rdacResultMessageInvalidChecksum2;
 		}
 	}
 	else
 	{
 		qWarning() << "Checksum 1 incorrect" << quint8(data->at(requiredSize - 2));
 		data->remove(0, 1);
-		return false;
+		return rdacResultMessageInvalidChecksum1;
 	}
-	return false;
 }
 
 void RDACconnect::handleMessage1(QByteArray *data)
