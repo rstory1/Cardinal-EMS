@@ -60,6 +60,7 @@ protected:
 			peakOrder.clear();
 			peakOrder << 0 << 0 << 0 << 0;
 		}
+		update();
 	}
 };
 
