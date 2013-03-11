@@ -169,6 +169,11 @@ void EngineMonitor::setDataMessage2(double oilTemperatureValue, double oilPressu
 	voltMeter.setValue(voltageValue);
 }
 
+void EngineMonitor::setDataMessage3(double revolutionPerMinute)
+{
+	rpmIndicator.setValue(revolutionPerMinute);
+}
+
 void EngineMonitor::setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4)
 {
 	exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
