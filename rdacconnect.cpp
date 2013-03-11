@@ -36,6 +36,10 @@ RDACmessage2::RDACmessage2() : oilTemperature(0)
 {
 }
 
+RDACmessage3::RDACmessage3() : timeBetweenPulses(0)
+{
+}
+
 RDACmessage4::RDACmessage4()
 {
 }
@@ -111,6 +115,9 @@ void RDACconnect::run()
 						handleMessage1(&data);
 						break;
 					case 0x02:
+						handleMessage2(&data);
+						break;
+					case 0x03:
 						handleMessage2(&data);
 						break;
 					case 0x04:
@@ -242,10 +249,28 @@ void RDACconnect::handleMessage1(QByteArray *data)
 void RDACconnect::handleMessage2(QByteArray *data)
 {
 	RDACmessage2 message;
-	memcpy(&message, data->mid(3, 4).constData(), 18);
+	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
 
-	emit updateDataMessage2(message.oilTemperature, message.oilPressure, message.voltage / 1000.0);
+	double voltage = message.voltage / 4095.0 * 5.0;
+
+	emit updateDataMessage2(message.oilTemperature, message.oilPressure, voltage);
+}
+
+void RDACconnect::handleMessage3(QByteArray *data)
+{
+	RDACmessage3 message;
+	memcpy(&message, data->mid(3, 2).constData(), 2);
+	data->remove(0, 7);
+
+	double revFudge = (6000.0 / 100.0) * 15586.0;
+	double rpm = revFudge / message.timeBetweenPulses;
+	if(rpm > 30000)
+	{
+		rpm = 0.0;
+	}
+
+	emit updateDataMessage3(rpm);
 }
 
 void RDACconnect::handleMessage4(QByteArray *data)
@@ -256,4 +281,5 @@ void RDACconnect::handleMessage4(QByteArray *data)
 	data->remove(0, 29);
 
 	emit updateDataMessage4egt(message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3]);
+	emit updateDataMessage4cht(message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7]);
 }

@@ -49,6 +49,13 @@ public:
 	quint16 manifoldPressure;
 };
 
+struct RDACmessage3
+{
+public:
+	RDACmessage3();
+	quint16 timeBetweenPulses;
+};
+
 struct RDACmessage4
 {
 public:
@@ -78,12 +85,15 @@ private:
 	QDateTime lastMessage1;
 	void handleMessage1(QByteArray *data);
 	void handleMessage2(QByteArray *data);
+	void handleMessage3(QByteArray *data);
 	void handleMessage4(QByteArray *data);
 	QSettings settings;
 signals:
 	void updateDataMessage1(double fuelFlowValue);
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
+	void updateDataMessage3(double revolutionsPerMinute);
 	void updateDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
+	void updateDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void userMessage(QString title, QString content, bool endApplication);
 	void statusMessage(QString text, QColor color);
 };

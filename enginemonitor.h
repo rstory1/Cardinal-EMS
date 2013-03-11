@@ -57,7 +57,9 @@ private slots:
 public slots:
 	void setDataMessage1(double fuelFlowValue);
 	void setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
+	void setDataMessage3(double revolutionPerMinute);
 	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
+	void setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void userMessageHandler(QString title, QString content, bool endApplication);
 	void showStatusMessage(QString text, QColor color);
 };
