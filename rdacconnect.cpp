@@ -242,7 +242,9 @@ void RDACconnect::handleMessage2(QByteArray *data)
 	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
 
-	emit updateDataMessage2(message.oilTemperature, message.oilPressure, message.voltage / 1000.0);
+	double voltage = message.voltage / 4095.0 * 5.0;
+
+	emit updateDataMessage2(message.oilTemperature, message.oilPressure, voltage);
 }
 
 void RDACconnect::handleMessage3(QByteArray *data)
