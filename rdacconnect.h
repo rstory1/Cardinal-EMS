@@ -93,6 +93,7 @@ signals:
 	void updateDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
 	void updateDataMessage3(double revolutionsPerMinute);
 	void updateDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
+	void updateDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void userMessage(QString title, QString content, bool endApplication);
 	void statusMessage(QString text, QColor color);
 };

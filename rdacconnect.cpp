@@ -269,4 +269,5 @@ void RDACconnect::handleMessage4(QByteArray *data)
 	data->remove(0, 29);
 
 	emit updateDataMessage4egt(message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3]);
+	emit updateDataMessage4cht(message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7]);
 }
