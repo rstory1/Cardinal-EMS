@@ -179,6 +179,11 @@ void EngineMonitor::setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3,
 	exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
 }
 
+void EngineMonitor::setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4)
+{
+	cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
+}
+
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
 {
 	QMessageBox::warning(this, title, content);
