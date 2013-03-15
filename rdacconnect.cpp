@@ -263,7 +263,7 @@ void RDACconnect::handleMessage3(QByteArray *data)
 	memcpy(&message, data->mid(3, 2).constData(), 2);
 	data->remove(0, 7);
 
-	double revFudge = (6000.0 / 100.0) * 15586.0;
+	double revFudge = (6000.0 / 19.6) * 15586.0;
 	double rpm = revFudge / message.timeBetweenPulses;
 	if(rpm > 30000)
 	{
