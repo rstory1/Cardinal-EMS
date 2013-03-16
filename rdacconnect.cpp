@@ -108,7 +108,7 @@ void RDACconnect::run()
 						handleMessage2(&data);
 						break;
 					case 0x03:
-						handleMessage2(&data);
+						handleMessage3(&data);
 						break;
 					case 0x04:
 						handleMessage4(&data);
