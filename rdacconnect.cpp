@@ -265,6 +265,7 @@ void RDACconnect::handleMessage3(QByteArray *data)
 
 	double revFudge = (6000.0 / 19.6) * 15586.0;
 	double rpm = revFudge / message.timeBetweenPulses;
+	qDebug() << Q_FUNC_INFO << "RPM raw" << revFudge << "RPM calc" << rpm;
 	if(rpm > 30000)
 	{
 		rpm = 0.0;
