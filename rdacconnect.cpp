@@ -73,6 +73,15 @@ void RDACconnect::run()
 
 	QByteArray data;
 	bool startPatternFound = false;
+	QFile serialStream("serialstram.log");
+	if(serialStream.open(QIODevice::WriteOnly))
+	{
+		qDebug() << serialStream.fileName() << "opened";
+	}
+	else
+	{
+		qDebug() << serialStream.fileName() << "failed";
+	}
 	forever
 	{
 		quint8 byte;
@@ -82,7 +91,8 @@ void RDACconnect::run()
 			if(nrBytes == 1)
 			{
 				data.append(byte);
-				qDebug() << QString::number(byte, 16);
+				serialStream.write(QString::number(byte, 16).rightJustified(2, '0').prepend("0x").append("\r\n").toLatin1());
+				serialStream.flush();
 			}
 		}
 		else
@@ -255,6 +265,7 @@ void RDACconnect::handleMessage3(QByteArray *data)
 
 	double revFudge = (6000.0 / 19.6) * 15586.0;
 	double rpm = revFudge / message.timeBetweenPulses;
+	qDebug() << Q_FUNC_INFO << "RPM raw" << revFudge << "RPM calc" << rpm;
 	if(message.timeBetweenPulses > 30000)
 	{
 		rpm = 0.0;
