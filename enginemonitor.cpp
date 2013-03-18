@@ -85,11 +85,13 @@ void EngineMonitor::setupExhaustGasTemperature()
 void EngineMonitor::setupCylinderHeadTemperature()
 {
 	cylinderHeadTemperature.setPos(-200, 175);
-	cylinderHeadTemperature.setBorders(100.0, 250.0, 200.0, 230.0);
+	cylinderHeadTemperature.setBorders(60.0, 160.0, 140.0, 150.0);
+	cylinderHeadTemperature.addBetweenValue(80);
+	cylinderHeadTemperature.addBetweenValue(100);
 	cylinderHeadTemperature.addBetweenValue(120);
+	cylinderHeadTemperature.addBetweenValue(140);
+	cylinderHeadTemperature.addBetweenValue(150);
 	cylinderHeadTemperature.addBetweenValue(160);
-	cylinderHeadTemperature.addBetweenValue(200);
-	cylinderHeadTemperature.addBetweenValue(230);
 	graphicsScene.addItem(&cylinderHeadTemperature);
 }
 
