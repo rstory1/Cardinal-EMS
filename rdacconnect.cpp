@@ -242,8 +242,13 @@ void RDACconnect::handleMessage2(QByteArray *data)
 	data->remove(0, 23);
 
 	double voltage = message.voltage / 4095.0 * 5.0;
+	double oilPressure = 0.3320318366 * message.oilPressure - 31.2628022226;
+	if(oilPressure < 0.0)
+	{
+		oilPressure = 0.0;
+	}
 
-	emit updateDataMessage2(message.oilTemperature, 0.3320318366 * message.oilPressure - 31.2628022226 , voltage);
+	emit updateDataMessage2(message.oilTemperature, oilPressure, voltage);
 }
 
 void RDACconnect::handleMessage3(QByteArray *data)
