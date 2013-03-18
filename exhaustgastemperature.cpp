@@ -235,6 +235,14 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 		//If any value exceeds caution range, deactivate lean assist
 		leanAssistActive = false;
 	}
+	else if(val1 < minValue ||
+			val2 < minValue ||
+			val3 < minValue ||
+			val4 < minValue)
+	{
+		//If any value falls below min value, deactivate lean assist
+		leanAssistActive = false;
+	}
 	if(leanAssistActive)
 	{
 		//If lean assist is active, check if peak values are exceeded
