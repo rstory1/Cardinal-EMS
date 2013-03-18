@@ -54,6 +54,11 @@ protected:
 			QList<double> egts = currentValues;
 			qSort(egts.begin(), egts.end());
 			leanMinValue = qMax(egts.first() - 50.0, minValue);
+			if(egts.last() < minValue)
+			{
+				leanAssistActive = false;
+				return;
+			}
 			peakValues = currentValues;
 			peakFound.clear();
 			peakFound << false << false << false << false;
