@@ -114,7 +114,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 		if(leanAssistActive)
 		{
-			//If lean assis is active, check what display should occur
+			//If lean assist is active, check what display should occur
 			if(currentValues.at(i) < leanMinValue)
 			{
 				//If current value is below minimum value, check if window is adjustable
@@ -232,7 +232,7 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 			val3 > greenYellowValue ||
 			val4 > greenYellowValue)
 	{
-		//If any value exceeds vaution range, deactivate lean assist
+		//If any value exceeds caution range, deactivate lean assist
 		leanAssistActive = false;
 	}
 	if(leanAssistActive)
