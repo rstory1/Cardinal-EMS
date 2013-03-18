@@ -82,7 +82,6 @@ void RDACconnect::run()
 			if(nrBytes == 1)
 			{
 				data.append(byte);
-				qDebug() << QString::number(byte, 16);
 			}
 		}
 		else
