@@ -82,6 +82,7 @@ public:
 private:
 	bool searchStart(QByteArray *data);
 	rdacResults checkPatternValidity(QByteArray *data, quint8 &messageType);
+	QMap<quint8, QDateTime> lastMessageReception;
 	QDateTime lastMessage1;
 	void handleMessage1(QByteArray *data);
 	void handleMessage2(QByteArray *data);

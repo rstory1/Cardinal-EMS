@@ -97,7 +97,7 @@ void RDACconnect::run()
 			switch(checkPatternValidity(&data, messageType))
 			{
 			case rdacResultMessageComplete:
-				emit statusMessage("Everything OK", Qt::white);
+				emit statusMessage("Everything OK\nLast RPM update: " + lastMessageReception.value(3).toString(Qt::ISODate), Qt::white);
 				switch(messageType)
 				{
 					case 0x01:
@@ -223,6 +223,7 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 
 void RDACconnect::handleMessage1(QByteArray *data)
 {
+	lastMessageReception.insert(1, QDateTime::currentDateTimeUtc());
 	RDACmessage1 message;
 	memcpy(&message, data->mid(3, 4).constData(), 4);
 	data->remove(0, 9);
@@ -237,6 +238,7 @@ void RDACconnect::handleMessage1(QByteArray *data)
 
 void RDACconnect::handleMessage2(QByteArray *data)
 {
+	lastMessageReception.insert(2, QDateTime::currentDateTimeUtc());
 	RDACmessage2 message;
 	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
@@ -253,6 +255,7 @@ void RDACconnect::handleMessage2(QByteArray *data)
 
 void RDACconnect::handleMessage3(QByteArray *data)
 {
+	lastMessageReception.insert(3, QDateTime::currentDateTimeUtc());
 	RDACmessage3 message;
 	memcpy(&message, data->mid(3, 2).constData(), 2);
 	data->remove(0, 7);
@@ -269,6 +272,7 @@ void RDACconnect::handleMessage3(QByteArray *data)
 
 void RDACconnect::handleMessage4(QByteArray *data)
 {
+	lastMessageReception.insert(4, QDateTime::currentDateTimeUtc());
 	RDACmessage4 message;
 	memcpy(&message, data->mid(3, 24).constData(), 24);
 
