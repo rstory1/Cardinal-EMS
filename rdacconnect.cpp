@@ -97,7 +97,7 @@ void RDACconnect::run()
 			switch(checkPatternValidity(&data, messageType))
 			{
 			case rdacResultMessageComplete:
-				emit statusMessage("Everything OK\nLast RPM update: " + lastMessageReception.value(3).toString(Qt::ISODate), Qt::white);
+				emit statusMessage("Everything OK\nLast RPM update: " + lastMessageReception.value(3).toString("hh:mm:ss.zzz"), Qt::white);
 				switch(messageType)
 				{
 					case 0x01:
@@ -268,6 +268,7 @@ void RDACconnect::handleMessage3(QByteArray *data)
 	}
 
 	emit updateDataMessage3(rpm);
+	qDebug() << Q_FUNC_INFO << rpm;
 }
 
 void RDACconnect::handleMessage4(QByteArray *data)
