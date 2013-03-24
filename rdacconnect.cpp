@@ -51,7 +51,6 @@ RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
 
 void RDACconnect::run()
 {
-	settings.setValue("Access/LastRead", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 	QString portString = "\\\\.\\";
 	portString.append(settings.value("Communication/Port", "COM1").toString());
 	wchar_t portArray[portString.length() + 1];
