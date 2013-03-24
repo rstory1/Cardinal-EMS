@@ -21,6 +21,7 @@
 #include <QtGui/QApplication>
 #include "enginemonitor.h"
 #include "rdacconnect.h"
+#include "nmeaconnect.h"
 
 void messageToFileHandler(QtMsgType type, const char *msg)
 {
@@ -103,6 +104,11 @@ int main(int argc, char *argv[])
 	a.connect(&rdacConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
 	a.connect(&rdacConnect, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
 	rdacConnect.start();
+
+	NMEAconnect nmeaConnect;
+	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
+	a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
+	nmeaConnect.start();
 
 	//Alternative for other resolutions
 //	engineMonitor.showFullScreen();

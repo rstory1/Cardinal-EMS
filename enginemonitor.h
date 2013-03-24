@@ -40,6 +40,7 @@ private:
 	void setupExhaustGasTemperature();
 	void setupCylinderHeadTemperature();
 	void setupStatusItem();
+	void setupTimeToDestinationItem();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
@@ -52,6 +53,7 @@ private:
 	BarGraph fuelFlow;
 	BarGraph outsideAirTemperature;
 	QGraphicsTextItem statusItem;
+	QGraphicsTextItem timeToDestinationItem;
 private slots:
 	void demoFunction();
 public slots:
@@ -60,6 +62,7 @@ public slots:
 	void setDataMessage3(double revolutionPerMinute);
 	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
 	void setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
+	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
 	void showStatusMessage(QString text, QColor color);
 };

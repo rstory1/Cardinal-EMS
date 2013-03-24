@@ -37,6 +37,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupCylinderHeadTemperature();
 	setupBarGraphs();
 	setupStatusItem();
+	setupTimeToDestinationItem();
 	graphicsScene.update();
 
 //	//Demo timer, for testing purposes only
@@ -159,6 +160,13 @@ void EngineMonitor::setupStatusItem()
 	graphicsScene.addItem(&statusItem);
 }
 
+void EngineMonitor::setupTimeToDestinationItem()
+{
+	timeToDestinationItem.setPos(-650, -240);
+	timeToDestinationItem.setDefaultTextColor(Qt::white);
+	graphicsScene.addItem(&timeToDestinationItem);
+}
+
 void EngineMonitor::setDataMessage1(double fuelFlowValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
@@ -184,6 +192,11 @@ void EngineMonitor::setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3,
 void EngineMonitor::setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4)
 {
 	cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
+}
+
+void EngineMonitor::setTimeToDestination(double time)
+{
+	timeToDestinationItem.setPlainText(QString::number(time, 'f', 1).prepend("Time to destination: ").append(" minutes"));
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
