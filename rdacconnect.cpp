@@ -85,7 +85,7 @@ void RDACconnect::run()
 		}
 		else
 		{
-			emit userMessage("COM error", "Error reading data, closing application", true);
+			emit userMessage("RDAC COM error", "Error reading data, closing application", true);
 			exec();
 		}
 
