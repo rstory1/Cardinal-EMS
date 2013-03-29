@@ -38,6 +38,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupBarGraphs();
 	setupStatusItem();
 	setupTimeToDestinationItem();
+	setupFuelManagement();
 	graphicsScene.update();
 
 //	//Demo timer, for testing purposes only
@@ -165,6 +166,14 @@ void EngineMonitor::setupTimeToDestinationItem()
 	timeToDestinationItem.setPos(-650, -240);
 	timeToDestinationItem.setDefaultTextColor(Qt::white);
 	graphicsScene.addItem(&timeToDestinationItem);
+}
+
+void EngineMonitor::setupFuelManagement()
+{
+	fuelManagement.setPos(-70, 70);
+	fuelManagement.setVisible(false);
+	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
+	graphicsScene.addItem(&fuelManagement);
 }
 
 void EngineMonitor::setDataMessage1(double fuelFlowValue)

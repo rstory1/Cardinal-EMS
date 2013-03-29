@@ -31,8 +31,9 @@ struct ColorStop
 	double minValue, maxValue;
 };
 
-class BarGraph : public QGraphicsItem
+class BarGraph : public QObject, public QGraphicsItem
 {
+	Q_OBJECT
 public:
 	explicit BarGraph(QGraphicsItem * parent = 0);
 	QRectF boundingRect() const;
@@ -51,6 +52,13 @@ private:
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
+protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent *event)
+	{
+		emit hasBeenClicked();
+	}
+signals:
+	void hasBeenClicked();
 };
 
 #endif // BARGRAPH_H
