@@ -88,10 +88,14 @@ int main(int argc, char *argv[])
 
 	//Create the engine monitor and show after splashscreen delay
 	EngineMonitor engineMonitor;
+#ifndef QT_DEBUG
 	SplashScreenDelay::sleep(5);
+	engineMonitor.showFullScreen();
+#else
 	engineMonitor.show();
 	engineMonitor.move(0, 0);
 	engineMonitor.resize(800, 480);
+#endif
 	splash.finish(&engineMonitor);
 
 	//Create the RDAC connector
@@ -103,15 +107,16 @@ int main(int argc, char *argv[])
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage4cht(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setDataMessage4cht(quint16,quint16,quint16,quint16)));
 	a.connect(&rdacConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
 	a.connect(&rdacConnect, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
+#ifndef QT_DEBUG
 	rdacConnect.start();
+#endif
 
 	NMEAconnect nmeaConnect;
 	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
 	a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
+#ifndef QT_DEBUG
 	nmeaConnect.start();
+#endif
 
-	//Alternative for other resolutions
-//	engineMonitor.showFullScreen();
-//	engineMonitor.scale(1.28, 1.28);
 	return a.exec();
 }
