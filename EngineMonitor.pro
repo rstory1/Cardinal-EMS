@@ -33,6 +33,7 @@ SOURCES += main.cpp\
     rpmindicator.cpp \
     cylinderheadtemperature.cpp \
     exhaustgastemperature.cpp \
+    fuelmanagement.cpp \
     rdacconnect.cpp \
     nmeaconnect.cpp
 
@@ -41,6 +42,7 @@ HEADERS  += enginemonitor.h \
     rpmindicator.h \
     cylinderheadtemperature.h \
     exhaustgastemperature.h \
+    fuelmanagement.h \
     rdacconnect.h \
     nmeaconnect.h
 

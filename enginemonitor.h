@@ -27,6 +27,7 @@
 #include "exhaustgastemperature.h"
 #include "cylinderheadtemperature.h"
 #include "bargraph.h"
+#include "fuelmanagement.h"
 
 class EngineMonitor : public QGraphicsView
 {
@@ -41,6 +42,7 @@ private:
 	void setupCylinderHeadTemperature();
 	void setupStatusItem();
 	void setupTimeToDestinationItem();
+	void setupFuelManagement();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
@@ -54,6 +56,7 @@ private:
 	BarGraph outsideAirTemperature;
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
+	FuelManagement fuelManagement;
 private slots:
 	void demoFunction();
 public slots:
