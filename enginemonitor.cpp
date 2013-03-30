@@ -179,6 +179,7 @@ void EngineMonitor::setupFuelManagement()
 void EngineMonitor::setDataMessage1(double fuelFlowValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
+	fuelManagement.setFuelFlow(fuelFlowValue);
 }
 
 void EngineMonitor::setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue)
@@ -206,6 +207,7 @@ void EngineMonitor::setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3,
 void EngineMonitor::setTimeToDestination(double time)
 {
 	timeToDestinationItem.setPlainText(QString::number(time, 'f', 1).prepend("Time to destination: ").append(" minutes"));
+	fuelManagement.setTimeToDestination(time);
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
