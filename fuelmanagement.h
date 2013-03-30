@@ -30,6 +30,8 @@ public:
 	explicit FuelManagement(QGraphicsObject* parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void setFuelFlow(double value);
+	void setTimeToDestination(double time);
 public slots:
 	void activateOverlay()
 	{
@@ -39,6 +41,10 @@ public slots:
 	{
 		setVisible(false);
 	}
+	void saveFuelState()
+	{
+		settings.setValue("Fueling/LastShutdown", fuelAmount);
+	}
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 private:
@@ -47,6 +53,10 @@ private:
 		fuelModeManagement,
 		fuelModeFueling
 	};
+	QSettings settings;
+	double fuelAmount;
+	double fuelFlow;
+	double timeToDestination;
 	fuelingMode currentMode;
 	QRectF remainingFuelRect;
 	QRectF remainingFuelAtDestinationRect;

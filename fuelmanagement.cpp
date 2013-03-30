@@ -40,6 +40,8 @@ FuelManagement::FuelManagement(QGraphicsObject *parent)
 	, clearRect(0, 82, 100, 36)
 	, fuelTopRect(110, 82, 100, 36)
 {
+	connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
+	fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
 }
 
 QRectF FuelManagement::boundingRect() const
@@ -58,6 +60,7 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
 	QPen edgePen(Qt::transparent, 0);
+	double fuelAtDestination = fuelAmount - (fuelFlow * timeToDestination);
 
 	//Draw fuel management
 	switch(currentMode)
@@ -80,9 +83,9 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel at Destination:");
 		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignLeft, " Fuel flow:");
 
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, "94 l ");
-		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignRight, "12 l ");
-		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignRight, "33.4 l/h ");
+		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(" l "));
+		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAtDestination, 'f', 1).append(" l "));
+		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelFlow, 'f', 1).append(" l "));
 
 		painter->drawText(fuelingRect, Qt::AlignCenter, "Fueling");
 		painter->drawText(homeRect, Qt::AlignCenter, "Home");
@@ -107,7 +110,7 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 		painter->setPen(Qt::white);
 		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel:");
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, " 94 l");
+		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(" l "));
 		painter->drawText(addLitersTextRect, Qt::AlignVCenter| Qt::AlignLeft, " Add Fuel\n in liters");
 		painter->drawText(add50LitersRect, Qt::AlignCenter, "+50");
 		painter->drawText(add10LitersRect, Qt::AlignCenter, "+10");
@@ -144,27 +147,38 @@ void FuelManagement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	{
 		if(add50LitersRect.contains(event->pos()))
 		{
-			qDebug() << "+50";
+			fuelAmount += 50.0;
 		}
 		else if(add10LitersRect.contains(event->pos()))
 		{
-			qDebug() << "+10";
+			fuelAmount += 10.0;
 		}
 		else if(add5LitersRect.contains(event->pos()))
 		{
-			qDebug() << "+5";
+			fuelAmount += 5.0;
 		}
 		else if(add1LitersRect.contains(event->pos()))
 		{
-			qDebug() << "+1";
+			fuelAmount += 1.0;
 		}
 		else if(fuelTopRect.contains(event->pos()))
 		{
-			qDebug() << "TopUp";
+			fuelAmount = settings.value("Fueling/Capacity", 0.0).toDouble();
 		}
 		else if(clearRect.contains(event->pos()))
 		{
-			qDebug() << "Clear";
+			fuelAmount = 0.0;
 		}
+		update();
 	}
+}
+
+void FuelManagement::setFuelFlow(double value)
+{
+	fuelFlow = value;
+}
+
+void FuelManagement::setTimeToDestination(double time)
+{
+	timeToDestination = time;
 }
