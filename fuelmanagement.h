@@ -23,11 +23,11 @@
 
 #include <QtGui>
 
-class FuelManagement : public QObject, public QGraphicsItem
+class FuelManagement : public QGraphicsObject
 {
 	Q_OBJECT
 public:
-	explicit FuelManagement(QGraphicsItem * parent = 0);
+	explicit FuelManagement(QGraphicsObject* parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 public slots:

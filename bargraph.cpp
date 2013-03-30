@@ -20,9 +20,8 @@
 
 #include "bargraph.h"
 
-BarGraph::BarGraph(QGraphicsItem *parent)
-	: QObject()
-	, QGraphicsItem(parent)
+BarGraph::BarGraph(QGraphicsObject *parent)
+	: QGraphicsObject(parent)
 	, titleText("HEAD")
 	, unitText("UNIT")
 	, minValue(0.0)

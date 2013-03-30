@@ -31,11 +31,11 @@ struct ColorStop
 	double minValue, maxValue;
 };
 
-class BarGraph : public QObject, public QGraphicsItem
+class BarGraph : public QGraphicsObject
 {
 	Q_OBJECT
 public:
-	explicit BarGraph(QGraphicsItem * parent = 0);
+	explicit BarGraph(QGraphicsObject* parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setTitle(QString title);
