@@ -23,18 +23,18 @@
 FuelManagement::FuelManagement(QGraphicsItem *parent)
 	: QObject()
 	, QGraphicsItem(parent)
-	, remainingFuelRect(0, 10, 210, 35)
-	, remainingFuelAtDestinationRect(0, 45, 210, 35)
-	, fuelFlowRect(0, 80, 210, 35)
-	, fuelingRect(10, 115, 70, 35)
-	, homeRect(120, 115, 70, 35)
-	, addLitersTextRect(0, 45, 50, 35)
-	, add50LitersRect(50, 45, 40, 35)
-	, add10LitersRect(90, 45, 40, 35)
-	, add5LitersRect(130, 45, 40, 35)
-	, add1LitersRect(170, 45, 40, 35)
-	, clearRect(0, 80, 105, 35)
-	, fuelTopRect(105, 80, 105, 35)
+	, remainingFuelRect(0, 2, 210, 36)
+	, remainingFuelAtDestinationRect(0, 42, 210, 36)
+	, fuelFlowRect(0, 82, 210, 36)
+	, fuelingRect(0, 122, 100, 36)
+	, homeRect(110, 122, 100, 36)
+	, addLitersTextRect(0, 42, 50, 36)
+	, add50LitersRect(54, 42, 36, 36)
+	, add10LitersRect(94, 42, 36, 36)
+	, add5LitersRect(134, 42, 36, 36)
+	, add1LitersRect(174, 42, 36, 36)
+	, clearRect(0, 82, 100, 36)
+	, fuelTopRect(110, 82, 100, 36)
 	, currentMode(fuelModeManagement)
 {
 }
@@ -51,10 +51,10 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 	//Save thje painter and deactivate Antialising for rectangle drawing
 	painter->save();
-	painter->setRenderHint(QPainter::Antialiasing, false);
-	painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+	painter->setRenderHint(QPainter::Antialiasing, true);
+	painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-	QPen edgePen(Qt::gray, 2);
+	QPen edgePen(Qt::transparent, 0);
 
 	//Draw fuel management
 	switch(currentMode)
@@ -64,22 +64,22 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->setPen(Qt::transparent);
 		painter->drawRect(boundingRect());
 
-		painter->setBrush(Qt::red);
+		painter->setBrush(Qt::darkBlue);
 		painter->setPen(edgePen);
-		painter->drawRect(remainingFuelRect);
-		painter->drawRect(remainingFuelAtDestinationRect);
-		painter->drawRect(fuelFlowRect);
-		painter->drawRect(fuelingRect);
-		painter->drawRect(homeRect);
+		painter->drawRoundedRect(remainingFuelRect, 5, 5);
+		painter->drawRoundedRect(remainingFuelAtDestinationRect, 5, 5);
+		painter->drawRoundedRect(fuelFlowRect, 5, 5);
+		painter->drawRoundedRect(fuelingRect, 5, 5);
+		painter->drawRoundedRect(homeRect, 5, 5);
 
 		painter->setPen(Qt::white);
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, "Remaining Fuel:");
-		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignLeft, "Remaining Fuel at Destination:");
-		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignLeft, "Fuel flow:");
+		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel:");
+		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel at Destination:");
+		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignLeft, " Fuel flow:");
 
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, "94 l");
-		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignRight, "12 l");
-		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignRight, "33.4 l/h");
+		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, "94 l ");
+		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignRight, "12 l ");
+		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignRight, "33.4 l/h ");
 
 		painter->drawText(fuelingRect, Qt::AlignCenter, "Fueling");
 		painter->drawText(homeRect, Qt::AlignCenter, "Home");
@@ -89,23 +89,23 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->setPen(Qt::transparent);
 		painter->drawRect(boundingRect());
 
-		painter->setBrush(Qt::red);
+		painter->setBrush(Qt::darkBlue);
 		painter->setPen(edgePen);
-		painter->drawRect(remainingFuelRect);
-		painter->drawRect(homeRect);
+		painter->drawRoundedRect(remainingFuelRect, 5, 5);
+		painter->drawRoundedRect(homeRect, 5, 5);
 
-		painter->drawRect(add50LitersRect);
-		painter->drawRect(add10LitersRect);
-		painter->drawRect(add5LitersRect);
-		painter->drawRect(add1LitersRect);
+		painter->drawRoundedRect(add50LitersRect, 5, 5);
+		painter->drawRoundedRect(add10LitersRect, 5, 5);
+		painter->drawRoundedRect(add5LitersRect, 5, 5);
+		painter->drawRoundedRect(add1LitersRect, 5, 5);
 
-		painter->drawRect(clearRect);
-		painter->drawRect(fuelTopRect);
+		painter->drawRoundedRect(clearRect, 5, 5);
+		painter->drawRoundedRect(fuelTopRect, 5, 5);
 
 		painter->setPen(Qt::white);
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, "Remaining Fuel:");
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, "94 l");
-		painter->drawText(addLitersTextRect, Qt::AlignVCenter| Qt::AlignLeft, "Add Fuel\nin liters");
+		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel:");
+		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, " 94 l");
+		painter->drawText(addLitersTextRect, Qt::AlignVCenter| Qt::AlignLeft, " Add Fuel\n in liters");
 		painter->drawText(add50LitersRect, Qt::AlignCenter, "+50");
 		painter->drawText(add10LitersRect, Qt::AlignCenter, "+10");
 		painter->drawText(add5LitersRect, Qt::AlignCenter, "+5");
