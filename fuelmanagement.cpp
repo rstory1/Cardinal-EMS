@@ -20,9 +20,13 @@
 
 #include "fuelmanagement.h"
 
-FuelManagement::FuelManagement(QGraphicsItem *parent)
-	: QObject()
-	, QGraphicsItem(parent)
+FuelManagement::FuelManagement(QGraphicsObject *parent)
+	: QGraphicsObject(parent)
+	, settings("./settings.ini", QSettings::IniFormat)
+	, fuelAmount(0.0)
+	, fuelFlow(0.0)
+	, timeToDestination(0.0)
+	, currentMode(fuelModeManagement)
 	, remainingFuelRect(0, 2, 210, 36)
 	, remainingFuelAtDestinationRect(0, 42, 210, 36)
 	, fuelFlowRect(0, 82, 210, 36)
@@ -35,7 +39,6 @@ FuelManagement::FuelManagement(QGraphicsItem *parent)
 	, add1LitersRect(174, 42, 36, 36)
 	, clearRect(0, 82, 100, 36)
 	, fuelTopRect(110, 82, 100, 36)
-	, currentMode(fuelModeManagement)
 {
 }
 
