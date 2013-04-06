@@ -43,6 +43,7 @@ private:
 	void setupStatusItem();
 	void setupTimeToDestinationItem();
 	void setupFuelManagement();
+	void setupLogFile();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
@@ -57,8 +58,10 @@ private:
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
+	QFile *logFile;
 private slots:
 	void demoFunction();
+	void writeLogFile();
 public slots:
 	void setDataMessage1(double fuelFlowValue);
 	void setDataMessage2(double outsideAirTemperatureValue, double oilTemperatureValue, double oilPressureValue, double voltageValue);
