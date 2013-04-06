@@ -59,6 +59,7 @@ private:
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
 	QFile *logFile;
+	QSettings settings;
 private slots:
 	void demoFunction();
 	void writeLogFile();
