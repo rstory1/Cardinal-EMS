@@ -98,6 +98,10 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->setBrush(Qt::darkBlue);
 		painter->setPen(edgePen);
 		painter->drawRoundedRect(remainingFuelRect, 5, 5);
+		painter->save();
+		painter->setBrush(Qt::red);
+		painter->drawRoundedRect(fuelingRect, 5, 5);
+		painter->restore();
 		painter->drawRoundedRect(homeRect, 5, 5);
 
 		painter->drawRoundedRect(add50LitersRect, 5, 5);
@@ -120,6 +124,7 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->drawText(clearRect, Qt::AlignCenter, "CLEAR");
 		painter->drawText(fuelTopRect, Qt::AlignCenter, "FUEL TOP");
 
+		painter->drawText(fuelingRect, Qt::AlignCenter, "Close\nApplication");
 		painter->drawText(homeRect, Qt::AlignCenter, "Home");
 		break;
 	}
@@ -145,6 +150,10 @@ void FuelManagement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 	else if(currentMode == fuelModeFueling)
 	{
+		if(fuelingRect.contains(event->pos()))
+		{
+			qApp->quit();
+		}
 		if(add50LitersRect.contains(event->pos()))
 		{
 			fuelAmount += 50.0;
