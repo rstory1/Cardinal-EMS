@@ -40,6 +40,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupTimeToDestinationItem();
 	setupFuelManagement();
 	graphicsScene.update();
+	setupLogFile();
 
 //	//Demo timer, for testing purposes only
 //	QTimer *demoTimer = new QTimer(this);
@@ -50,6 +51,64 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 EngineMonitor::~EngineMonitor()
 {
+	logFile->close();
+}
+
+void EngineMonitor::setupLogFile()
+{
+	logFile = new QFile(QString("EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+	if(logFile->open(QIODevice::WriteOnly))
+	{
+		QTimer *writeLogFileTimer = new QTimer(this);
+		connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
+		writeLogFileTimer->setSingleShot(false);
+		writeLogFileTimer->start(1000);
+	}
+	else
+	{
+		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
+	}
+
+	logFile->write("[Header]\n");
+	logFile->write("Created with EM-One, Build BETA\n");
+	logFile->write("Call Sign: <CALL_SIGN from settings.ini-file>\n");
+	logFile->write("Aircraft Model: <AIRCRAFT_MODEL from settings.ini-file>\n");
+	logFile->write("Aircraft S/N: <AIRCRAFT_S/N from settings.ini-file>\n");
+	logFile->write("Engine Type: <ENGINE_TPYE from settings.ini-file>\n");
+	logFile->write("Engine S/N: <ENGINE_S/N from settings.ini-file>\n");
+	logFile->write("All temperatures in degree Celsius, oil pressure in psi, fuel flow in liters per hour.\n");
+	logFile->write("[data]\n");
+	logFile->write("INDEX,TIME,EGT1,EGT2,EGT3,EGT4,CHT1,CHT2,CHT3,CHT4,OILT, OILP,OAT,IAT,BAT,CUR,RPM,MAP,FF,MARK\n");
+}
+
+void EngineMonitor::writeLogFile()
+{
+	static quint64 sample = 0;
+	logFile->write(QString::number(sample).append(',').toAscii());
+	logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(',').toAscii());
+	QList<double> egtValues = exhaustGasTemperature.getCurrentValues();
+	logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(',').toAscii());
+	QList<double> chtValues = cylinderHeadTemperature.getCurrentValues();
+	logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(oilTemperature.getValue(), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(oilPressure.getValue(), 'f', 0).append(',').toAscii());
+	logFile->write(QString::number(outsideAirTemperature.getValue(), 'f', 0).append(',').toAscii());
+	logFile->write(QString("IAT/ITEMP").append(',').toAscii());
+	logFile->write(QString::number(voltMeter.getValue(), 'f', 1).append(',').toAscii());
+	logFile->write(QString("CUR/CHT2").append(',').toAscii());
+	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(',').toAscii());
+	logFile->write(QString("MAP/MAP").append(',').toAscii());
+	logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(',').toAscii());
+	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append(',').toAscii());
+	logFile->write("\n");
+	logFile->flush();
+	++sample;
 }
 
 void EngineMonitor::setupRpmIndicator()
