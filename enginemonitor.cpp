@@ -24,6 +24,7 @@
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
+  , settings("./settings.ini", QSettings::IniFormat, parent)
 {
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
@@ -71,11 +72,11 @@ void EngineMonitor::setupLogFile()
 
 	logFile->write("[Header]\n");
 	logFile->write("Created with EM-One, Build BETA\n");
-	logFile->write("Call Sign: <CALL_SIGN from settings.ini-file>\n");
-	logFile->write("Aircraft Model: <AIRCRAFT_MODEL from settings.ini-file>\n");
-	logFile->write("Aircraft S/N: <AIRCRAFT_S/N from settings.ini-file>\n");
-	logFile->write("Engine Type: <ENGINE_TPYE from settings.ini-file>\n");
-	logFile->write("Engine S/N: <ENGINE_S/N from settings.ini-file>\n");
+	logFile->write(QString("Call Sign: %1\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toAscii());
+	logFile->write(QString("Aircraft Model: %1\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toAscii());
+	logFile->write(QString("Aircraft S/N: %1\n").arg(settings.value("Aircraft/AIRCRAFT_S/N").toString()).toAscii());
+	logFile->write(QString("Engine Type: %1\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toAscii());
+	logFile->write(QString("Engine S/N: %1\n").arg(settings.value("Aircraft/ENGINE_S/N").toString()).toAscii());
 	logFile->write("All temperatures in degree Celsius, oil pressure in psi, fuel flow in liters per hour.\n");
 	logFile->write("[data]\n");
 	logFile->write("INDEX,TIME,EGT1,EGT2,EGT3,EGT4,CHT1,CHT2,CHT3,CHT4,OILT, OILP,OAT,IAT,BAT,CUR,RPM,MAP,FF,MARK\n");
