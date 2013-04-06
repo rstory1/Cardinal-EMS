@@ -45,6 +45,7 @@ public:
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
 	void setValue(double value);
+	double getValue() {return currentValue;};
 private:
 	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
