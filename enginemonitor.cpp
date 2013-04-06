@@ -229,7 +229,9 @@ void EngineMonitor::setupTimeToDestinationItem()
 
 void EngineMonitor::setupFuelManagement()
 {
-	fuelManagement.setPos(-70, 70);
+	//fuelManagement.setPos(-70, 70);
+	fuelManagement.setPos(-525, -240);
+	fuelManagement.scale(1.8, 1.8);
 	fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
