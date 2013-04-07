@@ -65,7 +65,7 @@ private slots:
 	void writeLogFile();
 public slots:
 	void setDataMessage1(double fuelFlowValue);
-	void setDataMessage2(double outsideAirTemperatureValue, double oilTemperatureValue, double oilPressureValue, double voltageValue);
+	void setDataMessage2(double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue);
 	void setDataMessage3(double revolutionPerMinute);
 	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
 	void setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);

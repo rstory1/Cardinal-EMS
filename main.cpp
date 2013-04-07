@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	//Create the RDAC connector
 	RDACconnect rdacConnect;
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage1(double)), &engineMonitor, SLOT(setDataMessage1(double)));
-	a.connect(&rdacConnect, SIGNAL(updateDataMessage2(double,double,double,double)), &engineMonitor, SLOT(setDataMessage2(double,double,double,double)));
+	a.connect(&rdacConnect, SIGNAL(updateDataMessage2(double,double,double,double,double)), &engineMonitor, SLOT(setDataMessage2(double,double,double,double,double)));
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage3(double)), &engineMonitor, SLOT(setDataMessage3(double)));
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage4egt(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setDataMessage4egt(quint16,quint16,quint16,quint16)));
 	a.connect(&rdacConnect, SIGNAL(updateDataMessage4cht(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setDataMessage4cht(quint16,quint16,quint16,quint16)));
