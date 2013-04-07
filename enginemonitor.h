@@ -28,6 +28,7 @@
 #include "cylinderheadtemperature.h"
 #include "bargraph.h"
 #include "fuelmanagement.h"
+#include "manifoldpressure.h"
 
 class EngineMonitor : public QGraphicsView
 {
@@ -43,6 +44,7 @@ private:
 	void setupStatusItem();
 	void setupTimeToDestinationItem();
 	void setupFuelManagement();
+	void setupManifoldPressure();
 	void setupLogFile();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
@@ -59,6 +61,7 @@ private:
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
+	ManifoldPressure manifoldPressure;
 	QFile *logFile;
 	QSettings settings;
 private slots:

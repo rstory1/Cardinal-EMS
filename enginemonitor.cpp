@@ -40,6 +40,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupStatusItem();
 	setupTimeToDestinationItem();
 	setupFuelManagement();
+	setupManifoldPressure();
 	graphicsScene.update();
 	setupLogFile();
 
@@ -113,7 +114,7 @@ void EngineMonitor::writeLogFile()
 
 void EngineMonitor::setupRpmIndicator()
 {
-	rpmIndicator.setPos(-350, -100);
+	rpmIndicator.setPos(-255, -100);
 	rpmIndicator.setStartSpan(230.0, 240.0);
 	rpmIndicator.setBorders(0.0, 2800.0, 300.0, 2550.0);
 	rpmIndicator.addBetweenValue(0.0);
@@ -245,11 +246,24 @@ void EngineMonitor::setupTimeToDestinationItem()
 void EngineMonitor::setupFuelManagement()
 {
 	//fuelManagement.setPos(-70, 70);
-	fuelManagement.setPos(-525, -240);
+	fuelManagement.setPos(-495, -240);
 	fuelManagement.scale(1.8, 1.8);
 	fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
+}
+
+void EngineMonitor::setupManifoldPressure()
+{
+	manifoldPressure.setPos(-585, -100);
+	manifoldPressure.setStartSpan(240.0, 240.0);
+	manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
+	manifoldPressure.addBetweenValue(10.0);
+	manifoldPressure.addBetweenValue(15.0);
+	manifoldPressure.addBetweenValue(20.0);
+	manifoldPressure.addBetweenValue(25.0);
+	manifoldPressure.addBetweenValue(30.0);
+	graphicsScene.addItem(&manifoldPressure);
 }
 
 void EngineMonitor::setDataMessage1(double fuelFlowValue)

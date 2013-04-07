@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     exhaustgastemperature.cpp \
     fuelmanagement.cpp \
     rdacconnect.cpp \
-    nmeaconnect.cpp
+    nmeaconnect.cpp \
+    manifoldpressure.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -44,7 +45,8 @@ HEADERS  += enginemonitor.h \
     exhaustgastemperature.h \
     fuelmanagement.h \
     rdacconnect.h \
-    nmeaconnect.h
+    nmeaconnect.h \
+    manifoldpressure.h
 
 RESOURCES += \
     res/res.qrc
