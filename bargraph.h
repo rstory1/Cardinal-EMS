@@ -46,6 +46,9 @@ public:
 	void addColorStop(ColorStop stop);
 	void setValue(double value);
 	double getValue() {return currentValue;};
+public slots:
+	void makeVisible() {setVisible(true);};
+	void makeInvisible() {setVisible(false);};
 private:
 	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
