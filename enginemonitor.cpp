@@ -71,16 +71,16 @@ void EngineMonitor::setupLogFile()
 		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
 	}
 
-	logFile->write("[Header]\n");
-	logFile->write("Created with EM-One, Build BETA\n");
-	logFile->write(QString("Call Sign: %1\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toAscii());
-	logFile->write(QString("Aircraft Model: %1\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toAscii());
-	logFile->write(QString("Aircraft S/N: %1\n").arg(settings.value("Aircraft/AIRCRAFT_S/N").toString()).toAscii());
-	logFile->write(QString("Engine Type: %1\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toAscii());
-	logFile->write(QString("Engine S/N: %1\n").arg(settings.value("Aircraft/ENGINE_S/N").toString()).toAscii());
-	logFile->write("All temperatures in degree Celsius, oil pressure in psi, fuel flow in liters per hour.\n");
-	logFile->write("[data]\n");
-	logFile->write("INDEX,TIME,EGT1,EGT2,EGT3,EGT4,CHT1,CHT2,CHT3,CHT4,OILT, OILP,OAT,IAT,BAT,CUR,RPM,MAP,FF,MARK\n");
+	logFile->write("[Header]\r\n");
+	logFile->write("Created with EM-one, Build BETA\r\n");
+	logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toAscii());
+	logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toAscii());
+	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_S/N").toString()).toAscii());
+	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toAscii());
+	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_S/N").toString()).toAscii());
+	logFile->write("All temperatures in degree Celsius, oil pressure in psi, fuel flow in liters per hour.\r\n");
+	logFile->write("[data]\r\n");
+	logFile->write("INDEX,TIME,EGT1,EGT2,EGT3,EGT4,CHT1,CHT2,CHT3,CHT4,OILT,OILP,OAT,IAT,BAT,CUR,RPM,MAP,FF,MARK\r\n");
 }
 
 void EngineMonitor::writeLogFile()
@@ -107,7 +107,7 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(',').toAscii());
 	logFile->write(QString::number(manifoldPressure.getValue(), 'f', 1).append(',').toAscii());
 	logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(',').toAscii());
-	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append('\n').toAscii());
+	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append('\r\n').toAscii());
 	logFile->flush();
 	++sample;
 }
