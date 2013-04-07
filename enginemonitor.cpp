@@ -98,11 +98,11 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(',').toAscii());
 	logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(',').toAscii());
 	logFile->write(QString::number(oilTemperature.getValue(), 'f', 0).append(',').toAscii());
-	logFile->write(QString::number(oilPressure.getValue(), 'f', 0).append(',').toAscii());
-	logFile->write(QString::number(outsideAirTemperature.getValue(), 'f', 0).append(',').toAscii());
-	logFile->write(QString("IAT/ITEMP").append(',').toAscii());
+	logFile->write(QString::number(oilPressure.getValue(), 'f', 1).append(',').toAscii());
+	logFile->write(QString::number(outsideAirTemperature.getValue(), 'f', 1).append(',').toAscii());
+	logFile->write(QString::number(insideAirTemperature.getValue(), 'f', 1).append(',').toAscii());
 	logFile->write(QString::number(voltMeter.getValue(), 'f', 1).append(',').toAscii());
-	logFile->write(QString("CUR/CHT2").append(',').toAscii());
+	logFile->write(QString::number(ampereMeter.getValue(), 'f', 1).append(',').toAscii());
 	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(',').toAscii());
 	logFile->write(QString("MAP/MAP").append(',').toAscii());
 	logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(',').toAscii());
