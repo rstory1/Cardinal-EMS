@@ -203,6 +203,19 @@ void EngineMonitor::setupBarGraphs()
 	fuelFlow.addBetweenValue(20.0);
 	graphicsScene.addItem(&fuelFlow);
 
+	insideAirTemperature.setPos(100, 150);
+	insideAirTemperature.setTitle("IAT");
+	insideAirTemperature.setUnit(QString::fromUtf8("°C"));
+	insideAirTemperature.setBorders(-10.0, 40);
+	insideAirTemperature.addBetweenValue(0.0);
+	insideAirTemperature.addBetweenValue(10.0);
+	insideAirTemperature.addBetweenValue(20.0);
+	insideAirTemperature.addBetweenValue(30.0);
+	graphicsScene.addItem(&insideAirTemperature);
+	insideAirTemperature.setVisible(false);
+	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
+	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
+
 	outsideAirTemperature.setPos(100, 150);
 	outsideAirTemperature.setTitle("OAT");
 	outsideAirTemperature.setUnit(QString::fromUtf8("°C"));
@@ -212,6 +225,8 @@ void EngineMonitor::setupBarGraphs()
 	outsideAirTemperature.addBetweenValue(20.0);
 	outsideAirTemperature.addBetweenValue(30.0);
 	graphicsScene.addItem(&outsideAirTemperature);
+	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
+	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }
 
 void EngineMonitor::setupStatusItem()

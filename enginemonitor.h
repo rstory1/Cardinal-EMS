@@ -54,6 +54,7 @@ private:
 	BarGraph voltMeter;
 	BarGraph ampereMeter;
 	BarGraph fuelFlow;
+	BarGraph insideAirTemperature;
 	BarGraph outsideAirTemperature;
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
