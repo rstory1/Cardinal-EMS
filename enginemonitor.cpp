@@ -64,7 +64,7 @@ void EngineMonitor::setupLogFile()
 		QTimer *writeLogFileTimer = new QTimer(this);
 		connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
 		writeLogFileTimer->setSingleShot(false);
-		writeLogFileTimer->start(1000);
+		writeLogFileTimer->start(settings.value("Logging/SampleRate", 1).toInt() * 1000);
 	}
 	else
 	{
