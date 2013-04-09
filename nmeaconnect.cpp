@@ -42,7 +42,7 @@ void NMEAconnect::run()
 	else
 	{
 		qDebug() << "Could not open" << portString;
-		emit userMessage("Sky Map COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
+		emit userMessage("Sky Map COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Application runs without NMEA input from Sky Map", false);
 		exec();
 	}
 
