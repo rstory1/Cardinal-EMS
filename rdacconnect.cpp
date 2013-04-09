@@ -252,7 +252,7 @@ void RDACconnect::handleMessage2(QByteArray *data)
 		oilPressure = 0.0;
 	}
 
-	emit updateDataMessage2(message.cht1, message.cht2, message.oilTemperature, oilPressure, voltage, message.manifoldPressure);
+	emit updateDataMessage2(message.internalTemperature, message.cht1, message.cht2, message.oilTemperature, oilPressure, voltage, message.manifoldPressure);
 }
 
 void RDACconnect::handleMessage3(QByteArray *data)

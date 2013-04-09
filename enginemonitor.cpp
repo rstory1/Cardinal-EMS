@@ -272,8 +272,9 @@ void EngineMonitor::setDataMessage1(double fuelFlowValue)
 	fuelManagement.setFuelFlow(fuelFlowValue);
 }
 
-void EngineMonitor::setDataMessage2(double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue)
+void EngineMonitor::setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue)
 {
+	insideAirTemperature.setValue(insideAirTemperatureValue);
 	outsideAirTemperature.setValue(outsideAirTemperatureValue);
 	ampereMeter.setValue(ampereValue);
 	oilTemperature.setValue(oilTemperatureValue);
