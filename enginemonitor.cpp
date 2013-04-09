@@ -107,7 +107,7 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(',').toAscii());
 	logFile->write(QString::number(manifoldPressure.getValue(), 'f', 1).append(',').toAscii());
 	logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(',').toAscii());
-	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append('\r\n').toAscii());
+	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append("\r\n").toAscii());
 	logFile->flush();
 	++sample;
 }
