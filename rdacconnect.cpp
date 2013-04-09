@@ -227,6 +227,9 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	memcpy(&message, data->mid(3, 4).constData(), 4);
 	data->remove(0, 9);
 
+	qDebug() << Q_FUNC_INFO << "Pulses" << message.pulses;
+	qDebug() << Q_FUNC_INFO << "Timing" << message.timing;
+
 	quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
 	lastMessage1 = QDateTime::currentDateTime();
 
