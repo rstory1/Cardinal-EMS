@@ -44,11 +44,13 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	graphicsScene.update();
 	setupLogFile();
 
-//	//Demo timer, for testing purposes only
-//	QTimer *demoTimer = new QTimer(this);
-//	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-//	demoTimer->setSingleShot(false);
-//	demoTimer->start(200);
+	//Demo timer, for testing purposes only
+#ifdef QT_DEBUG
+	QTimer *demoTimer = new QTimer(this);
+	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+	demoTimer->setSingleShot(false);
+	demoTimer->start(200);
+#endif
 }
 
 EngineMonitor::~EngineMonitor()
