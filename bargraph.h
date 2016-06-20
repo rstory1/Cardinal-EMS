@@ -21,7 +21,7 @@
 #ifndef BARGRAPH_H
 #define BARGRAPH_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 struct ColorStop
 {

@@ -99,11 +99,11 @@ void NMEAconnect::handleMessageRMB(QString data)
 
 char NMEAconnect::calculateChecksum(QString data)
 {
-	char checksum = data.at(0).toAscii();
+	char checksum = data.at(0).toLatin1();
 	while(data.size() > 1)
 	{
 		data.remove(0, 1);
-		checksum ^= data.at(0).toAscii();
+		checksum ^= data.at(0).toLatin1();
 	}
 	return checksum;
 }

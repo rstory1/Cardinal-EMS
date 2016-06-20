@@ -18,7 +18,7 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include <QtGui/QApplication>
+#include <QtWidgets>
 #include "enginemonitor.h"
 #include "rdacconnect.h"
 #include "nmeaconnect.h"
@@ -44,7 +44,7 @@ void messageToFileHandler(QtMsgType type, const char *msg)
 			debugString.append("Fatal: ");
 			abort();
 		}
-		debugfile.write(debugString.append(msg).replace('\n', ", ").append('\n').toAscii());
+		debugfile.write(debugString.append(msg).replace('\n', ", ").append('\n').toLatin1());
 		debugfile.close();
 	}
 	else

@@ -21,7 +21,7 @@
 #ifndef RPMINDICATOR_H
 #define RPMINDICATOR_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class RpmIndicator : public QGraphicsItem
 {
