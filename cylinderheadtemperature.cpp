@@ -34,7 +34,7 @@ QRectF CylinderHeadTemperature::boundingRect() const
 	return QRectF(-125, -170, 250, 230);
 }
 
-void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	//Set Clipping Rect
 	painter->setClipRect(boundingRect());

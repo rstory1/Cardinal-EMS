@@ -57,7 +57,7 @@ private:
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
 protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent *event)
+	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{
 		emit hasBeenClicked();
 	}
