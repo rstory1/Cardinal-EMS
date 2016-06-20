@@ -234,7 +234,7 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	lastMessage1 = QDateTime::currentDateTimeUtc();
 
 	qreal k_factor = 1.0;
-	qreal absoluteFuel = qreal(message.pulses) * k_factor;
+	qreal absoluteFuel = qreal(message.pulses) * k_factor / 60.0 / 60.0;
 	qreal fuelflow = absoluteFuel / seconds * 60.0 * 60.0;
 	emit updateDataMessage1(fuelflow, absoluteFuel);
 }
