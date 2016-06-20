@@ -36,7 +36,7 @@ QRectF ExhaustGasTemperature::boundingRect() const
 	return QRectF(-130, -170, 255, 230);
 }
 
-void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	//Set clipping rectangle to avoid overdrawing
 	painter->setClipRect(boundingRect());
