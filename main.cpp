@@ -49,7 +49,7 @@ void messageToFileHandler(QtMsgType type, const char *msg)
 	}
 	else
 	{
-		QMessageBox::warning(NULL, "No debug output", "Unable to open 'TerrainOnNavigationDisplay.debug', therefore no debug output available.");
+		QMessageBox::warning(NULL, "No debug output", "Unable to open 'EngineMon.log', therefore no debug output available.");
 	}
 }
 
