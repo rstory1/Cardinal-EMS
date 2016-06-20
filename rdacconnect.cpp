@@ -230,12 +230,13 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	qDebug() << Q_FUNC_INFO << "Pulses" << message.pulses;
 	qDebug() << Q_FUNC_INFO << "Timing" << message.timing;
 
-	quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
-	lastMessage1 = QDateTime::currentDateTime();
+	qreal seconds = qreal(lastMessage1.msecsTo(QDateTime::currentDateTimeUtc())) / 1000.0;
+	lastMessage1 = QDateTime::currentDateTimeUtc();
 
 	qreal k_factor = 1.0;
-	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
-	emit updateDataMessage1(fuelflow);
+	qreal absoluteFuel = qreal(message.pulses) * k_factor;
+	qreal fuelflow = absoluteFuel / seconds * 60.0 * 60.0;
+	emit updateDataMessage1(fuelflow, absoluteFuel);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)

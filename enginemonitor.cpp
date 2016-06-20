@@ -266,10 +266,11 @@ void EngineMonitor::setupManifoldPressure()
 	graphicsScene.addItem(&manifoldPressure);
 }
 
-void EngineMonitor::setDataMessage1(double fuelFlowValue)
+void EngineMonitor::setDataMessage1(double fuelFlowValue, double fuelAbsoluteValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
 	fuelManagement.setFuelFlow(fuelFlowValue);
+	fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
 }
 
 void EngineMonitor::setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue)
@@ -417,6 +418,8 @@ void EngineMonitor::demoFunction()
 		flow = 30.0;
 	}
 	fuelFlow.setValue(flow);
+	fuelManagement.setFuelFlow(flow);
+	fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
 
 	static double airTemp = -10.0;
 	airTemp += 0.01;

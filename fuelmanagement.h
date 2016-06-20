@@ -32,6 +32,12 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setFuelFlow(double value);
 	void setTimeToDestination(double time);
+	void reduceFuelAmount(double fuel)
+	{
+		fuelAmount -= fuel;
+		this->update();
+	}
+
 public slots:
 	void activateOverlay()
 	{
