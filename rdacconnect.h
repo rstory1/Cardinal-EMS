@@ -90,7 +90,7 @@ private:
 	void handleMessage4(QByteArray *data);
 	QSettings settings;
 signals:
-	void updateDataMessage1(double fuelFlowValue);
+	void updateDataMessage1(double fuelFlowValue, double fuelAbsoluteValue);
 	void updateDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressure);
 	void updateDataMessage3(double revolutionsPerMinute);
 	void updateDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
