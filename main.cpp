@@ -23,7 +23,7 @@
 #include "rdacconnect.h"
 #include "nmeaconnect.h"
 
-void messageToFileHandler(QtMsgType type, const char *msg)
+void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
 	QFile debugfile("EngineMon.log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
@@ -70,9 +70,9 @@ int main(int argc, char *argv[])
 	QFile debugfile("EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
 	{
-		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toAscii());
+		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
 		debugfile.close();
-		qInstallMsgHandler(messageToFileHandler);
+		qInstallMessageHandler(messageToFileHandler);
 	}
 	else
 	{
