@@ -21,7 +21,7 @@
 #ifndef EXHAUSTGASTEMPERATURE_H
 #define EXHAUSTGASTEMPERATURE_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class ExhaustGasTemperature : public QGraphicsItem
 {

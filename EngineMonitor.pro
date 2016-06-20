@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui svg
+QT       += core gui widgets svg
 
 TARGET = EngineMonitor
 TEMPLATE = app

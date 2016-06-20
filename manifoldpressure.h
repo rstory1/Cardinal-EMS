@@ -21,7 +21,7 @@
 #ifndef MANIFOLDPRESSURE_H
 #define MANIFOLDPRESSURE_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class ManifoldPressure : public QGraphicsItem
 {

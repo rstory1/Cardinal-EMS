@@ -21,7 +21,7 @@
 #ifndef FUELMANAGEMENT_H
 #define FUELMANAGEMENT_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class FuelManagement : public QGraphicsObject
 {

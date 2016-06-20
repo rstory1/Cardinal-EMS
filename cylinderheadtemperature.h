@@ -21,7 +21,7 @@
 #ifndef CYLINDERHEADTEMPERATURE_H
 #define CYLINDERHEADTEMPERATURE_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class CylinderHeadTemperature : public QGraphicsItem
 {
