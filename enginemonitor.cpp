@@ -214,6 +214,7 @@ void EngineMonitor::setupBarGraphs()
 	insideAirTemperature.addBetweenValue(10.0);
 	insideAirTemperature.addBetweenValue(20.0);
 	insideAirTemperature.addBetweenValue(30.0);
+	insideAirTemperature.setPrecision(1);
 	graphicsScene.addItem(&insideAirTemperature);
 	insideAirTemperature.setVisible(false);
 	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
@@ -227,6 +228,7 @@ void EngineMonitor::setupBarGraphs()
 	outsideAirTemperature.addBetweenValue(10.0);
 	outsideAirTemperature.addBetweenValue(20.0);
 	outsideAirTemperature.addBetweenValue(30.0);
+	outsideAirTemperature.setPrecision(1);
 	graphicsScene.addItem(&outsideAirTemperature);
 	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
 	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
