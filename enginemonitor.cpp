@@ -426,12 +426,13 @@ void EngineMonitor::demoFunction()
 	fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
 
 	static double airTemp = -10.0;
-	airTemp += 0.01;
+	airTemp += 0.07;
 	if(airTemp > 40.0)
 	{
 		airTemp = -10.0;
 	}
 	outsideAirTemperature.setValue(airTemp);
+	insideAirTemperature.setValue(airTemp);
 }
 
 void EngineMonitor::saveSceneToSvg(const QString fileName)
