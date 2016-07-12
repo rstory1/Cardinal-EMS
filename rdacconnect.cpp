@@ -246,7 +246,7 @@ void RDACconnect::handleMessage2(QByteArray *data)
 	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
 
-	double voltage = (message.voltage / 100.0) - 5.0;
+	double voltage = (static_cast<double>(message.voltage) + 115.0) * 0.0069693802;
 	double oilPressure = 0.3320318366 * message.oilPressure - 31.2628022226;
 	if(oilPressure < 0.0)
 	{
