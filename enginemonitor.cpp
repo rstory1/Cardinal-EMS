@@ -77,9 +77,9 @@ void EngineMonitor::setupLogFile()
 	logFile->write("Created with EM-one - Build BETA\r\n");
 	logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
 	logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
-	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_S/N").toString()).toLatin1());
+	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
 	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
-	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_S/N").toString()).toLatin1());
+	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
 	logFile->write("All temperatures in degree Celsius; oil pressure in psi; fuel flow in liters per hour.\r\n");
 	logFile->write("[data]\r\n");
 	logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;MARK\r\n");
