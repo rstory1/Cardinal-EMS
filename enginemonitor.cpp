@@ -183,8 +183,10 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.setPos(0, 0);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
-	voltMeter.setBorders(11.5, 18.0);
-	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.5, 13.0));
+	voltMeter.setBorders(10.0, 16.0);
+	voltMeter.addColorStop(ColorStop(Qt::red, 10.0, 11.9));
+	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.9, 12.4));
+	voltMeter.addColorStop(ColorStop(Qt::red, 14.5, 16.0));
 	voltMeter.setPrecision(1, 1);
 	graphicsScene.addItem(&voltMeter);
 
