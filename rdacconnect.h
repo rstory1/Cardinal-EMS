@@ -23,7 +23,6 @@
 
 #include <QtCore>
 #include <QtGui/QColor>
-#include <windows.h>
 
 #pragma pack(1)
 struct RDACmessage1
