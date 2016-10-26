@@ -34,37 +34,37 @@ void NMEAconnect::run()
 	portArray[portString.length()] = '\0';
 	portString.replace("\\\\.\\", "");
 
-	HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
-	if(serialhCom != INVALID_HANDLE_VALUE)
-	{
-		qDebug() << "Succesful opening" << portString;
-	}
-	else
-	{
-		qDebug() << "Could not open" << portString;
-		emit userMessage("Sky Map COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Application runs without NMEA input from Sky Map", false);
-		exec();
-	}
+//	HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
+//	if(serialhCom != INVALID_HANDLE_VALUE)
+//	{
+//		qDebug() << "Succesful opening" << portString;
+//	}
+//	else
+//	{
+//		qDebug() << "Could not open" << portString;
+//		emit userMessage("Sky Map COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Application runs without NMEA input from Sky Map", false);
+//		exec();
+//	}
 
-	QString data;
-	forever
-	{
-		char character;
-		DWORD nrBytes = 0;
-		if(ReadFile(serialhCom, &character, 1, &nrBytes, NULL))
-		{
-			if(nrBytes == 1)
-			{
-				data.append(character);
-			}
-		}
-		else
-		{
-			emit userMessage("Sky Map COM error", "Error reading data, closing application", true);
-			exec();
-		}
-		searchMessage(&data);
-	}
+//	QString data;
+//	forever
+//	{
+//		char character;
+//		DWORD nrBytes = 0;
+//		if(ReadFile(serialhCom, &character, 1, &nrBytes, NULL))
+//		{
+//			if(nrBytes == 1)
+//			{
+//				data.append(character);
+//			}
+//		}
+//		else
+//		{
+//			emit userMessage("Sky Map COM error", "Error reading data, closing application", true);
+//			exec();
+//		}
+//		searchMessage(&data);
+//	}
 	exec();
 }
 

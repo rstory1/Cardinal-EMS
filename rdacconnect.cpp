@@ -58,36 +58,37 @@ void RDACconnect::run()
 	portArray[portString.length()] = '\0';
 	portString.replace("\\\\.\\", "");
 
-	HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
-	if(serialhCom != INVALID_HANDLE_VALUE)
-	{
-		qDebug() << "Succesful opening" << portString;
-	}
-	else
-	{
-		qDebug() << "Could not open" << portString;
-		emit userMessage("COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
-		exec();
-	}
+    // Need to convert to C++/Linux library to open serial port.
+    //HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
+//	if(serialhCom != INVALID_HANDLE_VALUE)
+//	{
+//		qDebug() << "Succesful opening" << portString;
+//	}
+//	else
+//	{
+//		qDebug() << "Could not open" << portString;
+//		emit userMessage("COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
+//		exec();
+//	}
 
 	QByteArray data;
 	bool startPatternFound = false;
 	forever
 	{
 		quint8 byte;
-		DWORD nrBytes = 0;
-		if(ReadFile(serialhCom, &byte, 1, &nrBytes, NULL))
-		{
-			if(nrBytes == 1)
-			{
-				data.append(byte);
-			}
-		}
-		else
-		{
-			emit userMessage("RDAC COM error", "Error reading data, closing application", true);
-			exec();
-		}
+        //DWORD nrBytes = 0;
+//		if(ReadFile(serialhCom, &byte, 1, &nrBytes, NULL))
+//		{
+//			if(nrBytes == 1)
+//			{
+//				data.append(byte);
+//			}
+//		}
+//		else
+//		{
+//			emit userMessage("RDAC COM error", "Error reading data, closing application", true);
+//			exec();
+//		}
 
 		if(searchStart(&data))
 		{
