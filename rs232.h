@@ -41,23 +41,19 @@ extern "C" {
 #include <string.h>
 
 
-
-#if defined(__linux__) || defined(__FreeBSD__)
-
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <limits.h>
-#include <sys/file.h>
-#include <errno.h>
-
+#ifdef _WIN32
+    #include <windows.h>
 #else
-
-#include <windows.h>
-
+    #include <termios.h>
+    #include <sys/ioctl.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <limits.h>
+    #include <sys/file.h>
+    #include <errno.h>
+    #endif
 #endif
 
 int RS232_OpenComport(int, int, const char *);
@@ -78,10 +74,5 @@ void RS232_flushTX(int);
 void RS232_flushRXTX(int);
 int RS232_GetPortnr(const char *);
 
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
-
-#endif
 
 
