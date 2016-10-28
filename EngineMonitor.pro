@@ -37,8 +37,7 @@ SOURCES += main.cpp\
     rdacconnect.cpp \
     nmeaconnect.cpp \
     manifoldpressure.cpp \
-    rs232.c \
-    serialstream.cpp
+    PortListener.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -49,8 +48,9 @@ HEADERS  += enginemonitor.h \
     rdacconnect.h \
     nmeaconnect.h \
     manifoldpressure.h \
-    rs232.h \
-    serialstream.h
+    PortListener.h
 
 RESOURCES += \
     res/res.qrc
+
+include(../enginemon/qextserialport/qextserialport.pri)
