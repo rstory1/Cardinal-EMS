@@ -290,7 +290,7 @@ void EngineMonitor::setDataMessage2(double insideAirTemperatureValue, double out
 	manifoldPressure.setValue(manifoldPressureValue);
 }
 
-void EngineMonitor::setDataMessage3(double revolutionPerMinute)
+void EngineMonitor::setRpm(double revolutionPerMinute)
 {
 	rpmIndicator.setValue(revolutionPerMinute);
 }
@@ -449,4 +449,13 @@ void EngineMonitor::saveSceneToSvg(const QString fileName)
 	painter.begin(&generator);
 	graphicsScene.render(&painter);
 	painter.end();
+}
+
+void EngineMonitor::setOilTemp(double oilTemperatureValue) {
+    oilTemperature.setValue(oilTemperatureValue);
+}
+
+void EngineMonitor::setEgtChtTemp(double cht1, double cht2, double cht3, double cht4, double egt1, double egt2, double egt3, double egt4) {
+    exhaustGasTemperature.setValues(egt1,egt2,egt3,egt4);
+    cylinderHeadTemperature.setValues(cht1,cht2,cht3,cht4);
 }
