@@ -117,11 +117,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	}
 	//Round value to the nearest 10
 	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
-	//If number has more than three digits, add a separation mark
-	if(rpm.size() > 3)
-	{
-		rpm.insert(1, '\'');
-	}
+
 	//Set position and font for the value and draw it
 	QRectF textRect(-100, 35, 170, 65);
 	painter->setFont(QFont("Arial", 30, 1));
@@ -129,7 +125,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	//Set position and font for the unit and draw it
 	QRectF unitRect(90, 35, 100, 65);
 	painter->setFont(QFont("Arial", 20, 1));
-	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "rpm");
+    painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "RPM");
 }
 
 void RpmIndicator::setStartSpan(double start, double span)
