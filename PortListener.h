@@ -12,10 +12,16 @@ public:
 
 private:
     QextSerialPort *port;
+    QByteArray bytesReceived;
 
 private slots:
     void onReadyRead();
     void onDsrChanged(bool status);
+
+signals:
+    void updateOilTemp(double);
+    void updateEgtCht(double cht1,double cht2,double cht3,double cht4,double egt1,double egt2,double egt3,double egt4);
+    void updateRpm(double revolutionsPerMinute);
 
 };
 

@@ -9,7 +9,7 @@ PortListener::PortListener(const QString &portName)
     port->setFlowControl(FLOW_OFF);
     port->setParity(PAR_NONE);
     port->setDataBits(DATA_8);
-    port->setStopBits(STOP_2);
+    port->setStopBits(STOP_1);
 
     if (port->open(QIODevice::ReadWrite) == true) {
         connect(port, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
@@ -29,8 +29,17 @@ void PortListener::onReadyRead()
     int a = port->bytesAvailable();
     bytes.resize(a);
     port->read(bytes.data(), bytes.size());
-    qDebug() << "bytes read:" << bytes.size();
-    qDebug() << "bytes:" << bytes;
+
+    bytesReceived.append(bytes);
+
+    if(bytes.contains('\n')) {
+        qDebug() << QString::fromLatin1(bytesReceived);
+        QString data = QString::fromLatin1(bytesReceived);
+        bytesReceived.clear();
+        emit updateOilTemp(data.section(',',9,9).toDouble());
+        emit updateEgtCht(data.section(',',1,1).toDouble(),data.section(',',2,2).toDouble(),data.section(',',3,3).toDouble(),data.section(',',4,4).toDouble(),data.section(',',5,5).toDouble(),data.section(',',6,6).toDouble(),data.section(',',7,7).toDouble(),data.section(',',8,8).toDouble());
+        emit updateRpm(data.section(',',0,0).toDouble());
+    }
 }
 
 void PortListener::onDsrChanged(bool status)
