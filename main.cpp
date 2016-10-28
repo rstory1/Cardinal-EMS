@@ -22,6 +22,7 @@
 #include "enginemonitor.h"
 #include "rdacconnect.h"
 #include "nmeaconnect.h"
+#include "PortListener.h"
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
@@ -120,6 +121,9 @@ int main(int argc, char *argv[])
 #ifndef QT_DEBUG
 	nmeaConnect.start();
 #endif
+
+    QString portName = QLatin1String("ttyACM01");              // update this to use your port of choice
+    PortListener listener(portName);        // signals get hooked up internally
 
 	return a.exec();
 }
