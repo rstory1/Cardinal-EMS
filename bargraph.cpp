@@ -20,14 +20,15 @@
 
 #include "bargraph.h"
 
-BarGraph::BarGraph(QGraphicsItem *parent) : QGraphicsItem(parent)
-  , titleText("HEAD")
-  , unitText("UNIT")
-  , minValue(0.0)
-  , maxValue(0.0)
-  , currentValue(0.0)
-  , barPrecision(0)
-  , readoutPrecision(0)
+BarGraph::BarGraph(QGraphicsObject *parent)
+	: QGraphicsObject(parent)
+	, titleText("HEAD")
+	, unitText("UNIT")
+	, minValue(0.0)
+	, maxValue(0.0)
+	, currentValue(0.0)
+	, barPrecision(0)
+	, readoutPrecision(0)
 {
 }
 

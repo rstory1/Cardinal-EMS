@@ -23,7 +23,6 @@
 
 #include <QtCore>
 #include <QtGui/QColor>
-#include <windows.h>
 
 class NMEAconnect : public QThread
 {

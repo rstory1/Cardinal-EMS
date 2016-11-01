@@ -27,6 +27,8 @@
 #include "exhaustgastemperature.h"
 #include "cylinderheadtemperature.h"
 #include "bargraph.h"
+#include "fuelmanagement.h"
+#include "manifoldpressure.h"
 
 class EngineMonitor : public QGraphicsView
 {
@@ -41,6 +43,9 @@ private:
 	void setupCylinderHeadTemperature();
 	void setupStatusItem();
 	void setupTimeToDestinationItem();
+	void setupFuelManagement();
+	void setupManifoldPressure();
+	void setupLogFile();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
@@ -51,20 +56,28 @@ private:
 	BarGraph voltMeter;
 	BarGraph ampereMeter;
 	BarGraph fuelFlow;
+	BarGraph insideAirTemperature;
 	BarGraph outsideAirTemperature;
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
+	FuelManagement fuelManagement;
+	ManifoldPressure manifoldPressure;
+	QFile *logFile;
+	QSettings settings;
 private slots:
 	void demoFunction();
+	void writeLogFile();
 public slots:
-	void setDataMessage1(double fuelFlowValue);
-	void setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue);
-	void setDataMessage3(double revolutionPerMinute);
+	void setDataMessage1(double fuelFlowValue, double fuelAbsoluteValue);
+	void setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue);
+    void setRpm(double revolutionPerMinute);
 	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
 	void setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
 	void showStatusMessage(QString text, QColor color);
+    void setOilTemp(double oilTemperatureValue);
+    void setEgtChtTemp(double cht1,double cht2,double cht3,double cht4,double egt1,double egt2,double egt3,double egt4);
 };
 
 #endif // ENGINEMONITOR_H

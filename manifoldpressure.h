@@ -18,27 +18,29 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef CYLINDERHEADTEMPERATURE_H
-#define CYLINDERHEADTEMPERATURE_H
+#ifndef MANIFOLDPRESSURE_H
+#define MANIFOLDPRESSURE_H
 
 #include <QtWidgets>
 
-class CylinderHeadTemperature : public QGraphicsItem
+class ManifoldPressure : public QGraphicsItem
 {
 public:
-	explicit CylinderHeadTemperature(QGraphicsItem * parent = 0);
+	ManifoldPressure(QGraphicsItem * parent = 0);
+	~ManifoldPressure();
 	QRectF boundingRect() const;
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
-	void setBorders(double minimum, double maximum, double yellowBorder, double redBorder);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+	void setStartSpan(double start, double span);
+	void setBorders(double minimum, double maximum, double greenBorder, double redBorder);
 	void addBetweenValue(double value);
-	void setValues(double val1, double val2, double val3, double val4);
-	const QList<double> &getCurrentValues() {return currentValues;};
+	void setValue(double value);
+	double getValue() {return currentValue;};
 private:
 	double calculateLocalValue(double value) const;
-	double minValue, maxValue;
-	double greenYellowValue, yellowRedValue;
-	QList<double> currentValues;
-	QList<double> betweenValues;
+	double minValue, maxValue, currentValue;
+	double whiteGreenBorder, greenRedBorder;
+	double startAngle, spanAngle;
+	QList<double> beetweenValues;
 };
 
-#endif // CYLINDERHEADTEMPERATURE_H
+#endif // MANIFOLDPRESSURE_H

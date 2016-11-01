@@ -21,7 +21,7 @@
 #ifndef BARGRAPH_H
 #define BARGRAPH_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 struct ColorStop
 {
@@ -31,10 +31,11 @@ struct ColorStop
 	double minValue, maxValue;
 };
 
-class BarGraph : public QGraphicsItem
+class BarGraph : public QGraphicsObject
 {
+	Q_OBJECT
 public:
-	explicit BarGraph(QGraphicsItem * parent = 0);
+	explicit BarGraph(QGraphicsObject* parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setTitle(QString title);
@@ -44,6 +45,10 @@ public:
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
 	void setValue(double value);
+	double getValue() {return currentValue;};
+public slots:
+	void makeVisible() {setVisible(true);};
+	void makeInvisible() {setVisible(false);};
 private:
 	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
@@ -51,6 +56,13 @@ private:
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
+protected:
+	void mousePressEvent(QGraphicsSceneMouseEvent *)
+	{
+		emit hasBeenClicked();
+	}
+signals:
+	void hasBeenClicked();
 };
 
 #endif // BARGRAPH_H

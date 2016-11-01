@@ -58,36 +58,37 @@ void RDACconnect::run()
 	portArray[portString.length()] = '\0';
 	portString.replace("\\\\.\\", "");
 
-	HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
-	if(serialhCom != INVALID_HANDLE_VALUE)
-	{
-		qDebug() << "Succesful opening" << portString;
-	}
-	else
-	{
-		qDebug() << "Could not open" << portString;
-		emit userMessage("COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
-		exec();
-	}
+    // Need to convert to C++/Linux library to open serial port.
+    //HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
+//	if(serialhCom != INVALID_HANDLE_VALUE)
+//	{
+//		qDebug() << "Succesful opening" << portString;
+//	}
+//	else
+//	{
+//		qDebug() << "Could not open" << portString;
+//		emit userMessage("COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
+//		exec();
+//	}
 
 	QByteArray data;
 	bool startPatternFound = false;
 	forever
 	{
 		quint8 byte;
-		DWORD nrBytes = 0;
-		if(ReadFile(serialhCom, &byte, 1, &nrBytes, NULL))
-		{
-			if(nrBytes == 1)
-			{
-				data.append(byte);
-			}
-		}
-		else
-		{
-			emit userMessage("RDAC COM error", "Error reading data, closing application", true);
-			exec();
-		}
+        //DWORD nrBytes = 0;
+//		if(ReadFile(serialhCom, &byte, 1, &nrBytes, NULL))
+//		{
+//			if(nrBytes == 1)
+//			{
+//				data.append(byte);
+//			}
+//		}
+//		else
+//		{
+//			emit userMessage("RDAC COM error", "Error reading data, closing application", true);
+//			exec();
+//		}
 
 		if(searchStart(&data))
 		{
@@ -227,12 +228,16 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	memcpy(&message, data->mid(3, 4).constData(), 4);
 	data->remove(0, 9);
 
-	quint16 seconds = lastMessage1.secsTo(QDateTime::currentDateTimeUtc());
-	lastMessage1 = QDateTime::currentDateTime();
+	qDebug() << Q_FUNC_INFO << "Pulses" << message.pulses;
+	qDebug() << Q_FUNC_INFO << "Timing" << message.timing;
+
+	qreal seconds = qreal(lastMessage1.msecsTo(QDateTime::currentDateTimeUtc())) / 1000.0;
+	lastMessage1 = QDateTime::currentDateTimeUtc();
 
 	qreal k_factor = 1.0;
-	qreal fuelflow = qreal(message.pulses) * k_factor / qreal(seconds);
-	emit updateDataMessage1(fuelflow);
+	qreal absoluteFuel = qreal(message.pulses) * k_factor / 60.0 / 60.0;
+	qreal fuelflow = absoluteFuel / seconds * 60.0 * 60.0;
+	emit updateDataMessage1(fuelflow, absoluteFuel);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)
@@ -242,14 +247,17 @@ void RDACconnect::handleMessage2(QByteArray *data)
 	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
 
-	double voltage = message.voltage / 4095.0 * 5.0;
+	double voltage = (static_cast<double>(message.voltage) + 115.0) * 0.0069693802;
 	double oilPressure = 0.3320318366 * message.oilPressure - 31.2628022226;
 	if(oilPressure < 0.0)
 	{
 		oilPressure = 0.0;
 	}
 
-	emit updateDataMessage2(message.oilTemperature, oilPressure, voltage);
+	qreal insideAirTemperature = qreal(message.internalTemperature) / 100.0;
+	qreal outsideAirTemperature = qreal(message.cht1) / 100.0;
+
+	emit updateDataMessage2(insideAirTemperature, outsideAirTemperature, message.cht2, message.oilTemperature, oilPressure, voltage, message.manifoldPressure);
 }
 
 void RDACconnect::handleMessage3(QByteArray *data)

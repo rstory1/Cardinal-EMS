@@ -21,7 +21,7 @@
 #ifndef RPMINDICATOR_H
 #define RPMINDICATOR_H
 
-#include <QtGui>
+#include <QtWidgets>
 
 class RpmIndicator : public QGraphicsItem
 {
@@ -34,6 +34,7 @@ public:
 	void setBorders(double minimum, double maximum, double greenBorder, double redBorder);
 	void addBetweenValue(double value);
 	void setValue(double value);
+	double getValue() {return currentValue;};
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;

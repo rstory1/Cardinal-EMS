@@ -6,3 +6,4 @@ release/*
 bin/*
 *.Debug
 *.Release
+*.DS_Store

@@ -18,9 +18,9 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include "rpmindicator.h"
+#include "manifoldpressure.h"
 
-RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
+ManifoldPressure::ManifoldPressure(QGraphicsItem *parent) : QGraphicsItem(parent)
   , minValue(0.0)
   , maxValue(0.0)
   , currentValue(0.0)
@@ -31,22 +31,22 @@ RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
 {
 }
 
-RpmIndicator::~RpmIndicator()
+ManifoldPressure::~ManifoldPressure()
 {
 }
 
-QRectF RpmIndicator::boundingRect() const
+QRectF ManifoldPressure::boundingRect() const
 {
-	return QRectF(-200.0, -140.0, 400.0, 280.0);
+	return QRectF(-80.0, -80.0, 170.0, 160.0);
 }
 
-void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
 	//Draw the arc
-	QRectF circle = QRectF(-130.0, -130.0, 260.0, 260.0);
+	QRectF circle = QRectF(-70.0, -70.0, 140.0, 140.0);
 	//Calculate angles for white and red arc part
 	double whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	double greenRedAngle = calculateLocalValue(greenRedBorder);
@@ -54,7 +54,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->setPen(QPen(Qt::green, 0));
 	painter->setBrush(Qt::green);
 	painter->drawPie(circle, startAngle*16.0, -spanAngle*16.0);
-	//Draw the green part
+	//Draw the white part
 	painter->setPen(QPen(Qt::white, 0));
 	painter->setBrush(Qt::white);
 	painter->drawPie(circle, startAngle*16.0, -fabs(whiteGreenAngle-startAngle)*16.0);
@@ -62,30 +62,40 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->setPen(QPen(Qt::red, 0));
 	painter->setBrush(Qt::red);
 	painter->drawPie(circle, greenRedAngle*16.0, -fabs(startAngle-spanAngle-greenRedAngle)*16.0);
+	//Draw the short ticks
+	painter->setPen(QPen(Qt::white, 2));
+	for(double value = whiteGreenBorder; value < maxValue; value += 1.0)
+	{
+		//Rotate painter and draw the ticks
+		painter->save();
+		painter->rotate(-calculateLocalValue(value));
+		painter->drawLine(55, 0, 70, 0);
+		painter->restore();
+	}
 	//Overlay the center with a black circle
 	painter->setPen(QPen(Qt::black, 0));
 	painter->setBrush(Qt::black);
-	painter->drawEllipse(circle.center(), 110.0, 110.0);
+	painter->drawEllipse(circle.center(), 55.0, 55.0);
 
 	//Set the pen and font to draw the ticks
 	painter->setPen(QPen(Qt::white, 2));
-	painter->setFont(QFont("Arial", 14));
+	painter->setFont(QFont("Arial", 10));
 	foreach(double value, beetweenValues)
 	{
 		//Rotate painter and draw the ticks
 		painter->save();
 		painter->rotate(-calculateLocalValue(value));
-		painter->drawLine(100, 0, 130, 0);
+		painter->drawLine(50, 0, 70, 0);
 		painter->restore();
 		//Define a box, move it and draw the text centered to this position
-		QRectF textRect(-10, -10, 20, 20);
-		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*85.0, -sin(calculateLocalValue(value)/180.0*M_PI)*85.0));
-		painter->drawText(textRect, Qt::AlignCenter, QString::number(value/100.0, 'f', 0));
+		QRectF textRect(-7, -7, 14, 14);
+		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*40.0, -sin(calculateLocalValue(value)/180.0*M_PI)*40.0));
+		painter->drawText(textRect, Qt::AlignCenter, QString::number(value, 'f', 0));
 	}
 
 	//Draw the center text
-	QRectF centerTextRect(-50, -50, 100, 100);
-	painter->drawText(centerTextRect, Qt::AlignCenter, "x 100 rpm");
+	QRectF centerTextRect(-25, -25, 50, 50);
+	painter->drawText(centerTextRect, Qt::AlignCenter, "Manifold\nPressure");
 
 	//Draw the needle if value is in range
 	if((currentValue > minValue) &&
@@ -96,9 +106,9 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 		painter->setBrush(Qt::white);
 		//Define the shape
 		QPolygonF marker;
-		marker.append(QPointF(110.0, 0.0));
-		marker.append(QPointF(140.0, -7.0));
-		marker.append(QPointF(140.0, 7.0));
+		marker.append(QPointF(55.0, 0.0));
+		marker.append(QPointF(80.0, -5.0));
+		marker.append(QPointF(80.0, 5.0));
 		//Rotate the painter and draw the needle
 		painter->save();
 		painter->rotate(-calculateLocalValue(currentValue));
@@ -116,25 +126,24 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 		painter->setPen(Qt::white);
 	}
 	//Round value to the nearest 10
-	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
-
+	QString rpm = QString::number(currentValue, 'f', 1);
 	//Set position and font for the value and draw it
-	QRectF textRect(-100, 35, 170, 65);
-	painter->setFont(QFont("Arial", 30, 1));
+	QRectF textRect(-82, 25, 130, 25);
+	painter->setFont(QFont("Arial", 20, 1));
 	painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
 	//Set position and font for the unit and draw it
-	QRectF unitRect(90, 35, 100, 65);
-	painter->setFont(QFont("Arial", 20, 1));
-    painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "RPM");
+	QRectF unitRect(55, 25, 60, 25);
+	painter->setFont(QFont("Arial", 14, 1));
+	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "psi");
 }
 
-void RpmIndicator::setStartSpan(double start, double span)
+void ManifoldPressure::setStartSpan(double start, double span)
 {
 	startAngle = start;
 	spanAngle = span;
 }
 
-void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
+void ManifoldPressure::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
 {
 	minValue = minimum;
 	maxValue = maximum;
@@ -142,17 +151,17 @@ void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder
 	greenRedBorder = redBorder;
 }
 
-double RpmIndicator::calculateLocalValue(double value) const
+double ManifoldPressure::calculateLocalValue(double value) const
 {
 	return startAngle-((value-minValue)/(maxValue-minValue)*spanAngle);
 }
 
-void RpmIndicator::addBetweenValue(double value)
+void ManifoldPressure::addBetweenValue(double value)
 {
 	beetweenValues.append(value);
 }
 
-void RpmIndicator::setValue(double value)
+void ManifoldPressure::setValue(double value)
 {
 	currentValue = value;
 	update();

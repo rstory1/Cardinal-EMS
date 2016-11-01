@@ -24,6 +24,7 @@
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
+  , settings("./settings.ini", QSettings::IniFormat, parent)
 {
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
@@ -38,22 +39,84 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupBarGraphs();
 	setupStatusItem();
 	setupTimeToDestinationItem();
+	setupFuelManagement();
+	setupManifoldPressure();
 	graphicsScene.update();
+	setupLogFile();
 
-//	//Demo timer, for testing purposes only
-//	QTimer *demoTimer = new QTimer(this);
-//	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-//	demoTimer->setSingleShot(false);
-//	demoTimer->start(200);
+	//Demo timer, for testing purposes only
+#ifdef QT_DEBUG
+	QTimer *demoTimer = new QTimer(this);
+	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+	demoTimer->setSingleShot(false);
+	demoTimer->start(200);
+#endif
 }
 
 EngineMonitor::~EngineMonitor()
 {
+	logFile->close();
+}
+
+void EngineMonitor::setupLogFile()
+{
+	logFile = new QFile(QString("EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+	if(logFile->open(QIODevice::WriteOnly))
+	{
+		QTimer *writeLogFileTimer = new QTimer(this);
+		connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
+		writeLogFileTimer->setSingleShot(false);
+		writeLogFileTimer->start(settings.value("Logging/SampleRate", 1).toInt() * 1000);
+	}
+	else
+	{
+		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
+	}
+
+	logFile->write("[Header]\r\n");
+	logFile->write("Created with EM-one - Build BETA\r\n");
+	logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
+	logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
+	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
+	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
+	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
+	logFile->write("All temperatures in degree Celsius; oil pressure in psi; fuel flow in liters per hour.\r\n");
+	logFile->write("[data]\r\n");
+	logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;MARK\r\n");
+}
+
+void EngineMonitor::writeLogFile()
+{
+	static quint64 sample = 0;
+	logFile->write(QString::number(sample).append(';').toLatin1());
+	logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
+	QList<double> egtValues = exhaustGasTemperature.getCurrentValues();
+	logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+	QList<double> chtValues = cylinderHeadTemperature.getCurrentValues();
+	logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(oilTemperature.getValue(), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(oilPressure.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString::number(outsideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString::number(insideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString::number(voltMeter.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString::number(ampereMeter.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(';').toLatin1());
+	logFile->write(QString::number(manifoldPressure.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(';').toLatin1());
+	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append("\r\n").toLatin1());
+	logFile->flush();
+	++sample;
 }
 
 void EngineMonitor::setupRpmIndicator()
 {
-	rpmIndicator.setPos(-350, -100);
+	rpmIndicator.setPos(-255, -100);
 	rpmIndicator.setStartSpan(230.0, 240.0);
 	rpmIndicator.setBorders(0.0, 2800.0, 300.0, 2550.0);
 	rpmIndicator.addBetweenValue(0.0);
@@ -120,8 +183,10 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.setPos(0, 0);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
-	voltMeter.setBorders(11.5, 18.0);
-	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.5, 13.0));
+	voltMeter.setBorders(10.0, 16.0);
+	voltMeter.addColorStop(ColorStop(Qt::red, 10.0, 11.9));
+	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.9, 12.4));
+	voltMeter.addColorStop(ColorStop(Qt::red, 14.5, 16.0));
 	voltMeter.setPrecision(1, 1);
 	graphicsScene.addItem(&voltMeter);
 
@@ -143,6 +208,20 @@ void EngineMonitor::setupBarGraphs()
 	fuelFlow.addBetweenValue(20.0);
 	graphicsScene.addItem(&fuelFlow);
 
+	insideAirTemperature.setPos(100, 150);
+	insideAirTemperature.setTitle("IAT");
+	insideAirTemperature.setUnit(QString::fromUtf8("°C"));
+	insideAirTemperature.setBorders(-10.0, 40);
+	insideAirTemperature.addBetweenValue(0.0);
+	insideAirTemperature.addBetweenValue(10.0);
+	insideAirTemperature.addBetweenValue(20.0);
+	insideAirTemperature.addBetweenValue(30.0);
+	insideAirTemperature.setPrecision(1);
+	graphicsScene.addItem(&insideAirTemperature);
+	insideAirTemperature.setVisible(false);
+	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
+	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
+
 	outsideAirTemperature.setPos(100, 150);
 	outsideAirTemperature.setTitle("OAT");
 	outsideAirTemperature.setUnit(QString::fromUtf8("°C"));
@@ -151,7 +230,10 @@ void EngineMonitor::setupBarGraphs()
 	outsideAirTemperature.addBetweenValue(10.0);
 	outsideAirTemperature.addBetweenValue(20.0);
 	outsideAirTemperature.addBetweenValue(30.0);
+	outsideAirTemperature.setPrecision(1);
 	graphicsScene.addItem(&outsideAirTemperature);
+	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
+	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }
 
 void EngineMonitor::setupStatusItem()
@@ -167,19 +249,48 @@ void EngineMonitor::setupTimeToDestinationItem()
 	graphicsScene.addItem(&timeToDestinationItem);
 }
 
-void EngineMonitor::setDataMessage1(double fuelFlowValue)
+void EngineMonitor::setupFuelManagement()
 {
-	fuelFlow.setValue(fuelFlowValue);
+	//fuelManagement.setPos(-70, 70);
+	fuelManagement.setPos(-495, -240);
+	fuelManagement.setScale(1.8);
+	fuelManagement.setVisible(false);
+	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
+	graphicsScene.addItem(&fuelManagement);
 }
 
-void EngineMonitor::setDataMessage2(double oilTemperatureValue, double oilPressureValue, double voltageValue)
+void EngineMonitor::setupManifoldPressure()
 {
+	manifoldPressure.setPos(-585, -100);
+	manifoldPressure.setStartSpan(240.0, 240.0);
+	manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
+	manifoldPressure.addBetweenValue(10.0);
+	manifoldPressure.addBetweenValue(15.0);
+	manifoldPressure.addBetweenValue(20.0);
+	manifoldPressure.addBetweenValue(25.0);
+	manifoldPressure.addBetweenValue(30.0);
+	graphicsScene.addItem(&manifoldPressure);
+}
+
+void EngineMonitor::setDataMessage1(double fuelFlowValue, double fuelAbsoluteValue)
+{
+	fuelFlow.setValue(fuelFlowValue);
+	fuelManagement.setFuelFlow(fuelFlowValue);
+	fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
+}
+
+void EngineMonitor::setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue)
+{
+	insideAirTemperature.setValue(insideAirTemperatureValue);
+	outsideAirTemperature.setValue(outsideAirTemperatureValue);
+	ampereMeter.setValue(ampereValue);
 	oilTemperature.setValue(oilTemperatureValue);
 	oilPressure.setValue(oilPressureValue);
 	voltMeter.setValue(voltageValue);
+	manifoldPressure.setValue(manifoldPressureValue);
 }
 
-void EngineMonitor::setDataMessage3(double revolutionPerMinute)
+void EngineMonitor::setRpm(double revolutionPerMinute)
 {
 	rpmIndicator.setValue(revolutionPerMinute);
 }
@@ -197,6 +308,7 @@ void EngineMonitor::setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3,
 void EngineMonitor::setTimeToDestination(double time)
 {
 	timeToDestinationItem.setPlainText(QString::number(time, 'f', 1).prepend("Time to destination: ").append(" minutes"));
+	fuelManagement.setTimeToDestination(time);
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
@@ -312,14 +424,17 @@ void EngineMonitor::demoFunction()
 		flow = 30.0;
 	}
 	fuelFlow.setValue(flow);
+	fuelManagement.setFuelFlow(flow);
+	fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
 
 	static double airTemp = -10.0;
-	airTemp += 0.01;
+	airTemp += 0.07;
 	if(airTemp > 40.0)
 	{
 		airTemp = -10.0;
 	}
 	outsideAirTemperature.setValue(airTemp);
+	insideAirTemperature.setValue(airTemp);
 }
 
 void EngineMonitor::saveSceneToSvg(const QString fileName)
@@ -334,4 +449,13 @@ void EngineMonitor::saveSceneToSvg(const QString fileName)
 	painter.begin(&generator);
 	graphicsScene.render(&painter);
 	painter.end();
+}
+
+void EngineMonitor::setOilTemp(double oilTemperatureValue) {
+    oilTemperature.setValue(oilTemperatureValue);
+}
+
+void EngineMonitor::setEgtChtTemp(double cht1, double cht2, double cht3, double cht4, double egt1, double egt2, double egt3, double egt4) {
+    exhaustGasTemperature.setValues(egt1,egt2,egt3,egt4);
+    cylinderHeadTemperature.setValues(cht1,cht2,cht3,cht4);
 }
