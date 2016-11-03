@@ -11,13 +11,12 @@
 #define SENSORCONVERT_H
 
 #include <QtCore>
-#include <QtGui/QColor>
 
-class sensorConvert : public QThread
+class SensorConvert : public QThread
 {
     Q_OBJECT
 public:
-    explicit sensorConvert(QObject *parent = 0);
+    explicit SensorConvert(QObject *parent = 0);
 
 private:
     QString thermocoupleTypeCht;
@@ -27,21 +26,29 @@ private:
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
     void convertThermocouple(int resistance);
-    void convertEgt(int egt1, int egt2, int egt3, int egt4);
-    void convertCht(int cht1, int cht2, int cht3, int cht4);
+    void convertEgt(int volt1, int volt2, int volt3, int volt4);
+    void convertCht(int volt1, int volt2, int volt3, int volt4);
 
-    void convertFuelFlow(int pulses);
+    void convertFuelFlow(quint16 pulses);
 
     void convertOilTemp(int voltage);
     void convertOilPress(int voltage);
 
-    void convertRpm(int pulses);
+    void convertRpm(quint16 pulses);
 
 signals:
-    void updateEgt(int egt1, int egt2, int egt3, int egt4);
-    void updateCht(int cht1, int cht2, int cht3, int cht4);
+    void updateEgt(quint16 egt1,quint16 egt2,quint16 egt3,quint16 egt4);
+    void updateCht(quint16 cht1,quint16 cht2,quint16 cht3,quint16 cht4);
+    void userMessage(QString,QString,bool);
+    void updateFuelData(double,double);
+    void updateOilData(double,double);
+    void updateRpm(double);
+    void updateOatIat(double,double);
+    void updateAmpsVoltage(double,double);
+    void statusMessage(QString,QColor);
 
 public slots:
+    void processData(QString data);
 };
 
 #endif // SENSORCONVERT_H

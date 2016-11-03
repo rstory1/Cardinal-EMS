@@ -272,37 +272,38 @@ void EngineMonitor::setupManifoldPressure()
 	graphicsScene.addItem(&manifoldPressure);
 }
 
-void EngineMonitor::setDataMessage1(double fuelFlowValue, double fuelAbsoluteValue)
+void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
 	fuelManagement.setFuelFlow(fuelFlowValue);
 	fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
 }
 
-void EngineMonitor::setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue)
+void EngineMonitor::setOatIat(double insideAirTemperatureValue, double outsideAirTemperatureValue)
 {
 	insideAirTemperature.setValue(insideAirTemperatureValue);
 	outsideAirTemperature.setValue(outsideAirTemperatureValue);
-	ampereMeter.setValue(ampereValue);
-	oilTemperature.setValue(oilTemperatureValue);
+}
+void EngineMonitor::setOilData(double oilTemperatureValue, double oilPressureValue)
+{
+    oilTemperature.setValue(oilTemperatureValue);
 	oilPressure.setValue(oilPressureValue);
-	voltMeter.setValue(voltageValue);
-	manifoldPressure.setValue(manifoldPressureValue);
+}
+
+set EngineMonitor::setManifoldPress(double manifoldPressureValue)
+{
+    manifoldPressure.setValue(manifoldPressureValue);
+}
+
+void EngineMonitor::setAmpsVoltage(double ampereValue, double voltageValue)
+{
+    ampereMeter.setValue(ampereValue);
+    voltMeter.setValue(voltageValue);
 }
 
 void EngineMonitor::setRpm(double revolutionPerMinute)
 {
 	rpmIndicator.setValue(revolutionPerMinute);
-}
-
-void EngineMonitor::setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4)
-{
-	exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
-}
-
-void EngineMonitor::setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4)
-{
-	cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
 }
 
 void EngineMonitor::setTimeToDestination(double time)
@@ -455,7 +456,7 @@ void EngineMonitor::setOilTemp(double oilTemperatureValue) {
     oilTemperature.setValue(oilTemperatureValue);
 }
 
-void EngineMonitor::setEgtChtTemp(double cht1, double cht2, double cht3, double cht4, double egt1, double egt2, double egt3, double egt4) {
-    exhaustGasTemperature.setValues(egt1,egt2,egt3,egt4);
-    cylinderHeadTemperature.setValues(cht1,cht2,cht3,cht4);
+void EngineMonitor::setEgtChtTemp(egtValues,chtValues) {
+    exhaustGasTemperature.setValues(egtValues.egt1,egtValues.egt1,egtValues.egt3,egtValues.egt4);
+    cylinderHeadTemperature.setValues(chtValues.cht1,chtValues.cht2,chtValues.cht3,chtValues.cht4);
 }
