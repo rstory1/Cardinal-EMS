@@ -11,6 +11,7 @@
 #define SENSORCONVERT_H
 
 #include <QtCore>
+#include <math.h>
 
 class SensorConvert : public QThread
 {
@@ -21,20 +22,25 @@ public:
 private:
     QString thermocoupleTypeCht;
     QString thermocoupleTypeEgt;
-    QString temperatureScale; // K, C, R, or F
+    QString temperatureScale;
+
+    quint16 kFactor;
 
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
+    void setTemperatureScale(QString scale); // K, C, R, or F
     void convertThermocouple(int resistance);
     void convertEgt(int volt1, int volt2, int volt3, int volt4);
     void convertCht(int volt1, int volt2, int volt3, int volt4);
 
-    void convertFuelFlow(quint16 pulses);
+    double convertFuelFlow(quint16 pulses);
 
-    void convertOilTemp(int voltage);
-    void convertOilPress(int voltage);
+    double convertOilTemp(int resistance);
+    double convertOilPress(int voltage);
 
-    void convertRpm(quint16 pulses);
+    double convertRpm(quint16 pulses);
+
+    quint16 convertTemperature(quint16 temp);
 
 signals:
     void updateEgt(quint16 egt1,quint16 egt2,quint16 egt3,quint16 egt4);
