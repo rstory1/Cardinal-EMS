@@ -30,7 +30,7 @@ circularGauge::circularGauge(QGraphicsItem *parent) : QGraphicsItem(parent)
   , spanAngle(0.0)
   , gaugeSettings("./gaugeSettings.ini", QSettings::IniFormat)
 {
-    warmup=true;
+    isWarmup=true;
 }
 
 circularGauge::~circularGauge()

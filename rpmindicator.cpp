@@ -30,7 +30,7 @@ RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
   , spanAngle(0.0)
   , gaugeSettings("./gaugeSettings.ini", QSettings::IniFormat)
 {
-    warmup=true;
+    isWarmup=true;
 }
 
 RpmIndicator::~RpmIndicator()
@@ -193,12 +193,16 @@ void RpmIndicator::setStartSpan(double start, double span)
 	spanAngle = span;
 }
 
-void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
+void RpmIndicator::setBorders(double minimum, double maximum, double whiteGreen, double greenRed,double yellowRed, double greenYellow, double redYellow, double yellowGreen)
 {
-    minValue = gaugeSettings.value("RPM/min",0).toInt();
-    maxValue = gaugeSettings.value("RPM/max",0).toInt();
-    whiteGreenBorder = 0;
-    greenRedBorder = 0;
+    minValue = minimum;
+    maxValue = maximum;
+    whiteGreenBorder = whiteGreen;
+    greenRedBorder = greenRed;
+    yellowRedBorder = yellowRed;
+    greenYellowBorder = greenYellow;
+    redYellowBorder = redYellow;
+    yellowGreenBorder = yellowGreen;
 }
 
 double RpmIndicator::calculateLocalValue(double value) const
