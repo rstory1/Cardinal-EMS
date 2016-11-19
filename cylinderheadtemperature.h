@@ -32,7 +32,7 @@ public:
 	void setBorders(double minimum, double maximum, double yellowBorder, double redBorder);
 	void addBetweenValue(double value);
 	void setValues(double val1, double val2, double val3, double val4);
-    const QList<double> &getCurrentValues() {return currentValues};
+    const QList<double> &getCurrentValues() {return currentValues;};
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue;

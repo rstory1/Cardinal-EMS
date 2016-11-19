@@ -62,7 +62,7 @@ protected:
 		emit hasBeenClicked();
 	}
 signals:
-	void hasBeenClicked();
+    void hasBeenClicked();
 };
 
 #endif // BARGRAPH_H

@@ -20,38 +20,39 @@ public:
     explicit SensorConvert(QObject *parent = 0);
 
 private:
+    QSettings settings;
     QString thermocoupleTypeCht;
     QString thermocoupleTypeEgt;
     QString temperatureScale;
 
     quint16 kFactor;
 
+    double rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat;
+
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
     void setTemperatureScale(QString scale); // K, C, R, or F
     void convertThermocouple(int resistance);
-    void convertEgt(int volt1, int volt2, int volt3, int volt4);
-    void convertCht(int volt1, int volt2, int volt3, int volt4);
 
-    double convertFuelFlow(quint16 pulses);
+    void convertEgt(double volt1, double volt2, double volt3, double volt4);
+    void convertCht(double volt1, double volt2, double volt3, double volt4);
 
-    double convertOilTemp(int resistance);
-    double convertOilPress(int voltage);
+    void convertIat(double sensorValue);
 
-    double convertRpm(quint16 pulses);
+    void convertOat(double sensorValue);
 
-    quint16 convertTemperature(quint16 temp);
+    void convertFuelFlow(double pulses);
+
+    void convertOilTemp(double resistance);
+    void convertOilPress(double voltage);
+
+    void convertRpm(double pulses);
+
+    double convertTemperature(double temp);
 
 signals:
-    void updateEgt(quint16 egt1,quint16 egt2,quint16 egt3,quint16 egt4);
-    void updateCht(quint16 cht1,quint16 cht2,quint16 cht3,quint16 cht4);
     void userMessage(QString,QString,bool);
-    void updateFuelData(double,double);
-    void updateOilData(double,double);
-    void updateRpm(double);
-    void updateOatIat(double,double);
-    void updateAmpsVoltage(double,double);
-    void statusMessage(QString,QColor);
+    void updateMonitor(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
 
 public slots:
     void processData(QString data);

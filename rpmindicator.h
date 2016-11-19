@@ -22,6 +22,7 @@
 #define RPMINDICATOR_H
 
 #include <QtWidgets>
+#include <QtCore>
 
 class RpmIndicator : public QGraphicsItem
 {
@@ -34,13 +35,18 @@ public:
 	void setBorders(double minimum, double maximum, double greenBorder, double redBorder);
 	void addBetweenValue(double value);
 	void setValue(double value);
-	double getValue() {return currentValue;};
+    double getValue() {return currentValue;};
+    bool isWarmup;
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;
-	double whiteGreenBorder, greenRedBorder;
+    double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
 	double startAngle, spanAngle;
 	QList<double> beetweenValues;
+    QSettings gaugeSettings;
+    void paintWarmup(QPainter parentPainter);
+    void paintNormal(QPainter parentPainter);
+
 };
 
 #endif // RPMINDICATOR_H

@@ -38,7 +38,8 @@ SOURCES += main.cpp\
     nmeaconnect.cpp \
     manifoldpressure.cpp \
     PortListener.cpp \
-    sensorconvert.cpp
+    sensorconvert.cpp \
+    circulargauge.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -50,7 +51,8 @@ HEADERS  += enginemonitor.h \
     nmeaconnect.h \
     manifoldpressure.h \
     PortListener.h \
-    sensorconvert.h
+    sensorconvert.h \
+    circulargauge.h
 
 RESOURCES += \
     res/res.qrc
