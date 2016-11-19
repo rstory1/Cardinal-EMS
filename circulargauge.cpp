@@ -18,9 +18,9 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include "rpmindicator.h"
+#include "circulargauge.h"
 
-RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
+circularGauge::circularGauge(QGraphicsItem *parent) : QGraphicsItem(parent)
   , minValue(0.0)
   , maxValue(0.0)
   , currentValue(0.0)
@@ -33,16 +33,16 @@ RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
     warmup=true;
 }
 
-RpmIndicator::~RpmIndicator()
+circularGauge::~circularGauge()
 {
 }
 
-QRectF RpmIndicator::boundingRect() const
+QRectF circularGauge::boundingRect() const
 {
 	return QRectF(-200.0, -140.0, 400.0, 280.0);
 }
 
-void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void circularGauge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
@@ -187,13 +187,13 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "RPM");
 }
 
-void RpmIndicator::setStartSpan(double start, double span)
+void circularGauge::setStartSpan(double start, double span)
 {
 	startAngle = start;
 	spanAngle = span;
 }
 
-void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
+void circularGauge::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
 {
     minValue = gaugeSettings.value("RPM/min",0).toInt();
     maxValue = gaugeSettings.value("RPM/max",0).toInt();
@@ -201,17 +201,17 @@ void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder
     greenRedBorder = 0;
 }
 
-double RpmIndicator::calculateLocalValue(double value) const
+double circularGauge::calculateLocalValue(double value) const
 {
 	return startAngle-((value-minValue)/(maxValue-minValue)*spanAngle);
 }
 
-void RpmIndicator::addBetweenValue(double value)
+void circularGauge::addBetweenValue(double value)
 {
 	beetweenValues.append(value);
 }
 
-void RpmIndicator::setValue(double value)
+void circularGauge::setValue(double value)
 {
 	currentValue = value;
 	update();
