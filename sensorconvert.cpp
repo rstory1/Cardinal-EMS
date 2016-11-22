@@ -18,7 +18,7 @@ void SensorConvert::convertOilTemp(double resistance)
     //  This equation produces a temperature in Celsius
     //  Rotax 912ULS
     if (resistance <= 322.8 && resistance >= 18.6) {
-        temp = 497.2 * pow(resistance, -0.1);
+        temp = 497.2 * pow(resistance, -0.397);
     }
     else {
         temp = -999;
