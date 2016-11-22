@@ -133,6 +133,5 @@ int main(int argc, char *argv[])
     PortListener listener(portName);        // signals get hooked up internally
     a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, SLOT(processData(QString)));
 
-
 	return a.exec();
 }

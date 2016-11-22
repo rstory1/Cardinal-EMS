@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     manifoldpressure.cpp \
     PortListener.cpp \
     sensorconvert.cpp \
-    circulargauge.cpp
+    circulargauge.cpp \
+    alarm.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -52,9 +53,12 @@ HEADERS  += enginemonitor.h \
     manifoldpressure.h \
     PortListener.h \
     sensorconvert.h \
-    circulargauge.h
+    circulargauge.h \
+    alarm.h
 
 RESOURCES += \
     res/res.qrc
+
+LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
 
 include(./qextserialport/qextserialport.pri)

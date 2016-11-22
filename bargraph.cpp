@@ -18,7 +18,7 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include "bargraph.h"f
+#include "bargraph.h"
 
 BarGraph::BarGraph(QGraphicsObject *parent)
 	: QGraphicsObject(parent)

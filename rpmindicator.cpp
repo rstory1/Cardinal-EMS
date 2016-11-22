@@ -169,10 +169,12 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     if(currentValue > yellowRedBorder || currentValue < redYellowBorder)
 	{
 		painter->setPen(Qt::red);
+        Alarm.soundAlarm(1,1,"RPM REDLINE","RPM");
 	}
 	else
 	{
 		painter->setPen(Qt::white);
+
 	}
 	//Round value to the nearest 10
 	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
