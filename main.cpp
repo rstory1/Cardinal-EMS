@@ -33,9 +33,9 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
 		switch (type)
 		{
-        case QtInfoMsg:
-            debugString.append("Info: ");
-            break;
+//        case QtInfoMsg:
+//            debugString.append("Info: ");
+//            break;
 		case QtDebugMsg:
 			debugString.append("Debug: ");
 			break;
@@ -125,13 +125,8 @@ int main(int argc, char *argv[])
 
     SensorConvert sensorConvert;
     a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
-    a.connect(&sensorConvert, SIGNAL(updateEgt(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setEgtValues(quint16,quint16,quint16,quint16)));
-    a.connect(&sensorConvert, SIGNAL(updateCht(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setChtValues(quint16,quint16,quint16,quint16)));
+    a.connect(&sensorConvert, SIGNAL(updateMonitor(quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setValuesBulkUpdate(quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16)));
     a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor, SLOT(setFuelData(double,double)));
-    a.connect(&sensorConvert, SIGNAL(updateOilData(double,double)), &engineMonitor, SLOT(setOilData(double,double)));
-    a.connect(&sensorConvert, SIGNAL(updateRpm(double)), &engineMonitor, SLOT(setRpm(double)));
-    a.connect(&sensorConvert, SIGNAL(updateOatIat(double,double)), &engineMonitor, SLOT(setOatIat(double,double)));
-    a.connect(&sensorConvert, SIGNAL(updateAmpsVoltage(double,double)), &engineMonitor, SLOT(setAmpsVoltage(double,double)));
     a.connect(&sensorConvert, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
 
     QString portName = QLatin1String("ttyACM0");              // update this to use your port of choice

@@ -52,14 +52,14 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     //Calculate angles for white and red arc part
 	double whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	double greenRedAngle = calculateLocalValue(greenRedBorder);
-    double redYellowAngleStart = calculateLocalValue(gaugeSettings.value("RPM/warmupRedLow",0).toInt());
-    double yellowGreenAngleStart = calculateLocalValue(gaugeSettings.value("RPM/warmupGreenLow",0).toInt());
-    double greenYellowAngleStart = calculateLocalValue(gaugeSettings.value("RPM/warmupGreenHigh",0).toInt());
-    double yellowRedAngleStart = calculateLocalValue(gaugeSettings.value("RPM/warmupRedHigh",0).toInt());
-    double redYellowAngle = calculateLocalValue(gaugeSettings.value("RPM/lowerRedLine",0).toInt());
-    double yellowGreenAngle = calculateLocalValue(gaugeSettings.value("RPM/normalLow",0).toInt());
-    double greenYellowAngle = calculateLocalValue(gaugeSettings.value("RPM/normalHigh",0).toInt());
-    double yellowRedAngle = calculateLocalValue(gaugeSettings.value("RPM/upperRedLine",0).toInt());
+    double redYellowAngleWarmup = calculateLocalValue(redYellowBorderWarmup);
+    double yellowGreenAngleWarmup = calculateLocalValue(yellowGreenBorderWarmup);
+    double greenYellowAngleWarmup = calculateLocalValue(greenYellowBorderWarmup);
+    double yellowRedAngleWarmup = calculateLocalValue(yellowRedBorderWarmup);
+    double redYellowAngle = calculateLocalValue(redYellowBorder);
+    double yellowGreenAngle = calculateLocalValue(yellowGreenBorder);
+    double greenYellowAngle = calculateLocalValue(greenYellowBorder);
+    double yellowRedAngle = calculateLocalValue(yellowRedBorder);
 
     //Draw the green basis
     painter->setPen(QPen(Qt::green, 0));
@@ -77,22 +77,22 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         //Draw the upper red part
         painter->setPen(QPen(Qt::red, 0));
         painter->setBrush(Qt::red);
-        painter->drawPie(circle, yellowRedAngleStart*16.0, -fabs(startAngle-spanAngle-yellowRedAngleStart)*16.0);
+        painter->drawPie(circle, yellowRedAngleWarmup*16.0, -fabs(startAngle-spanAngle-yellowRedAngleWarmup)*16.0);
 
         //Draw the lower yellow part
         painter->setPen(QPen(Qt::yellow, 0));
         painter->setBrush(Qt::yellow);
-        painter->drawPie(circle, redYellowAngleStart*16.0, -fabs(yellowGreenAngle-redYellowAngleStart)*16.0);
+        painter->drawPie(circle, redYellowAngleWarmup*16.0, -fabs(yellowGreenAngle-redYellowAngleWarmup)*16.0);
 
         //Draw the upper yellow part
         painter->setPen(QPen(Qt::yellow, 0));
         painter->setBrush(Qt::yellow);
-        painter->drawPie(circle, greenYellowAngleStart*16.0, -fabs(yellowRedAngleStart-greenYellowAngleStart)*16.0);
+        painter->drawPie(circle, greenYellowAngleWarmup*16.0, -fabs(yellowRedAngleWarmup-greenYellowAngleWarmup)*16.0);
 
         //Draw the lower red part
         painter->setPen(QPen(Qt::red, 0));
         painter->setBrush(Qt::red);
-        painter->drawPie(circle, startAngle*16.0, -fabs(redYellowAngleStart-startAngle)*16.0);
+        painter->drawPie(circle, startAngle*16.0, -fabs(redYellowAngleWarmup-startAngle)*16.0);
     } else {
         //Draw the upper red part
         painter->setPen(QPen(Qt::red, 0));
@@ -193,7 +193,7 @@ void RpmIndicator::setStartSpan(double start, double span)
 	spanAngle = span;
 }
 
-void RpmIndicator::setBorders(double minimum, double maximum, double whiteGreen, double greenRed,double yellowRed, double greenYellow, double redYellow, double yellowGreen)
+void RpmIndicator::setBorders(double minimum, double maximum, double whiteGreen, double greenRed, double yellowRed, double greenYellow, double redYellow, double yellowGreen, double yellowRedWarmup, double greenYellowWarmup, double redYellowWarmup, double yellowGreenWarmup)
 {
     minValue = minimum;
     maxValue = maximum;
@@ -203,6 +203,10 @@ void RpmIndicator::setBorders(double minimum, double maximum, double whiteGreen,
     greenYellowBorder = greenYellow;
     redYellowBorder = redYellow;
     yellowGreenBorder = yellowGreen;
+    yellowRedBorderWarmup = yellowRedWarmup;
+    greenYellowBorderWarmup = greenYellowWarmup;
+    redYellowBorderWarmup = redYellowWarmup;
+    yellowGreenBorderWarmup = yellowGreenWarmup;
 }
 
 double RpmIndicator::calculateLocalValue(double value) const

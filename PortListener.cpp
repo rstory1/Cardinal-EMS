@@ -37,7 +37,7 @@ void PortListener::onReadyRead()
         QString data = QString::fromLatin1(bytesReceived);
         bytesReceived.clear();
 
-        emit processData(data);
+        emit sendData(data);
     }
 }
 

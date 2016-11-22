@@ -18,7 +18,7 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include <QtSvg>
+//#include <QtSvg>
 
 #include "enginemonitor.h"
 
@@ -138,9 +138,9 @@ void EngineMonitor::setupRpmIndicator()
     yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
 	rpmIndicator.setPos(-255, -100);
 	rpmIndicator.setStartSpan(230.0, 240.0);
-    rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen);
-    int i;
-    for(i=0;(i<=maxValue);i=i+1000) {
+    rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
+
+    for(int i=0;(i<=maxValue);i=i+1000) {
         rpmIndicator.addBetweenValue(i);
     }
 	graphicsScene.addItem(&rpmIndicator);
@@ -319,11 +319,11 @@ void EngineMonitor::demoFunction()
 	qsrand(QDateTime::currentDateTime().toTime_t());
 	static double rpm = 0.0;
 	rpm += 5.0;
-	if(rpm > 2800.0)
-	{
-        saveSceneToSvg("./bin/maxRPM.svg");
-		rpm = 0.0;
-	}
+//	if(rpm > 2800.0)
+//	{
+//        saveSceneToSvg("./bin/maxRPM.svg");
+//		rpm = 0.0;
+//	}
 	rpmIndicator.setValue(rpm);
 
 	static double basicEGT = 0.0;
@@ -427,16 +427,16 @@ void EngineMonitor::demoFunction()
 
 void EngineMonitor::saveSceneToSvg(const QString fileName)
 {
-	QSvgGenerator generator;
-	generator.setFileName(fileName);
-	generator.setSize(QSize(800, 600));
-	generator.setViewBox(QRect(0, 0, 800, 600));
-	generator.setTitle(tr("SVG Generator Example Drawing"));
-	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
-	QPainter painter;
-	painter.begin(&generator);
-	graphicsScene.render(&painter);
-	painter.end();
+//	QSvgGenerator generator;
+//	generator.setFileName(fileName);
+//	generator.setSize(QSize(800, 600));
+//	generator.setViewBox(QRect(0, 0, 800, 600));
+//	generator.setTitle(tr("SVG Generator Example Drawing"));
+//	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
+//	QPainter painter;
+//	painter.begin(&generator);
+//	graphicsScene.render(&painter);
+//	painter.end();
 }
 
 void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat) {

@@ -19,7 +19,7 @@ private slots:
     void onDsrChanged(bool status);
 
 signals:
-    void processData(QString data);
+    void sendData(QString data);
 
 };
 

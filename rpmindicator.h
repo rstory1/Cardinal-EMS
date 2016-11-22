@@ -32,7 +32,7 @@ public:
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setStartSpan(double start, double span);
-    void setBorders(double minimum, double maximum, double whiteGreen, double greenRed,double yellowRed, double greenYellow, double redYellow, double yellowGreen);
+    void setBorders(double minimum, double maximum, double whiteGreen, double greenRed,double yellowRed, double greenYellow, double redYellow, double yellowGreen,double yellowRedWarmup, double greenYellowWarmup, double redYellowWarmup, double yellowGreenWarmup);
 	void addBetweenValue(double value);
 	void setValue(double value);
     double getValue() {return currentValue;};
@@ -41,6 +41,7 @@ private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;
     double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
+    double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
 	double startAngle, spanAngle;
 	QList<double> beetweenValues;
     QSettings gaugeSettings;
