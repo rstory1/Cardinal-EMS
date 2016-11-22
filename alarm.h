@@ -10,6 +10,7 @@ public:
     alarm();
     void soundAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
     void clearRpmAlarm();
+    static void buttonClicked();
 };
 
 #endif // ALARM_H
