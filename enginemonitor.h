@@ -47,6 +47,8 @@ private:
 	void setupManifoldPressure();
 	void setupLogFile();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
+    void handleAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
+    void cancelAlarm(QString alarmGauge);
 	QGraphicsScene graphicsScene;
 	RpmIndicator rpmIndicator;
 	ExhaustGasTemperature exhaustGasTemperature;
@@ -63,21 +65,19 @@ private:
 	FuelManagement fuelManagement;
 	ManifoldPressure manifoldPressure;
 	QFile *logFile;
-	QSettings settings;
+    QSettings settings;
+    QSettings gaugeSettings;
+    QString sensorInterfaceType;
+    int warmupTemp;
 private slots:
 	void demoFunction();
 	void writeLogFile();
 public slots:
-	void setDataMessage1(double fuelFlowValue, double fuelAbsoluteValue);
-	void setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue);
-    void setRpm(double revolutionPerMinute);
-	void setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4);
-	void setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
-	void showStatusMessage(QString text, QColor color);
-    void setOilTemp(double oilTemperatureValue);
-    void setEgtChtTemp(double cht1,double cht2,double cht3,double cht4,double egt1,double egt2,double egt3,double egt4);
+    void showStatusMessage(QString text, QColor color);
+    void setValuesBulkUpdate(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
+    void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
 };
 
 #endif // ENGINEMONITOR_H

@@ -36,9 +36,8 @@ void PortListener::onReadyRead()
         qDebug() << QString::fromLatin1(bytesReceived);
         QString data = QString::fromLatin1(bytesReceived);
         bytesReceived.clear();
-        emit updateOilTemp(data.section(',',9,9).toDouble());
-        emit updateEgtCht(data.section(',',1,1).toDouble(),data.section(',',2,2).toDouble(),data.section(',',3,3).toDouble(),data.section(',',4,4).toDouble(),data.section(',',5,5).toDouble(),data.section(',',6,6).toDouble(),data.section(',',7,7).toDouble(),data.section(',',8,8).toDouble());
-        emit updateRpm(data.section(',',0,0).toDouble());
+
+        emit sendData(data);
     }
 }
 
