@@ -20,7 +20,7 @@
 
 #include "rpmindicator.h"
 
-RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
+RpmIndicator::RpmIndicator(QGraphicsObject *parent) : QGraphicsObject(parent)
   , minValue(0.0)
   , maxValue(0.0)
   , currentValue(0.0)
@@ -33,9 +33,6 @@ RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
     isWarmup=true;
 }
 
-RpmIndicator::~RpmIndicator()
-{
-}
 
 QRectF RpmIndicator::boundingRect() const
 {
@@ -46,6 +43,9 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 {
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
+
+    painter->setPen(QPen(Qt::green, 0));
+    painter->drawRect(QRectF(-200.0, -140.0, 400.0, 280.0));
 
 	//Draw the arc
 	QRectF circle = QRectF(-130.0, -130.0, 260.0, 260.0);
@@ -166,16 +166,38 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	}
 
 	//If number is in red range, draw it red
-    if(currentValue > yellowRedBorder || currentValue < redYellowBorder)
-	{
-		painter->setPen(Qt::red);
-        Alarm.soundAlarm(1,1,"RPM REDLINE","RPM");
-	}
-	else
-	{
-		painter->setPen(Qt::white);
+    if ((currentValue > yellowRedBorder || currentValue < redYellowBorder) || (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+    {
+        if (isWarmup && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+        {
 
-	}
+            painter->setPen(Qt::red);
+            if (isAlarmed == false) {
+                emit sendAlarm("RPM", Qt::red, false);
+                isAlarmed = true;
+            }
+
+        } else if (isWarmup = false && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+        {
+
+            painter->setPen(Qt::red);
+            if (isAlarmed == false) {
+                emit sendAlarm("RPM", Qt::red, false);
+                isAlarmed = true;
+            }
+        }
+    }
+    else
+    {
+        painter->setPen(Qt::white);
+
+        if (isAlarmed == true) {
+            emit cancelAlarm("RPM");
+            isAlarmed = false;
+        }
+
+    }
+
 	//Round value to the nearest 10
 	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
 

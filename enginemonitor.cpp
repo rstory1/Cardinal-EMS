@@ -29,9 +29,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 {
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
-	graphicsScene.setBackgroundBrush(Qt::black);
+    graphicsScene.setBackgroundBrush(Qt::black);
 	setScene(&graphicsScene);
-	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
 
 	//Setting up the items to be displayed
 	setupRpmIndicator();
@@ -42,7 +43,8 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	setupTimeToDestinationItem();
 	setupFuelManagement();
 	setupManifoldPressure();
-	graphicsScene.update();
+    setupAlarm();
+    graphicsScene.update();
 	setupLogFile();
 
     //  Get the interface type, Arduino or RDAC
@@ -50,6 +52,30 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     // Get the temp for when the engine is warmed up
     warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
+
+    //  Connect signal for alarm from rpm indicator
+    connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from CHT
+//    connect(&cylinderHeadTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&cylinderHeadTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from EGT
+//    connect(&exhaustGasTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&exhaustGasTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from FF
+//    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from OILT
+//    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from OILP
+//    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
@@ -119,6 +145,12 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append("\r\n").toLatin1());
 	logFile->flush();
 	++sample;
+}
+
+void EngineMonitor::setupAlarm()
+{
+    alarmWindow.setPos(-600, -100);
+    graphicsScene.addItem(&alarmWindow);
 }
 
 void EngineMonitor::setupRpmIndicator()
@@ -275,15 +307,15 @@ void EngineMonitor::setupFuelManagement()
 
 void EngineMonitor::setupManifoldPressure()
 {
-	manifoldPressure.setPos(-585, -100);
-	manifoldPressure.setStartSpan(240.0, 240.0);
-	manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
-	manifoldPressure.addBetweenValue(10.0);
-	manifoldPressure.addBetweenValue(15.0);
-	manifoldPressure.addBetweenValue(20.0);
-	manifoldPressure.addBetweenValue(25.0);
-	manifoldPressure.addBetweenValue(30.0);
-	graphicsScene.addItem(&manifoldPressure);
+//	manifoldPressure.setPos(-585, -100);
+//	manifoldPressure.setStartSpan(240.0, 240.0);
+//	manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
+//	manifoldPressure.addBetweenValue(10.0);
+//	manifoldPressure.addBetweenValue(15.0);
+//	manifoldPressure.addBetweenValue(20.0);
+//	manifoldPressure.addBetweenValue(25.0);
+//	manifoldPressure.addBetweenValue(30.0);
+    //graphicsScene.addItem(&manifoldPressure);
 }
 
 void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
@@ -317,14 +349,14 @@ void EngineMonitor::showStatusMessage(QString text, QColor color)
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
-	static double rpm = 0.0;
+    static double rpm = 1300.0;
 	rpm += 5.0;
 //	if(rpm > 2800.0)
 //	{
 //        saveSceneToSvg("./bin/maxRPM.svg");
 //		rpm = 0.0;
 //	}
-	rpmIndicator.setValue(rpm);
+    rpmIndicator.setValue(rpm);
 
 	static double basicEGT = 0.0;
 	static bool egtUp = true;
@@ -423,6 +455,7 @@ void EngineMonitor::demoFunction()
 	}
 	outsideAirTemperature.setValue(airTemp);
 	insideAirTemperature.setValue(airTemp);
+
 }
 
 void EngineMonitor::saveSceneToSvg(const QString fileName)
@@ -457,3 +490,6 @@ void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quin
         rpmIndicator.isWarmup = false;
     }
 }
+
+
+

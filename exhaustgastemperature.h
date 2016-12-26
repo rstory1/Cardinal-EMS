@@ -23,10 +23,11 @@
 
 #include <QtWidgets>
 
-class ExhaustGasTemperature : public QGraphicsItem
+class ExhaustGasTemperature : public QGraphicsObject
 {
+    Q_OBJECT
 public:
-	explicit ExhaustGasTemperature(QGraphicsItem * parent = 0);
+    explicit ExhaustGasTemperature(QGraphicsObject * parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 	void setBorders(double minimum, double maximum, double yellowBorder, double redBorder);
@@ -46,6 +47,10 @@ private:
 	QList<quint8> peakOrder;
 	QList<double> currentValues;
 	QList<double> betweenValues;
+    bool isAlarmed = false;
+signals:
+    void sendAlarm(QString, QColor, bool);
+    void cancelAlarm(QString);
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{

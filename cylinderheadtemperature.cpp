@@ -20,7 +20,7 @@
 
 #include "cylinderheadtemperature.h"
 
-CylinderHeadTemperature::CylinderHeadTemperature(QGraphicsItem *parent) : QGraphicsItem(parent)
+CylinderHeadTemperature::CylinderHeadTemperature(QGraphicsObject *parent) : QGraphicsObject(parent)
   , minValue(0.0)
   , maxValue(0.0)
   , greenYellowValue(0.0)
@@ -84,16 +84,32 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		{
 			//If value is in warning area, bar is drawn red
 			painter->setBrush(Qt::red);
+
+            if (isAlarmed == false) {
+                //emit sendAlarm("CHT", Qt::red, false);
+                isAlarmed = true;
+            }
 		}
 		else if(currentValues.at(i) > greenYellowValue)
 		{
 			//If value is in caution area, bar is drawn yellow
 			painter->setBrush(Qt::yellow);
+
+//            if (isAlarmed == false) {
+//                emit sendAlarm("CHT", Qt::yellow, false);
+//                isAlarmed = true;
+//            }
 		}
 		else
 		{
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
+
+            if (isAlarmed) {
+                emit cancelAlarm("CHT");
+                isAlarmed = false;
+            }
+
 		}
 		if((currentValues.at(i) > minValue) &&
 				(currentValues.at(i) < maxValue))

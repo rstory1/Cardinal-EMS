@@ -45,7 +45,8 @@ public:
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
 	void setValue(double value);
-	double getValue() {return currentValue;};
+    double getValue() {return currentValue;};
+    QString gaugeName;
 public slots:
 	void makeVisible() {setVisible(true);};
 	void makeInvisible() {setVisible(false);};
@@ -56,6 +57,7 @@ private:
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
+    bool isAlarmed = false;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{
@@ -63,6 +65,8 @@ protected:
 	}
 signals:
     void hasBeenClicked();
+    void sendAlarm(QString, QColor, bool);
+    void cancelAlarm(QString);
 };
 
 #endif // BARGRAPH_H

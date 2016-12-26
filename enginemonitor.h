@@ -29,6 +29,7 @@
 #include "bargraph.h"
 #include "fuelmanagement.h"
 #include "manifoldpressure.h"
+#include "alarmBox.h"
 
 class EngineMonitor : public QGraphicsView
 {
@@ -37,6 +38,7 @@ public:
 	EngineMonitor(QWidget *parent = 0);
 	~EngineMonitor();
 private:
+    void setupAlarm();
 	void setupRpmIndicator();
 	void setupBarGraphs();
 	void setupExhaustGasTemperature();
@@ -68,7 +70,9 @@ private:
     QSettings settings;
     QSettings gaugeSettings;
     QString sensorInterfaceType;
+    AlarmBox alarmWindow;
     int warmupTemp;
+
 private slots:
 	void demoFunction();
 	void writeLogFile();
@@ -78,6 +82,7 @@ public slots:
     void showStatusMessage(QString text, QColor color);
     void setValuesBulkUpdate(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
+
 };
 
 #endif // ENGINEMONITOR_H

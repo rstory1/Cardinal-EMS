@@ -40,7 +40,7 @@ SOURCES += main.cpp\
     PortListener.cpp \
     sensorconvert.cpp \
     circulargauge.cpp \
-    alarm.cpp
+    alarmBox.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -54,7 +54,7 @@ HEADERS  += enginemonitor.h \
     PortListener.h \
     sensorconvert.h \
     circulargauge.h \
-    alarm.h
+    alarmBox.h
 
 RESOURCES += \
     res/res.qrc

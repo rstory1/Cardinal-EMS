@@ -23,13 +23,15 @@
 
 #include <QtWidgets>
 #include <QtCore>
-#include <alarm.h>
+#include <alarmBox.h>
 
-class RpmIndicator : public QGraphicsItem
+class RpmIndicator : public QGraphicsObject
 {
+    Q_OBJECT
+
 public:
-    RpmIndicator(QGraphicsItem * parent = 0);
-	~RpmIndicator();
+    explicit RpmIndicator(QGraphicsObject* parent = 0);
+    //~RpmIndicator();
     QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setStartSpan(double start, double span);
@@ -38,6 +40,7 @@ public:
 	void setValue(double value);
     double getValue() {return currentValue;};
     bool isWarmup;
+    bool isAlarmed = false;
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;
@@ -48,7 +51,10 @@ private:
     QSettings gaugeSettings;
     void paintWarmup(QPainter parentPainter);
     void paintNormal(QPainter parentPainter);
-    alarm Alarm;
+
+signals:
+    void sendAlarm(QString, QColor, bool);
+    void cancelAlarm(QString);
 
 };
 
