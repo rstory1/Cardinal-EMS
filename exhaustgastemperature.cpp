@@ -20,7 +20,7 @@
 
 #include "exhaustgastemperature.h"
 
-ExhaustGasTemperature::ExhaustGasTemperature(QGraphicsItem *parent) : QGraphicsItem(parent)
+ExhaustGasTemperature::ExhaustGasTemperature(QGraphicsObject *parent) : QGraphicsObject(parent)
   , minValue(0.0)
   , maxValue(0.0)
   , greenYellowValue(0.0)
@@ -101,16 +101,32 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		{
 			//If value is in warning area, bar is drawn red
 			painter->setBrush(Qt::red);
+
+            if (isAlarmed == false) {
+                //emit sendAlarm("EGT", Qt::red, false);
+                isAlarmed = true;
+            }
 		}
 		else if(currentValues.at(i) > greenYellowValue)
 		{
 			//If value is in caution area, bar is drawn yellow
 			painter->setBrush(Qt::yellow);
+
+//            if (isAlarmed == false) {
+//                emit sendAlarm("EGT", Qt::yellow, false);
+//                isAlarmed = true;
+//            }
 		}
 		else
 		{
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
+
+            if (isAlarmed) {
+                emit cancelAlarm("EGT");
+                isAlarmed = false;
+            }
+
 		}
 		if(leanAssistActive)
 		{

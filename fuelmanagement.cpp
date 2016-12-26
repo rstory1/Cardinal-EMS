@@ -32,11 +32,11 @@ FuelManagement::FuelManagement(QGraphicsObject *parent)
 	, fuelFlowRect(0, 82, 210, 36)
 	, fuelingRect(0, 122, 100, 36)
 	, homeRect(110, 122, 100, 36)
-	, addLitersTextRect(0, 42, 50, 36)
-	, add50LitersRect(54, 42, 36, 36)
-	, add10LitersRect(94, 42, 36, 36)
-	, add5LitersRect(134, 42, 36, 36)
-	, add1LitersRect(174, 42, 36, 36)
+    , addUnitsTextRect(0, 42, 50, 36)
+    , add50UnitsRect(54, 42, 36, 36)
+    , add10UnitsRect(94, 42, 36, 36)
+    , add5UnitsRect(134, 42, 36, 36)
+    , add1UnitsRect(174, 42, 36, 36)
 	, clearRect(0, 82, 100, 36)
 	, fuelTopRect(110, 82, 100, 36)
 {
@@ -104,10 +104,10 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->restore();
 		painter->drawRoundedRect(homeRect, 5, 5);
 
-		painter->drawRoundedRect(add50LitersRect, 5, 5);
-		painter->drawRoundedRect(add10LitersRect, 5, 5);
-		painter->drawRoundedRect(add5LitersRect, 5, 5);
-		painter->drawRoundedRect(add1LitersRect, 5, 5);
+        painter->drawRoundedRect(add50UnitsRect, 5, 5);
+        painter->drawRoundedRect(add10UnitsRect, 5, 5);
+        painter->drawRoundedRect(add5UnitsRect, 5, 5);
+        painter->drawRoundedRect(add1UnitsRect, 5, 5);
 
 		painter->drawRoundedRect(clearRect, 5, 5);
 		painter->drawRoundedRect(fuelTopRect, 5, 5);
@@ -115,11 +115,11 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->setPen(Qt::white);
 		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel:");
 		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(" l "));
-		painter->drawText(addLitersTextRect, Qt::AlignVCenter| Qt::AlignLeft, " Add Fuel\n in liters");
-		painter->drawText(add50LitersRect, Qt::AlignCenter, "+50");
-		painter->drawText(add10LitersRect, Qt::AlignCenter, "+10");
-		painter->drawText(add5LitersRect, Qt::AlignCenter, "+5");
-		painter->drawText(add1LitersRect, Qt::AlignCenter, "+1");
+        painter->drawText(addUnitsTextRect, Qt::AlignVCenter| Qt::AlignLeft, " Add Fuel\n in liters");
+        painter->drawText(add50UnitsRect, Qt::AlignCenter, "+50");
+        painter->drawText(add10UnitsRect, Qt::AlignCenter, "+10");
+        painter->drawText(add5UnitsRect, Qt::AlignCenter, "+5");
+        painter->drawText(add1UnitsRect, Qt::AlignCenter, "+1");
 
 		painter->drawText(clearRect, Qt::AlignCenter, "CLEAR");
 		painter->drawText(fuelTopRect, Qt::AlignCenter, "FUEL TOP");
@@ -154,19 +154,19 @@ void FuelManagement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 		{
 			qApp->quit();
 		}
-		if(add50LitersRect.contains(event->pos()))
+        if(add50UnitsRect.contains(event->pos()))
 		{
 			fuelAmount += 50.0;
 		}
-		else if(add10LitersRect.contains(event->pos()))
+        else if(add10UnitsRect.contains(event->pos()))
 		{
 			fuelAmount += 10.0;
 		}
-		else if(add5LitersRect.contains(event->pos()))
+        else if(add5UnitsRect.contains(event->pos()))
 		{
 			fuelAmount += 5.0;
 		}
-		else if(add1LitersRect.contains(event->pos()))
+        else if(add1UnitsRect.contains(event->pos()))
 		{
 			fuelAmount += 1.0;
 		}

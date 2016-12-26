@@ -23,22 +23,27 @@
 
 #include <QtWidgets>
 
-class CylinderHeadTemperature : public QGraphicsItem
+class CylinderHeadTemperature : public QGraphicsObject
 {
+    Q_OBJECT
 public:
-	explicit CylinderHeadTemperature(QGraphicsItem * parent = 0);
+    explicit CylinderHeadTemperature(QGraphicsObject * parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 	void setBorders(double minimum, double maximum, double yellowBorder, double redBorder);
 	void addBetweenValue(double value);
 	void setValues(double val1, double val2, double val3, double val4);
-	const QList<double> &getCurrentValues() {return currentValues;};
+    const QList<double> &getCurrentValues() {return currentValues;};
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue;
 	double greenYellowValue, yellowRedValue;
 	QList<double> currentValues;
 	QList<double> betweenValues;
+    bool isAlarmed = false;
+signals:
+    void sendAlarm(QString, QColor, bool);
+    void cancelAlarm(QString);
 };
 
 #endif // CYLINDERHEADTEMPERATURE_H

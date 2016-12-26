@@ -22,25 +22,40 @@
 #define RPMINDICATOR_H
 
 #include <QtWidgets>
+#include <QtCore>
+#include <alarmBox.h>
 
-class RpmIndicator : public QGraphicsItem
+class RpmIndicator : public QGraphicsObject
 {
+    Q_OBJECT
+
 public:
-	RpmIndicator(QGraphicsItem * parent = 0);
-	~RpmIndicator();
-	QRectF boundingRect() const;
+    explicit RpmIndicator(QGraphicsObject* parent = 0);
+    //~RpmIndicator();
+    QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setStartSpan(double start, double span);
-	void setBorders(double minimum, double maximum, double greenBorder, double redBorder);
+    void setBorders(double minimum, double maximum, double whiteGreen, double greenRed,double yellowRed, double greenYellow, double redYellow, double yellowGreen,double yellowRedWarmup, double greenYellowWarmup, double redYellowWarmup, double yellowGreenWarmup);
 	void addBetweenValue(double value);
 	void setValue(double value);
-	double getValue() {return currentValue;};
+    double getValue() {return currentValue;};
+    bool isWarmup;
+    bool isAlarmed = false;
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;
-	double whiteGreenBorder, greenRedBorder;
+    double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
+    double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
 	double startAngle, spanAngle;
 	QList<double> beetweenValues;
+    QSettings gaugeSettings;
+    void paintWarmup(QPainter parentPainter);
+    void paintNormal(QPainter parentPainter);
+
+signals:
+    void sendAlarm(QString, QColor, bool);
+    void cancelAlarm(QString);
+
 };
 
 #endif // RPMINDICATOR_H

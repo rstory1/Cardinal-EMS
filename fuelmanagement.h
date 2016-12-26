@@ -69,11 +69,11 @@ private:
 	QRectF fuelFlowRect;
 	QRectF fuelingRect;
 	QRectF homeRect;
-	QRectF addLitersTextRect;
-	QRectF add50LitersRect;
-	QRectF add10LitersRect;
-	QRectF add5LitersRect;
-	QRectF add1LitersRect;
+    QRectF addUnitsTextRect;
+    QRectF add50UnitsRect;
+    QRectF add10UnitsRect;
+    QRectF add5UnitsRect;
+    QRectF add1UnitsRect;
 	QRectF clearRect;
 	QRectF fuelTopRect;
 };

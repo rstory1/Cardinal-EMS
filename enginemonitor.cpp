@@ -18,31 +18,64 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include <QtSvg>
+//#include <QtSvg>
 
 #include "enginemonitor.h"
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
   , settings("./settings.ini", QSettings::IniFormat, parent)
+  , gaugeSettings("./gaugeSettings.ini", QSettings::IniFormat, parent)
 {
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
-	graphicsScene.setBackgroundBrush(Qt::black);
+    graphicsScene.setBackgroundBrush(Qt::black);
 	setScene(&graphicsScene);
-	setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
 
 	//Setting up the items to be displayed
 	setupRpmIndicator();
 	setupExhaustGasTemperature();
 	setupCylinderHeadTemperature();
 	setupBarGraphs();
-	setupStatusItem();
+    setupStatusItem();
 	setupTimeToDestinationItem();
 	setupFuelManagement();
 	setupManifoldPressure();
-	graphicsScene.update();
+    setupAlarm();
+    graphicsScene.update();
 	setupLogFile();
+
+    //  Get the interface type, Arduino or RDAC
+    sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
+
+    // Get the temp for when the engine is warmed up
+    warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
+
+    //  Connect signal for alarm from rpm indicator
+    connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from CHT
+//    connect(&cylinderHeadTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&cylinderHeadTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from EGT
+//    connect(&exhaustGasTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&exhaustGasTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from FF
+//    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from OILT
+//    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+//    //  Connect signal for alarm from OILP
+//    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+//    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
@@ -80,7 +113,7 @@ void EngineMonitor::setupLogFile()
 	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
 	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
 	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
-	logFile->write("All temperatures in degree Celsius; oil pressure in psi; fuel flow in liters per hour.\r\n");
+    logFile->write(QString("All temperatures in degree %1; oil pressure in %2; fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
 	logFile->write("[data]\r\n");
 	logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;MARK\r\n");
 }
@@ -114,21 +147,34 @@ void EngineMonitor::writeLogFile()
 	++sample;
 }
 
+void EngineMonitor::setupAlarm()
+{
+    alarmWindow.setPos(-600, -100);
+    graphicsScene.addItem(&alarmWindow);
+}
+
 void EngineMonitor::setupRpmIndicator()
 {
+    double minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup;
+    minValue = gaugeSettings.value("RPM/min",0).toInt();
+    maxValue = gaugeSettings.value("RPM/max",0).toInt();
+    whiteGreen = gaugeSettings.value("RPM/whiteGreen",0).toInt();
+    greenRed = gaugeSettings.value("RPM/greenRed",0).toInt();
+    yellowRed = gaugeSettings.value("RPM/upperRedLine",0).toInt();
+    greenYellow = gaugeSettings.value("RPM/normalHigh",0).toInt();
+    redYellow = gaugeSettings.value("RPM/lowerRedLine",0).toInt();
+    yellowGreen = gaugeSettings.value("RPM/normalLow",0).toInt();
+    yellowRedWarmup = gaugeSettings.value("RPM/warmupRedHigh",0).toInt();
+    greenYellowWarmup = gaugeSettings.value("RPM/warmupGreenHigh",0).toInt();
+    redYellowWarmup = gaugeSettings.value("RPM/warmupRedLow",0).toInt();
+    yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
 	rpmIndicator.setPos(-255, -100);
 	rpmIndicator.setStartSpan(230.0, 240.0);
-	rpmIndicator.setBorders(0.0, 2800.0, 300.0, 2550.0);
-	rpmIndicator.addBetweenValue(0.0);
-	rpmIndicator.addBetweenValue(300.0);
-	rpmIndicator.addBetweenValue(600.0);
-	rpmIndicator.addBetweenValue(900.0);
-	rpmIndicator.addBetweenValue(1200.0);
-	rpmIndicator.addBetweenValue(1500.0);
-	rpmIndicator.addBetweenValue(1800.0);
-	rpmIndicator.addBetweenValue(2100.0);
-	rpmIndicator.addBetweenValue(2400.0);
-	rpmIndicator.addBetweenValue(2700.0);
+    rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
+
+    for(int i=0;(i<=maxValue);i=i+1000) {
+        rpmIndicator.addBetweenValue(i);
+    }
 	graphicsScene.addItem(&rpmIndicator);
 }
 
@@ -261,48 +307,22 @@ void EngineMonitor::setupFuelManagement()
 
 void EngineMonitor::setupManifoldPressure()
 {
-	manifoldPressure.setPos(-585, -100);
-	manifoldPressure.setStartSpan(240.0, 240.0);
-	manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
-	manifoldPressure.addBetweenValue(10.0);
-	manifoldPressure.addBetweenValue(15.0);
-	manifoldPressure.addBetweenValue(20.0);
-	manifoldPressure.addBetweenValue(25.0);
-	manifoldPressure.addBetweenValue(30.0);
-	graphicsScene.addItem(&manifoldPressure);
+//	manifoldPressure.setPos(-585, -100);
+//	manifoldPressure.setStartSpan(240.0, 240.0);
+//	manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
+//	manifoldPressure.addBetweenValue(10.0);
+//	manifoldPressure.addBetweenValue(15.0);
+//	manifoldPressure.addBetweenValue(20.0);
+//	manifoldPressure.addBetweenValue(25.0);
+//	manifoldPressure.addBetweenValue(30.0);
+    //graphicsScene.addItem(&manifoldPressure);
 }
 
-void EngineMonitor::setDataMessage1(double fuelFlowValue, double fuelAbsoluteValue)
+void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
 	fuelManagement.setFuelFlow(fuelFlowValue);
 	fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
-}
-
-void EngineMonitor::setDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressureValue)
-{
-	insideAirTemperature.setValue(insideAirTemperatureValue);
-	outsideAirTemperature.setValue(outsideAirTemperatureValue);
-	ampereMeter.setValue(ampereValue);
-	oilTemperature.setValue(oilTemperatureValue);
-	oilPressure.setValue(oilPressureValue);
-	voltMeter.setValue(voltageValue);
-	manifoldPressure.setValue(manifoldPressureValue);
-}
-
-void EngineMonitor::setRpm(double revolutionPerMinute)
-{
-	rpmIndicator.setValue(revolutionPerMinute);
-}
-
-void EngineMonitor::setDataMessage4egt(quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4)
-{
-	exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
-}
-
-void EngineMonitor::setDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4)
-{
-	cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
 }
 
 void EngineMonitor::setTimeToDestination(double time)
@@ -329,14 +349,14 @@ void EngineMonitor::showStatusMessage(QString text, QColor color)
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
-	static double rpm = 0.0;
+    static double rpm = 1300.0;
 	rpm += 5.0;
-	if(rpm > 2800.0)
-	{
-		saveSceneToSvg("./out/maxRPM.svg");
-		rpm = 0.0;
-	}
-	rpmIndicator.setValue(rpm);
+//	if(rpm > 2800.0)
+//	{
+//        saveSceneToSvg("./bin/maxRPM.svg");
+//		rpm = 0.0;
+//	}
+    rpmIndicator.setValue(rpm);
 
 	static double basicEGT = 0.0;
 	static bool egtUp = true;
@@ -435,27 +455,41 @@ void EngineMonitor::demoFunction()
 	}
 	outsideAirTemperature.setValue(airTemp);
 	insideAirTemperature.setValue(airTemp);
+
 }
 
 void EngineMonitor::saveSceneToSvg(const QString fileName)
 {
-	QSvgGenerator generator;
-	generator.setFileName(fileName);
-	generator.setSize(QSize(800, 600));
-	generator.setViewBox(QRect(0, 0, 800, 600));
-	generator.setTitle(tr("SVG Generator Example Drawing"));
-	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
-	QPainter painter;
-	painter.begin(&generator);
-	graphicsScene.render(&painter);
-	painter.end();
+//	QSvgGenerator generator;
+//	generator.setFileName(fileName);
+//	generator.setSize(QSize(800, 600));
+//	generator.setViewBox(QRect(0, 0, 800, 600));
+//	generator.setTitle(tr("SVG Generator Example Drawing"));
+//	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
+//	QPainter painter;
+//	painter.begin(&generator);
+//	graphicsScene.render(&painter);
+//	painter.end();
 }
 
-void EngineMonitor::setOilTemp(double oilTemperatureValue) {
-    oilTemperature.setValue(oilTemperatureValue);
+void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat) {
+    rpmIndicator.setValue(rpm);
+    fuelManagement.setFuelFlow(fuelFlowValue);
+    oilTemperature.setValue(oilTemp);
+    oilPressure.setValue(oilPress);
+    ampereMeter.setValue(amps);
+    voltMeter.setValue(volts);
+    exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
+    cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
+    outsideAirTemperature.setValue(oat);
+    insideAirTemperature.setValue(iat);
+
+    if (oilTemp < warmupTemp) {
+        rpmIndicator.isWarmup = true;
+    } else {
+        rpmIndicator.isWarmup = false;
+    }
 }
 
-void EngineMonitor::setEgtChtTemp(double cht1, double cht2, double cht3, double cht4, double egt1, double egt2, double egt3, double egt4) {
-    exhaustGasTemperature.setValues(egt1,egt2,egt3,egt4);
-    cylinderHeadTemperature.setValues(cht1,cht2,cht3,cht4);
-}
+
+

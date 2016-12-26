@@ -20,7 +20,7 @@
 
 #include "rpmindicator.h"
 
-RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
+RpmIndicator::RpmIndicator(QGraphicsObject *parent) : QGraphicsObject(parent)
   , minValue(0.0)
   , maxValue(0.0)
   , currentValue(0.0)
@@ -28,12 +28,11 @@ RpmIndicator::RpmIndicator(QGraphicsItem *parent) : QGraphicsItem(parent)
   , greenRedBorder(0.0)
   , startAngle(0.0)
   , spanAngle(0.0)
+  , gaugeSettings("./gaugeSettings.ini", QSettings::IniFormat)
 {
+    isWarmup=true;
 }
 
-RpmIndicator::~RpmIndicator()
-{
-}
 
 QRectF RpmIndicator::boundingRect() const
 {
@@ -45,23 +44,83 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
+    painter->setPen(QPen(Qt::green, 0));
+    painter->drawRect(QRectF(-200.0, -140.0, 400.0, 280.0));
+
 	//Draw the arc
 	QRectF circle = QRectF(-130.0, -130.0, 260.0, 260.0);
-	//Calculate angles for white and red arc part
+    //Calculate angles for white and red arc part
 	double whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	double greenRedAngle = calculateLocalValue(greenRedBorder);
-	//Draw the green basis
-	painter->setPen(QPen(Qt::green, 0));
-	painter->setBrush(Qt::green);
-	painter->drawPie(circle, startAngle*16.0, -spanAngle*16.0);
-	//Draw the green part
-	painter->setPen(QPen(Qt::white, 0));
-	painter->setBrush(Qt::white);
-	painter->drawPie(circle, startAngle*16.0, -fabs(whiteGreenAngle-startAngle)*16.0);
-	//Draw the red part
-	painter->setPen(QPen(Qt::red, 0));
-	painter->setBrush(Qt::red);
-	painter->drawPie(circle, greenRedAngle*16.0, -fabs(startAngle-spanAngle-greenRedAngle)*16.0);
+    double redYellowAngleWarmup = calculateLocalValue(redYellowBorderWarmup);
+    double yellowGreenAngleWarmup = calculateLocalValue(yellowGreenBorderWarmup);
+    double greenYellowAngleWarmup = calculateLocalValue(greenYellowBorderWarmup);
+    double yellowRedAngleWarmup = calculateLocalValue(yellowRedBorderWarmup);
+    double redYellowAngle = calculateLocalValue(redYellowBorder);
+    double yellowGreenAngle = calculateLocalValue(yellowGreenBorder);
+    double greenYellowAngle = calculateLocalValue(greenYellowBorder);
+    double yellowRedAngle = calculateLocalValue(yellowRedBorder);
+
+    //Draw the green basis
+    painter->setPen(QPen(Qt::green, 0));
+    painter->setBrush(Qt::green);
+    painter->drawPie(circle, startAngle*16.0, -spanAngle*16.0);
+    if (whiteGreenAngle != 0)
+    {
+        //Draw the white part
+        painter->setPen(QPen(Qt::white, 0));
+        painter->setBrush(Qt::white);
+        painter->drawPie(circle, startAngle*16.0, -fabs(whiteGreenAngle-startAngle)*16.0);
+    }
+
+    if (isWarmup) {
+        //Draw the upper red part
+        painter->setPen(QPen(Qt::red, 0));
+        painter->setBrush(Qt::red);
+        painter->drawPie(circle, yellowRedAngleWarmup*16.0, -fabs(startAngle-spanAngle-yellowRedAngleWarmup)*16.0);
+
+        //Draw the lower yellow part
+        painter->setPen(QPen(Qt::yellow, 0));
+        painter->setBrush(Qt::yellow);
+        painter->drawPie(circle, redYellowAngleWarmup*16.0, -fabs(yellowGreenAngle-redYellowAngleWarmup)*16.0);
+
+        //Draw the upper yellow part
+        painter->setPen(QPen(Qt::yellow, 0));
+        painter->setBrush(Qt::yellow);
+        painter->drawPie(circle, greenYellowAngleWarmup*16.0, -fabs(yellowRedAngleWarmup-greenYellowAngleWarmup)*16.0);
+
+        //Draw the lower red part
+        painter->setPen(QPen(Qt::red, 0));
+        painter->setBrush(Qt::red);
+        painter->drawPie(circle, startAngle*16.0, -fabs(redYellowAngleWarmup-startAngle)*16.0);
+    } else {
+        //Draw the upper red part
+        painter->setPen(QPen(Qt::red, 0));
+        painter->setBrush(Qt::red);
+        painter->drawPie(circle, yellowRedAngle*16.0, -fabs(startAngle-spanAngle-yellowRedAngle)*16.0);
+
+        //Draw the lower yellow part
+        painter->setPen(QPen(Qt::yellow, 0));
+        painter->setBrush(Qt::yellow);
+        painter->drawPie(circle, redYellowAngle*16.0, -fabs(yellowGreenAngle-redYellowAngle)*16.0);
+
+        //Draw the upper yellow part
+        painter->setPen(QPen(Qt::yellow, 0));
+        painter->setBrush(Qt::yellow);
+        painter->drawPie(circle, greenYellowAngle*16.0, -fabs(yellowRedAngle-greenYellowAngle)*16.0);
+
+        //Draw the lower red part
+        painter->setPen(QPen(Qt::red, 0));
+        painter->setBrush(Qt::red);
+        painter->drawPie(circle, startAngle*16.0, -fabs(redYellowAngle-startAngle)*16.0);
+    }
+
+
+//    //Draw the upper red part
+//    painter->setPen(QPen(Qt::red, 0));
+//    painter->setBrush(Qt::red);
+//    painter->drawPie(circle, greenRedAngle*16.0, -fabs(startAngle-spanAngle-greenRedAngle)*16.0);
+
 	//Overlay the center with a black circle
 	painter->setPen(QPen(Qt::black, 0));
 	painter->setBrush(Qt::black);
@@ -107,14 +166,38 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	}
 
 	//If number is in red range, draw it red
-	if(currentValue > greenRedBorder)
-	{
-		painter->setPen(Qt::red);
-	}
-	else
-	{
-		painter->setPen(Qt::white);
-	}
+    if ((currentValue > yellowRedBorder || currentValue < redYellowBorder) || (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+    {
+        if (isWarmup && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+        {
+
+            painter->setPen(Qt::red);
+            if (isAlarmed == false) {
+                emit sendAlarm("RPM", Qt::red, false);
+                isAlarmed = true;
+            }
+
+        } else if (isWarmup = false && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+        {
+
+            painter->setPen(Qt::red);
+            if (isAlarmed == false) {
+                emit sendAlarm("RPM", Qt::red, false);
+                isAlarmed = true;
+            }
+        }
+    }
+    else
+    {
+        painter->setPen(Qt::white);
+
+        if (isAlarmed == true) {
+            emit cancelAlarm("RPM");
+            isAlarmed = false;
+        }
+
+    }
+
 	//Round value to the nearest 10
 	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
 
@@ -134,12 +217,20 @@ void RpmIndicator::setStartSpan(double start, double span)
 	spanAngle = span;
 }
 
-void RpmIndicator::setBorders(double minimum, double maximum, double greenBorder, double redBorder)
+void RpmIndicator::setBorders(double minimum, double maximum, double whiteGreen, double greenRed, double yellowRed, double greenYellow, double redYellow, double yellowGreen, double yellowRedWarmup, double greenYellowWarmup, double redYellowWarmup, double yellowGreenWarmup)
 {
-	minValue = minimum;
-	maxValue = maximum;
-	whiteGreenBorder = greenBorder;
-	greenRedBorder = redBorder;
+    minValue = minimum;
+    maxValue = maximum;
+    whiteGreenBorder = whiteGreen;
+    greenRedBorder = greenRed;
+    yellowRedBorder = yellowRed;
+    greenYellowBorder = greenYellow;
+    redYellowBorder = redYellow;
+    yellowGreenBorder = yellowGreen;
+    yellowRedBorderWarmup = yellowRedWarmup;
+    greenYellowBorderWarmup = greenYellowWarmup;
+    redYellowBorderWarmup = redYellowWarmup;
+    yellowGreenBorderWarmup = yellowGreenWarmup;
 }
 
 double RpmIndicator::calculateLocalValue(double value) const
