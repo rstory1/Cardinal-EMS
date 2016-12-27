@@ -85,32 +85,20 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 			//If value is in warning area, bar is drawn red
 			painter->setBrush(Qt::red);
 
-            if (isAlarmed == false) {
-                //emit sendAlarm("CHT", Qt::red, false);
-                isAlarmed = true;
-            }
 		}
 		else if(currentValues.at(i) > greenYellowValue)
 		{
 			//If value is in caution area, bar is drawn yellow
 			painter->setBrush(Qt::yellow);
 
-//            if (isAlarmed == false) {
-//                emit sendAlarm("CHT", Qt::yellow, false);
-//                isAlarmed = true;
-//            }
 		}
 		else
 		{
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
 
-            if (isAlarmed) {
-                emit cancelAlarm("CHT");
-                isAlarmed = false;
-            }
-
 		}
+
 		if((currentValues.at(i) > minValue) &&
 				(currentValues.at(i) < maxValue))
 		{
@@ -125,22 +113,56 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 			painter->drawLine(barRect.left(), 60, barRect.right(), -120);
 			painter->drawLine(barRect.left(), -120, barRect.right(), 60);
 		}
+
 		if(painter->brush().color() == Qt::green)
 		{
 			//If value is in normal range, draw text in white
 			painter->setPen(Qt::white);
 		}
+
 		//Define text position and move to current column
-		QRectF textRect(-30, -20, 60, 40);
+        QRectF textRect(-30, -20, 30, 20);
 		textRect.moveCenter(QPointF(i*40-105, -135));
+
 		if(i%2)
 		{
 			//All odd values should be raised
 			textRect.translate(QPointF(0.0, -20.0));
 		}
-		//Draw the readout
-		painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+
+        //
+        if (isAlarmedRed == true) {
+            if (flashState) {
+                painter->setPen(Qt::red);
+                painter->setBrush(Qt::red);
+                painter->drawRect(textRect);
+                painter->setPen(Qt::white);
+                painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+
+            } else {
+                painter->setPen(Qt::red);
+                painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+            }
+
+        } else if (isAlarmedYellow) {
+            if (flashState) {
+                painter->setPen(Qt::yellow);
+                painter->setBrush(Qt::yellow);
+                painter->drawRect(textRect);
+                painter->setPen(Qt::black);
+                painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+
+            } else {
+                painter->setPen(Qt::yellow);
+                painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+            }
+        } else {
+            //Draw the readout
+            painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+        }
+
 	}
+    update();
 }
 
 double CylinderHeadTemperature::calculateLocalValue(double value) const
@@ -155,11 +177,52 @@ void CylinderHeadTemperature::addBetweenValue(double value)
 
 void CylinderHeadTemperature::setValues(double val1, double val2, double val3, double val4)
 {
+
 	currentValues.replace(0, val1);
 	currentValues.replace(1, val2);
 	currentValues.replace(2, val3);
 	currentValues.replace(3, val4);
-	update();
+
+    if ((((yellowRedValue > val1) && (val1 >= greenYellowValue))
+         || ((yellowRedValue > val2) && (val2 >= greenYellowValue))
+         || ((yellowRedValue > val3) && (val3 >= greenYellowValue))
+         || ((yellowRedValue > val4) && (val4 >= greenYellowValue)))
+            && (isAlarmedYellow == false && isAlarmedRed == false))
+    {
+        emit sendAlarm("CHT", Qt::yellow, true);
+        isAlarmedYellow = true;
+    }
+    else if ((val1 >= yellowRedValue || val2 >= yellowRedValue || val3 >= yellowRedValue || val4 >= yellowRedValue) && (isAlarmedRed == false))
+    {
+        if (isAlarmedYellow)
+        {
+            emit cancelAlarm("CHT");
+            isAlarmedYellow = false;
+
+            emit sendAlarm("CHT", Qt::red, true);
+            isAlarmedRed = true;
+        }
+        else
+        {
+            emit sendAlarm("CHT", Qt::red, true);
+            isAlarmedRed = true;
+        }
+
+    }
+    else if ((isAlarmedRed) && (val1 < yellowRedValue && val2 < yellowRedValue && val3 < yellowRedValue && val4 < yellowRedValue))
+    {
+        emit cancelAlarm("CHT");
+
+        isAlarmedRed = false;
+    }
+    else if ((isAlarmedYellow) && (val1 < greenYellowValue && val2 < greenYellowValue && val3 < greenYellowValue && val4 < greenYellowValue))
+    {
+        emit cancelAlarm("CHT");
+
+        isAlarmedYellow = false;
+    }
+
+
 }
 
 void CylinderHeadTemperature::setBorders(double minimum, double maximum, double yellowBorder, double redBorder)
@@ -168,4 +231,13 @@ void CylinderHeadTemperature::setBorders(double minimum, double maximum, double 
 	maxValue = maximum;
 	greenYellowValue = yellowBorder;
 	yellowRedValue = redBorder;
+}
+
+void CylinderHeadTemperature::changeFlashState()
+{
+    if (flashState == false) {
+        flashState  = true;
+    } else {
+        flashState = false;
+    }
 }

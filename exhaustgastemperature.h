@@ -47,10 +47,14 @@ private:
 	QList<quint8> peakOrder;
 	QList<double> currentValues;
 	QList<double> betweenValues;
-    bool isAlarmed = false;
+    bool isAlarmedRed = false;
+    bool isAlarmedYellow = false;
+    bool flashState;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
+public slots:
+    void changeFlashState();
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{

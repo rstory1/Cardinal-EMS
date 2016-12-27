@@ -72,6 +72,7 @@ private:
     QString sensorInterfaceType;
     AlarmBox alarmWindow;
     int warmupTemp;
+    QTimer flashTimer;
 
 private slots:
 	void demoFunction();

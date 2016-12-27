@@ -51,10 +51,14 @@ private:
     QSettings gaugeSettings;
     void paintWarmup(QPainter parentPainter);
     void paintNormal(QPainter parentPainter);
+    bool flashState;
 
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
+
+public slots:
+    void changeFlashState();
 
 };
 

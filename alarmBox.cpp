@@ -8,12 +8,14 @@ AlarmBox::AlarmBox(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 //    wiringPiISR(17,INT_EDGE_FALLING, &buttonClicked);
 
-//    textRect1 = QRectF(-202, -80, 202, 20);
+//    QTimer *flashTimer = new QTimer(this);
+//        connect(flashTimer, SIGNAL(timeout()), this, SLOT(changeFlashState()));
+//        flashTimer->start(1000);
 }
 
 QRectF AlarmBox::boundingRect() const
 {
-    return QRectF(-40, -100, 80, 200);
+    return QRectF(boundingX, boundingY, boundingWidth, boundingHeight);
 }
 
 void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -30,52 +32,46 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     //Define pen, brush and rect for the bar
     painter->setPen(Qt::white);
     //painter->setBrush(Qt::yellow); //This will fill in the rectangle
-    painter->drawRect(QRectF(-40, -80, 80, 180));
+    painter->drawRect(QRectF(boundingX, boundingY + 20, boundingWidth, boundingHeight - 20));
+
+    for (int i=0;i<=9;i++) {
+        if (alarmText[i] != "")
+        {
+            if ((flashState == true && alarmFlash[i] == true) || alarmFlash[i] == false) {
+                painter->setPen(alarmColor[i]);
+                painter->setBrush(alarmColor[i]);
+
+                painter->drawRect(QRectF(boundingX + 2, boundingY + 21 + (20 * i), boundingWidth - 4, 18));
+            }
+        }
+    }
 
     //Restore the painter with antialising
     painter->restore();
 
+    painter->setPen(Qt::white);
     painter->drawText(QRectF(-40, -100, 80, 20), Qt::AlignCenter, "ALARMS");
 
-    if (alarmText[0] != "")
-    {
-        painter->setPen(alarmColor[0]);
-        painter->setBrush(alarmColor[0]);
+    QFont font = QFont("Arial", 12);
+    font.setBold(true);
+    painter->setFont(font);
 
-        painter->drawRect(QRectF(-38, -79, 76, 18));
+    for (int i=0;i<=9;i++) {
+        if (alarmText[i] != "")
+        {
+            if (flashState == true) {
+                if (alarmColor[i] == Qt::yellow) {
+                    painter->setPen(Qt::black);
+                } else {
+                    painter->setPen(Qt::white);
+                }
+            } else {
+                painter->setPen(alarmColor[i]);
+            }
 
+            painter->drawText(QRectF(boundingX + 2, boundingY + 21 + (20 * i), boundingWidth - 4, 18), Qt::AlignCenter, alarmText[i]);
+        }
     }
-    painter->setFont(QFont("Arial", 12,true));
-    painter->setPen(Qt::white);
-    painter->drawText(QRectF(-40, -80, 80, 20), Qt::AlignCenter, alarmText[0]);
-
-
-//    painter->setPen(alarmColor[1]);
-//    painter->drawText(QRectF(QPointF(-80.0, -60.0), QPointF(60.0, -40.0)), Qt::AlignCenter, alarmText[1]);
-
-//    painter->setPen(alarmColor[2]);
-//    painter->drawText(QRectF(-80, -40, 120, 20), Qt::AlignCenter, alarmText[2]);
-
-//    painter->setPen(alarmColor[3]);
-//    painter->drawText(QRectF(-80, -20, 120, 20), Qt::AlignCenter, alarmText[3]);
-
-//    painter->setPen(alarmColor[4]);
-//    painter->drawText(QRectF(-80, 0, 120, 20), Qt::AlignCenter, alarmText[4]);
-
-//    painter->setPen(alarmColor[5]);
-//    painter->drawText(QRectF(-80, 20, 120, 20), Qt::AlignCenter, alarmText[5]);
-
-//    painter->setPen(alarmColor[6]);
-//    painter->drawText(QRectF(-80, 40, 120, 20), Qt::AlignCenter, alarmText[6]);
-
-//    painter->setPen(alarmColor[7]);
-//    painter->drawText(QRectF(-80, 60, 120, 20), Qt::AlignCenter, alarmText[7]);
-
-//    painter->setPen(alarmColor[8]);
-//    painter->drawText(QRectF(-80, 80, 120, 20), Qt::AlignCenter, alarmText[8]);
-
-//    painter->setPen(alarmColor[9]);
-//    painter->drawText(QRectF(-80, 100, 120, 20), Qt::AlignCenter, alarmText[9]);
 
     //  Update the item. Without this, the program will wait for something else to cause a redraw
     update();
@@ -115,12 +111,26 @@ void AlarmBox::onRemoveAlarm(QString text)
         }
 
     }
+
 }
 
 void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 {
     alarmText[alarmCount] = text;
     alarmColor[alarmCount] = color;
+    alarmFlash[alarmCount] = flashing;
 
     alarmCount++;
+
+    QSound::play("alarm.wav");
+
+}
+
+void AlarmBox::changeFlashState()
+{
+    if (flashState == false) {
+        flashState  = true;
+    } else {
+        flashState = false;
+    }
 }

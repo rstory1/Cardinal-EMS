@@ -40,10 +40,19 @@ private:
 	double greenYellowValue, yellowRedValue;
 	QList<double> currentValues;
 	QList<double> betweenValues;
-    bool isAlarmed = false;
+    bool isAlarmedRed = false;
+    bool isAlarmedYellow = false;
+    bool flashState = false;
+    qreal *x;
+    qreal *y;
+    qreal *width;
+    qreal *height;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
+
+public slots:
+    void changeFlashState();
 };
 
 #endif // CYLINDERHEADTEMPERATURE_H

@@ -102,9 +102,9 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			//If value is in warning area, bar is drawn red
 			painter->setBrush(Qt::red);
 
-            if (isAlarmed == false) {
-                //emit sendAlarm("EGT", Qt::red, false);
-                isAlarmed = true;
+            if (isAlarmedRed == false) {
+                emit sendAlarm("EGT", Qt::red, true);
+                isAlarmedRed= true;
             }
 		}
 		else if(currentValues.at(i) > greenYellowValue)
@@ -122,9 +122,9 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
 
-            if (isAlarmed) {
+            if (isAlarmedRed) {
                 emit cancelAlarm("EGT");
-                isAlarmed = false;
+                isAlarmedRed = false;
             }
 
 		}
@@ -181,7 +181,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			painter->setPen(Qt::white);
 		}
 		//Define text position and move to correct column
-		QRectF textRect(-30, -20, 60, 40);
+        QRectF textRect(-30, -20, 35, 20);
 		textRect.moveCenter(QPointF(i*40-15, -135));
 		if(i%2)
 		{
@@ -199,17 +199,46 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			painter->drawRect(textRect);
 
 			//Define rect and move it to correct column to write the peak order
-			QRectF peakRect(-30, -20, 60, 40);
+            QRectF peakRect(-30, -20, 35, 20);
 			peakRect.moveCenter(QPointF(i*40-15, 40));
 			painter->setPen(Qt::white);
 			painter->drawText(peakRect, Qt::AlignHCenter | Qt::AlignBottom, QString::number(peakOrder.at(i)));
 		}
 		else
 		{
-			//If in normal mode, just draw the readout
-			painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+            if (isAlarmedRed == true) {
+                if (flashState) {
+                    painter->setPen(Qt::red);
+                    painter->setBrush(Qt::red);
+                    painter->drawRect(textRect);
+                    painter->setPen(Qt::white);
+                    painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+
+                } else {
+                    painter->setPen(Qt::red);
+                    painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+                }
+
+            } else if (isAlarmedYellow) {
+                if (flashState) {
+                    painter->setPen(Qt::yellow);
+                    painter->setBrush(Qt::yellow);
+                    painter->drawRect(textRect);
+                    painter->setPen(Qt::black);
+                    painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+
+                } else {
+                    painter->setPen(Qt::yellow);
+                    painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+                }
+            } else {
+                //If in normal mode, just draw the readout
+                painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
+            }
+            update();
 		}
 	}
+
 	if(leanAssistActive)
 	{
 		painter->setBrush(Qt::transparent);
@@ -297,4 +326,13 @@ void ExhaustGasTemperature::setLeanWindow(double value)
 bool ExhaustGasTemperature::isLeanAssistActive() const
 {
 	return leanAssistActive;
+}
+
+void ExhaustGasTemperature::changeFlashState()
+{
+    if (flashState == false) {
+        flashState  = true;
+    } else {
+        flashState = false;
+    }
 }

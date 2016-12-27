@@ -47,6 +47,18 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     graphicsScene.update();
 	setupLogFile();
 
+    // Initialize the timer to flash values on alarm
+    QTimer *flashTimer = new QTimer(this);
+    flashTimer->start(1000);
+    connect(flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &cylinderHeadTemperature, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &exhaustGasTemperature, SLOT(changeFlashState()));
+//    connect(flashTimer, SIGNAL(timeout()), &fuelFlow, SLOT(changeFlashState()));
+//    connect(flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
+//    connect(flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
+
+
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
 
@@ -57,25 +69,25 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-//    //  Connect signal for alarm from CHT
-//    connect(&cylinderHeadTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-//    connect(&cylinderHeadTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from CHT
+    connect(&cylinderHeadTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&cylinderHeadTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-//    //  Connect signal for alarm from EGT
-//    connect(&exhaustGasTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-//    connect(&exhaustGasTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from EGT
+    connect(&exhaustGasTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&exhaustGasTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-//    //  Connect signal for alarm from FF
-//    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-//    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from FF
+    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-//    //  Connect signal for alarm from OILT
-//    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-//    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from OILT
+    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-//    //  Connect signal for alarm from OILP
-//    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-//    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from OILP
+    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
@@ -149,7 +161,7 @@ void EngineMonitor::writeLogFile()
 
 void EngineMonitor::setupAlarm()
 {
-    alarmWindow.setPos(-600, -100);
+    alarmWindow.setPos(-550, -125);
     graphicsScene.addItem(&alarmWindow);
 }
 
@@ -358,7 +370,7 @@ void EngineMonitor::demoFunction()
 //	}
     rpmIndicator.setValue(rpm);
 
-	static double basicEGT = 0.0;
+    static double basicEGT = 850.0;
 	static bool egtUp = true;
 	static bool leaned = false;
 	static double off13 = 0.0;
@@ -390,7 +402,7 @@ void EngineMonitor::demoFunction()
 	}
 	exhaustGasTemperature.setValues(basicEGT+20.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
-	static double basicCHT = 0.0;
+    static double basicCHT = 200.0;
 	basicCHT += 1.0;
 	if(basicCHT > 250.0)
 	{

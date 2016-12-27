@@ -5,6 +5,8 @@
 #include <wiringPi.h>
 #include <QtCore>
 #include <QtWidgets>
+#include <QtMultimedia/QSoundEffect>
+#include <QtMultimedia/QSound>
 
 class AlarmBox : public QGraphicsObject
 {
@@ -14,9 +16,15 @@ private:
     quint64 counter = 1;
     QString alarmText[10];
     QColor alarmColor[10];
+    bool alarmFlash[10];
     int alarmCount = 0;
     QRectF textRect1;
     QString textForAlarm;
+    int boundingX = -40;
+    int boundingY = -100;
+    int boundingWidth = 80;
+    int boundingHeight = 200;
+    bool flashState = false;
 
 public:
     explicit AlarmBox(QGraphicsObject * parent = 0);
@@ -31,6 +39,9 @@ public:
 public slots:
     void onAlarm(QString text, QColor color, bool flashing);
     void onRemoveAlarm(QString text);
+
+public slots:
+    void changeFlashState();
 
 };
 

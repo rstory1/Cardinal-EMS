@@ -42,10 +42,7 @@ QRectF RpmIndicator::boundingRect() const
 void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);
-	Q_UNUSED(widget);
-
-    painter->setPen(QPen(Qt::green, 0));
-    painter->drawRect(QRectF(-200.0, -140.0, 400.0, 280.0));
+    Q_UNUSED(widget);
 
 	//Draw the arc
 	QRectF circle = QRectF(-130.0, -130.0, 260.0, 260.0);
@@ -170,19 +167,40 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     {
         if (isWarmup && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
         {
+            if (flashState == false) {
+                painter->setPen(Qt::white);
+                painter->setBrush(Qt::white);
 
-            painter->setPen(Qt::red);
+                painter->drawRect(QRectF(-22.5, 35, 177.5, 65));
+
+                painter->setPen(Qt::red);
+
+            } else {
+                painter->setPen(Qt::red);
+                painter->setBrush(Qt::red);
+
+                painter->drawRect(QRectF(-22.5, 35, 175, 65));
+
+                painter->setPen(Qt::white);
+            }
+
             if (isAlarmed == false) {
-                emit sendAlarm("RPM", Qt::red, false);
+                emit sendAlarm("RPM", Qt::red, true);
                 isAlarmed = true;
             }
 
         } else if (isWarmup = false && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
         {
 
-            painter->setPen(Qt::red);
+            if (flashState == false) {
+                painter->setPen(Qt::red);
+
+            } else {
+                painter->setPen(Qt::white);
+            }
+
             if (isAlarmed == false) {
-                emit sendAlarm("RPM", Qt::red, false);
+                emit sendAlarm("RPM", Qt::red, true);
                 isAlarmed = true;
             }
         }
@@ -202,13 +220,16 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	QString rpm = QString::number(currentValue-fmod(currentValue, 10.0), 'f', 0);
 
 	//Set position and font for the value and draw it
-	QRectF textRect(-100, 35, 170, 65);
+    QRectF textRect(-100, 35, 170, 65);
 	painter->setFont(QFont("Arial", 30, 1));
 	painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
 	//Set position and font for the unit and draw it
 	QRectF unitRect(90, 35, 100, 65);
 	painter->setFont(QFont("Arial", 20, 1));
     painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "RPM");
+
+    update();
+
 }
 
 void RpmIndicator::setStartSpan(double start, double span)
@@ -246,5 +267,14 @@ void RpmIndicator::addBetweenValue(double value)
 void RpmIndicator::setValue(double value)
 {
 	currentValue = value;
-	update();
+    //update();
+}
+
+void RpmIndicator::changeFlashState()
+{
+    if (flashState == false) {
+        flashState  = true;
+    } else {
+        flashState = false;
+    }
 }
