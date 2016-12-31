@@ -77,9 +77,9 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&exhaustGasTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&exhaustGasTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-    //  Connect signal for alarm from FF
-    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from Volt Meter
+    connect(&voltMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&voltMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     //  Connect signal for alarm from OILT
     connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
@@ -88,6 +88,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //  Connect signal for alarm from OILP
     connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    //  Connect signal for alarm from ampere meter
+    connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
@@ -223,7 +227,7 @@ void EngineMonitor::setupBarGraphs()
 	oilTemperature.setTitle("OIL T");
 	oilTemperature.setUnit(QString::fromUtf8("°C"));
 	oilTemperature.setBorders(80.0, 180.0);
-	oilTemperature.addColorStop(ColorStop(Qt::green, 80.0, 160.0));
+    //oilTemperature.addColorStop(ColorStop(Qt::green, 80.0, 160.0));
 	oilTemperature.addColorStop(ColorStop(Qt::yellow, 160.0, 180.0));
 	graphicsScene.addItem(&oilTemperature);
 
@@ -370,14 +374,14 @@ void EngineMonitor::demoFunction()
 //	}
     rpmIndicator.setValue(rpm);
 
-    static double basicEGT = 850.0;
+    static double basicEGT = 690.0;
 	static bool egtUp = true;
 	static bool leaned = false;
 	static double off13 = 0.0;
 	static double off24 = 0.0;
 	if(leaned)
 	{
-		if(basicEGT < 1190.0)
+        if(basicEGT < 680.0)
 		{
 			off13 = double(qrand())/double(RAND_MAX)*3.0;
 			off24 = double(qrand())/double(RAND_MAX)*5.0;
@@ -402,7 +406,7 @@ void EngineMonitor::demoFunction()
 	}
 	exhaustGasTemperature.setValues(basicEGT+20.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
-    static double basicCHT = 200.0;
+    static double basicCHT = 135.0;
 	basicCHT += 1.0;
 	if(basicCHT > 250.0)
 	{

@@ -74,11 +74,49 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	//Restore the painter with antialising
 	painter->restore();
 
-	//Draw Texts around (title, min and max value)
-	painter->setPen(Qt::white);
-	painter->drawText(QRectF(-20, -70, 40, 20), Qt::AlignCenter, titleText);
-	painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
-	painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
+    //Draw Texts around (title, min and max value)
+    painter->setPen(Qt::white);
+    isPenAlarmColored = false;
+    painter->drawText(QRectF(-20, -70, 40, 20), Qt::AlignCenter, titleText);
+    painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
+    painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
+
+    for (int i=0;i<colorStops.count();i++) {
+        if ((currentValue >= colorStops[i].minValue && currentValue <= colorStops[i].maxValue) && (colorStops[i].color == Qt::red || colorStops[i].color == Qt::yellow)) {
+            painter->setPen(colorStops[i].color);
+            isPenAlarmColored = true;
+            if (colorStops[i].color == Qt::red && isAlarmedRed == false) {
+
+                if (isAlarmedYellow) {
+                    emit cancelAlarm(titleText);
+                    isAlarmedYellow = false;
+                }
+
+                emit sendAlarm(titleText, colorStops[i].color, true);
+                isAlarmedRed = true;
+
+            } else if (colorStops[i].color == Qt::yellow && isAlarmedYellow == false) {
+
+                if (isAlarmedRed) {
+                    emit cancelAlarm(titleText);
+                    isAlarmedRed = false;
+                }
+
+                emit sendAlarm(titleText, colorStops[i].color, true);
+                isAlarmedYellow = true;
+
+            }
+        }
+    }
+
+    if (isPenAlarmColored == false) {
+        if (isAlarmedRed == true || isAlarmedYellow == true) {
+            emit cancelAlarm(titleText);
+            isAlarmedRed = false;
+            isAlarmedYellow = false;
+        }
+    }
+
 
 	//Draw readout
 	painter->drawText(QRectF(-20, 50, 40, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));

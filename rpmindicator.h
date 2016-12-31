@@ -40,7 +40,8 @@ public:
 	void setValue(double value);
     double getValue() {return currentValue;};
     bool isWarmup;
-    bool isAlarmed = false;
+    bool isAlarmedRed = false;
+    bool isAlarmedYellow = false;
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;

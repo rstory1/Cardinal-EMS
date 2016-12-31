@@ -57,7 +57,11 @@ private:
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
-    bool isAlarmed = false;
+    bool isAlarmedRed = false;
+    bool isAlarmedYellow = false;
+    bool flashState = false;
+    bool isPenAlarmColored = false;
+
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{

@@ -84,19 +84,19 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		{
 			//If value is in warning area, bar is drawn red
 			painter->setBrush(Qt::red);
-
+            cylinderAlarm = 3;
 		}
 		else if(currentValues.at(i) > greenYellowValue)
 		{
 			//If value is in caution area, bar is drawn yellow
 			painter->setBrush(Qt::yellow);
-
+            cylinderAlarm = 2;
 		}
 		else
 		{
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
-
+            cylinderAlarm = 1;
 		}
 
 		if((currentValues.at(i) > minValue) &&
@@ -131,7 +131,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		}
 
         //
-        if (isAlarmedRed == true) {
+        if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
             if (flashState) {
                 painter->setPen(Qt::red);
                 painter->setBrush(Qt::red);
@@ -144,7 +144,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
                 painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
             }
 
-        } else if (isAlarmedYellow) {
+        } else if ((isAlarmedYellow) && (cylinderAlarm == 2)) {
             if (flashState) {
                 painter->setPen(Qt::yellow);
                 painter->setBrush(Qt::yellow);
@@ -160,9 +160,9 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
             //Draw the readout
             painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
         }
-
+        update();
 	}
-    update();
+
 }
 
 double CylinderHeadTemperature::calculateLocalValue(double value) const

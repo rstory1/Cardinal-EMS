@@ -43,10 +43,7 @@ private:
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;
     bool flashState = false;
-    qreal *x;
-    qreal *y;
-    qreal *width;
-    qreal *height;
+    int cylinderAlarm;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);

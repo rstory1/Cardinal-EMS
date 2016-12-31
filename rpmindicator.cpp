@@ -184,34 +184,48 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 painter->setPen(Qt::white);
             }
 
-            if (isAlarmed == false) {
+            if (isAlarmedRed == false) {
                 emit sendAlarm("RPM", Qt::red, true);
-                isAlarmed = true;
+                isAlarmedRed = true;
             }
 
         } else if (isWarmup = false && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
         {
 
             if (flashState == false) {
+                painter->setPen(Qt::white);
+                painter->setBrush(Qt::white);
+
+                painter->drawRect(QRectF(-22.5, 35, 177.5, 65));
+
                 painter->setPen(Qt::red);
 
             } else {
+                painter->setPen(Qt::red);
+                painter->setBrush(Qt::red);
+
+                painter->drawRect(QRectF(-22.5, 35, 175, 65));
+
                 painter->setPen(Qt::white);
             }
 
-            if (isAlarmed == false) {
+            if (isAlarmedRed == false) {
                 emit sendAlarm("RPM", Qt::red, true);
-                isAlarmed = true;
+                isAlarmedRed = true;
             }
         }
+    }
+    else if((currentValue > yellowRedBorder || currentValue < redYellowBorder) || (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
+    {
+
     }
     else
     {
         painter->setPen(Qt::white);
 
-        if (isAlarmed == true) {
+        if (isAlarmedRed == true) {
             emit cancelAlarm("RPM");
-            isAlarmed = false;
+            isAlarmedRed = false;
         }
 
     }

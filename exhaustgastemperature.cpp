@@ -100,33 +100,20 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		if(currentValues.at(i) > yellowRedValue)
 		{
 			//If value is in warning area, bar is drawn red
-			painter->setBrush(Qt::red);
-
-            if (isAlarmedRed == false) {
-                emit sendAlarm("EGT", Qt::red, true);
-                isAlarmedRed= true;
-            }
+            painter->setBrush(Qt::red);
+            cylinderAlarm = 3;
 		}
 		else if(currentValues.at(i) > greenYellowValue)
 		{
 			//If value is in caution area, bar is drawn yellow
-			painter->setBrush(Qt::yellow);
-
-//            if (isAlarmed == false) {
-//                emit sendAlarm("EGT", Qt::yellow, false);
-//                isAlarmed = true;
-//            }
+            painter->setBrush(Qt::yellow);
+            cylinderAlarm = 2;
 		}
 		else
 		{
 			//In all other cases, bar is drawn green
 			painter->setBrush(Qt::green);
-
-            if (isAlarmedRed) {
-                emit cancelAlarm("EGT");
-                isAlarmedRed = false;
-            }
-
+            cylinderAlarm = 1;
 		}
 		if(leanAssistActive)
 		{
@@ -187,6 +174,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		{
 			textRect.translate(QPointF(0.0, -20.0));
 		}
+
 		//Draw the readout
 		if(leanAssistActive && peakFound.at(i))
 		{
@@ -206,7 +194,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 		else
 		{
-            if (isAlarmedRed == true) {
+            if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
                 if (flashState) {
                     painter->setPen(Qt::red);
                     painter->setBrush(Qt::red);
@@ -219,7 +207,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
                     painter->drawText(textRect, Qt::AlignCenter, QString::number(currentValues.at(i), 'f', 0));
                 }
 
-            } else if (isAlarmedYellow) {
+            } else if ((isAlarmedYellow) && (cylinderAlarm == 2)) {
                 if (flashState) {
                     painter->setPen(Qt::yellow);
                     painter->setBrush(Qt::yellow);
@@ -288,6 +276,7 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 		//If any value falls below min value, deactivate lean assist
 		leanAssistActive = false;
 	}
+
 	if(leanAssistActive)
 	{
 		//If lean assist is active, check if peak values are exceeded
@@ -307,6 +296,45 @@ void ExhaustGasTemperature::setValues(double val1, double val2, double val3, dou
 			}
 		}
 	}
+
+    if ((((yellowRedValue > val1) && (val1 >= greenYellowValue))
+         || ((yellowRedValue > val2) && (val2 >= greenYellowValue))
+         || ((yellowRedValue > val3) && (val3 >= greenYellowValue))
+         || ((yellowRedValue > val4) && (val4 >= greenYellowValue)))
+            && (isAlarmedYellow == false && isAlarmedRed == false))
+    {
+        emit sendAlarm("EGT", Qt::yellow, true);
+        isAlarmedYellow = true;
+    }
+    else if ((val1 >= yellowRedValue || val2 >= yellowRedValue || val3 >= yellowRedValue || val4 >= yellowRedValue) && (isAlarmedRed == false))
+    {
+        if (isAlarmedYellow)
+        {
+            emit cancelAlarm("EGT");
+            isAlarmedYellow = false;
+
+            emit sendAlarm("EGT", Qt::red, true);
+            isAlarmedRed = true;
+        }
+        else
+        {
+            emit sendAlarm("EGT", Qt::red, true);
+            isAlarmedRed = true;
+        }
+
+    }
+    else if ((isAlarmedRed) && (val1 < yellowRedValue && val2 < yellowRedValue && val3 < yellowRedValue && val4 < yellowRedValue))
+    {
+        emit cancelAlarm("EGT");
+
+        isAlarmedRed = false;
+    }
+    else if ((isAlarmedYellow) && (val1 < greenYellowValue && val2 < greenYellowValue && val3 < greenYellowValue && val4 < greenYellowValue))
+    {
+        emit cancelAlarm("EGT");
+
+        isAlarmedYellow = false;
+    }
 	update();
 }
 
