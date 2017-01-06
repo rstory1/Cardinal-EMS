@@ -18,24 +18,24 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef BARGRAPH_H
-#define BARGRAPH_H
+#ifndef TEXTBOX_H
+#define TEXTBOX_H
 
 #include <QtWidgets>
 
-struct ColorStop
-{
-	ColorStop() : color(QColor()), minValue(0.0), maxValue(0.0) {};
-	ColorStop(QColor col, double minVal, double maxVal) : color(col), minValue(minVal), maxValue(maxVal) {};
-	QColor color;
-	double minValue, maxValue;
-};
+//struct ColorStop
+//{
+//	ColorStop() : color(QColor()), minValue(0.0), maxValue(0.0) {};
+//	ColorStop(QColor col, double minVal, double maxVal) : color(col), minValue(minVal), maxValue(maxVal) {};
+//	QColor color;
+//	double minValue, maxValue;
+//};
 
-class BarGraph : public QGraphicsObject
+class TextBox : public QGraphicsObject
 {
 	Q_OBJECT
 public:
-	explicit BarGraph(QGraphicsObject* parent = 0);
+    explicit TextBox(QGraphicsObject* parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setTitle(QString title);
@@ -43,27 +43,24 @@ public:
 	void setBorders(double minimum, double maximum);
 	void setPrecision(quint8 readout = 0, quint8 bar = 0);
 	void addBetweenValue(double value);
-	void addColorStop(ColorStop stop);
+    //void addColorStop(ColorStop stop);
     void setValue(double value);
     double getValue() {return currentValue;};
-    QString gaugeName;
 public slots:
 	void makeVisible() {setVisible(true);};
 	void makeInvisible() {setVisible(false);};
 private:
-	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
 	double minValue, maxValue, currentValue;
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
-	QList<ColorStop> colorStops;
+    //QList<ColorStop> colorStops;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;
     bool flashState = false;
     bool isPenAlarmColored = false;
     QPen pen;
     QFont font;
-    bool horizontal=false;
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
@@ -76,4 +73,4 @@ signals:
     void cancelAlarm(QString);
 };
 
-#endif // BARGRAPH_H
+#endif // TEXTBOX_H

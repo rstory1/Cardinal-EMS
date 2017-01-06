@@ -91,6 +91,19 @@ int main(int argc, char *argv[])
 	splash.show();
 	a.processEvents();
 
+//    QFontDatabase::addApplicationFont(":/MS33558.ttf");
+//    QFontDatabase database;
+//        foreach (const QString &family, database.families()) {
+//            qDebug() << family;
+//        }
+
+    QFont font;
+//    font.setFamily("Liberation Sans");
+    font.setBold(true);
+//    font.setPointSize(12);
+    a.setFont(font);
+
+
 	//Create the engine monitor and show after splashscreen delay
 	EngineMonitor engineMonitor;
 #ifndef QT_DEBUG

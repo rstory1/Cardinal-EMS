@@ -30,6 +30,8 @@
 #include "fuelmanagement.h"
 #include "manifoldpressure.h"
 #include "alarmBox.h"
+#include "textBoxGauge.h"
+#include "fueldisplay.h"
 
 class EngineMonitor : public QGraphicsView
 {
@@ -60,11 +62,12 @@ private:
 	BarGraph voltMeter;
 	BarGraph ampereMeter;
 	BarGraph fuelFlow;
-	BarGraph insideAirTemperature;
-	BarGraph outsideAirTemperature;
+    TextBox insideAirTemperature;
+    TextBox outsideAirTemperature;
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
+    FuelDisplay fuelDisplay;
 	ManifoldPressure manifoldPressure;
 	QFile *logFile;
     QSettings settings;

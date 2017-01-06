@@ -75,7 +75,8 @@ private:
     QRectF add5UnitsRect;
     QRectF add1UnitsRect;
 	QRectF clearRect;
-	QRectF fuelTopRect;
+    QRectF fuelTopRect;
+    QString fuelUnits;
 };
 
 #endif // FUELMANAGEMENT_H

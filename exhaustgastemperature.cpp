@@ -45,13 +45,13 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	//Draw the side legend
 	painter->setBrush(Qt::green);
 	painter->setPen(QPen(Qt::green, 0));
-	painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(minValue)), QPointF(-50.0, calculateLocalValue(greenYellowValue))));
+    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(minValue)), QPointF(-60.0, calculateLocalValue(greenYellowValue))));
 	painter->setBrush(Qt::yellow);
 	painter->setPen(QPen(Qt::yellow, 0));
-	painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(greenYellowValue)), QPointF(-50.0, calculateLocalValue(yellowRedValue))));
+    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(greenYellowValue)), QPointF(-60.0, calculateLocalValue(yellowRedValue))));
 	painter->setBrush(Qt::red);
 	painter->setPen(QPen(Qt::red, 0));
-	painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(yellowRedValue)), QPointF(-50.0, calculateLocalValue(maxValue))));
+    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(yellowRedValue)), QPointF(-60.0, calculateLocalValue(maxValue))));
 
 	//Set painter for texts
 	painter->setPen(QPen(Qt::white, 1));
@@ -240,12 +240,12 @@ double ExhaustGasTemperature::calculateLocalValue(double value) const
 	if(leanAssistActive)
 	{
 		//If lean assist is active, calculate based on reduced window
-		return -(value-leanMinValue)/(leanWindow)*180.0+60.0;
+        return -(value-leanMinValue)/(leanWindow)*150.0+60.0;
 	}
 	else
 	{
 		//Otherwise the full range is used for calculation
-		return -(value-minValue)/(maxValue-minValue)*180.0+60.0;
+        return -(value-minValue)/(maxValue-minValue)*150.0+60.0;
 	}
 }
 

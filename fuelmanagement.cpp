@@ -32,21 +32,22 @@ FuelManagement::FuelManagement(QGraphicsObject *parent)
 	, fuelFlowRect(0, 82, 210, 36)
 	, fuelingRect(0, 122, 100, 36)
 	, homeRect(110, 122, 100, 36)
-    , addUnitsTextRect(0, 42, 50, 36)
-    , add50UnitsRect(54, 42, 36, 36)
-    , add10UnitsRect(94, 42, 36, 36)
-    , add5UnitsRect(134, 42, 36, 36)
-    , add1UnitsRect(174, 42, 36, 36)
+    , addUnitsTextRect(0, 42, 55, 36)
+    , add50UnitsRect(59, 42, 36, 36)
+    , add10UnitsRect(99, 42, 36, 36)
+    , add5UnitsRect(139, 42, 36, 36)
+    , add1UnitsRect(179, 42, 36, 36)
 	, clearRect(0, 82, 100, 36)
-	, fuelTopRect(110, 82, 100, 36)
+    , fuelTopRect(110, 82, 100, 36)
 {
 	connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
 	fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
+    fuelUnits = settings.value("Units/fuel;", "gal").toString();
 }
 
 QRectF FuelManagement::boundingRect() const
 {
-	return QRectF(0, 0, 210, 160);
+    return QRectF(0, 0, 215, 160);
 }
 
 void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -83,9 +84,9 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel at Destination:");
 		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignLeft, " Fuel flow:");
 
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(" l "));
-		painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAtDestination, 'f', 1).append(" l "));
-		painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelFlow, 'f', 1).append(" l "));
+        painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(QString(" %1 ").arg(settings.value("Units/fuel").toString()).toLatin1()));
+        painter->drawText(remainingFuelAtDestinationRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAtDestination, 'f', 1).append(QString(" %1 ").arg(settings.value("Units/fuel").toString()).toLatin1()));
+        painter->drawText(fuelFlowRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelFlow, 'f', 1).append(QString(" %1 ").arg(settings.value("Units/fuel").toString()).toLatin1()));
 
 		painter->drawText(fuelingRect, Qt::AlignCenter, "Fueling");
 		painter->drawText(homeRect, Qt::AlignCenter, "Home");
@@ -114,8 +115,8 @@ void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 		painter->setPen(Qt::white);
 		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignLeft, " Remaining Fuel:");
-		painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(" l "));
-        painter->drawText(addUnitsTextRect, Qt::AlignVCenter| Qt::AlignLeft, " Add Fuel\n in liters");
+        painter->drawText(remainingFuelRect, Qt::AlignVCenter | Qt::AlignRight, QString::number(fuelAmount, 'f', 1).append(QString(" %1 ").arg(settings.value("Units/fuel").toString()).toLatin1()));
+        painter->drawText(addUnitsTextRect, Qt::AlignVCenter| Qt::AlignLeft, QString(" Add Fuel\n in %1 ").arg(settings.value("Units/fuel").toString()).toLatin1());
         painter->drawText(add50UnitsRect, Qt::AlignCenter, "+50");
         painter->drawText(add10UnitsRect, Qt::AlignCenter, "+10");
         painter->drawText(add5UnitsRect, Qt::AlignCenter, "+5");

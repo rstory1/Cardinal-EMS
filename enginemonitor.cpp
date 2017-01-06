@@ -224,22 +224,27 @@ void EngineMonitor::setupCylinderHeadTemperature()
 void EngineMonitor::setupBarGraphs()
 {
 	oilTemperature.setPos(0, -150);
-	oilTemperature.setTitle("OIL T");
-	oilTemperature.setUnit(QString::fromUtf8("°C"));
-	oilTemperature.setBorders(80.0, 180.0);
-    //oilTemperature.addColorStop(ColorStop(Qt::green, 80.0, 160.0));
-	oilTemperature.addColorStop(ColorStop(Qt::yellow, 160.0, 180.0));
-	graphicsScene.addItem(&oilTemperature);
+    oilTemperature.setTitle("OIL T");
+    oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
+    oilTemperature.setBorders(gaugeSettings.value("OilTemp/minReading",0).toInt(),gaugeSettings.value("OilTemp/maxReading",0).toInt());
+    oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/minReading",0).toInt(), gaugeSettings.value("OilTemp/min",0).toInt()));
+    oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/min",0).toInt(), gaugeSettings.value("OilTemp/normalLow",0).toInt()));
+    oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/max",0).toInt()));
+    oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/maxReading",0).toInt()));
+    graphicsScene.addItem(&oilTemperature);
 
 	oilPressure.setPos(100, -150);
 	oilPressure.setTitle("OIL P");
-	oilPressure.setUnit("psi");
-	oilPressure.setBorders(0.0, 60.0);
-	oilPressure.addColorStop(ColorStop(Qt::red, 0.0, 15.0));
-	oilPressure.addColorStop(ColorStop(Qt::yellow, 55.0, 60.0));
-	oilPressure.addBetweenValue(15.0);
-	oilPressure.addBetweenValue(35.0);
-	oilPressure.addBetweenValue(50.0);
+    oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
+    oilPressure.setBorders(0.0, gaugeSettings.value("OilPress/maxReading",0).toInt());
+    oilPressure.addColorStop(ColorStop(Qt::red, 0.0, gaugeSettings.value("OilPress/min",0).toInt()));
+    oilPressure.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilPress/min",0).toInt(), gaugeSettings.value("OilPress/normalLow",0).toInt()));
+    oilPressure.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilPress/normalHigh",0).toInt(), gaugeSettings.value("OilPress/max",0).toInt()));
+    oilPressure.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilPress/max",0).toInt(), gaugeSettings.value("OilPress/maxReading",0).toInt()));
+//    oilPressure.addBetweenValue(gaugeSettings.value("OilPress/min",0).toInt());
+//    oilPressure.addBetweenValue(gaugeSettings.value("OilPress/normalLow",0).toInt());
+//    oilPressure.addBetweenValue(gaugeSettings.value("OilPress/normalHigh",0).toInt());
+//    oilPressure.addBetweenValue(gaugeSettings.value("OilPress/max",0).toInt());
 	graphicsScene.addItem(&oilPressure);
 
 	voltMeter.setPos(0, 0);
@@ -263,7 +268,7 @@ void EngineMonitor::setupBarGraphs()
 
 	fuelFlow.setPos(0, 150);
 	fuelFlow.setTitle("FF");
-	fuelFlow.setUnit("lph");
+    fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
 	fuelFlow.setBorders(0, 30);
 	fuelFlow.addBetweenValue(10.0);
 	fuelFlow.setPrecision(1);
@@ -272,26 +277,26 @@ void EngineMonitor::setupBarGraphs()
 
 	insideAirTemperature.setPos(100, 150);
 	insideAirTemperature.setTitle("IAT");
-	insideAirTemperature.setUnit(QString::fromUtf8("°C"));
+    insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
 	insideAirTemperature.setBorders(-10.0, 40);
-	insideAirTemperature.addBetweenValue(0.0);
-	insideAirTemperature.addBetweenValue(10.0);
-	insideAirTemperature.addBetweenValue(20.0);
-	insideAirTemperature.addBetweenValue(30.0);
+//	insideAirTemperature.addBetweenValue(0.0);
+//	insideAirTemperature.addBetweenValue(10.0);
+//	insideAirTemperature.addBetweenValue(20.0);
+//	insideAirTemperature.addBetweenValue(30.0);
 	insideAirTemperature.setPrecision(1);
 	graphicsScene.addItem(&insideAirTemperature);
-	insideAirTemperature.setVisible(false);
+    insideAirTemperature.setVisible(false);
 	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
 	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
 
-	outsideAirTemperature.setPos(100, 150);
+    outsideAirTemperature.setPos(100, 200);
 	outsideAirTemperature.setTitle("OAT");
-	outsideAirTemperature.setUnit(QString::fromUtf8("°C"));
-	outsideAirTemperature.setBorders(-10.0, 40);
-	outsideAirTemperature.addBetweenValue(0.0);
-	outsideAirTemperature.addBetweenValue(10.0);
-	outsideAirTemperature.addBetweenValue(20.0);
-	outsideAirTemperature.addBetweenValue(30.0);
+    outsideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
+//	outsideAirTemperature.setBorders(-10.0, 40);
+//	outsideAirTemperature.addBetweenValue(0.0);
+//	outsideAirTemperature.addBetweenValue(10.0);
+//	outsideAirTemperature.addBetweenValue(20.0);
+//	outsideAirTemperature.addBetweenValue(30.0);
 	outsideAirTemperature.setPrecision(1);
 	graphicsScene.addItem(&outsideAirTemperature);
 	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
@@ -313,12 +318,13 @@ void EngineMonitor::setupTimeToDestinationItem()
 
 void EngineMonitor::setupFuelManagement()
 {
-	//fuelManagement.setPos(-70, 70);
+    fuelDisplay.setPos(-70, 70);
 	fuelManagement.setPos(-495, -240);
 	fuelManagement.setScale(1.8);
 	fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
+    graphicsScene.addItem(&fuelDisplay);
 }
 
 void EngineMonitor::setupManifoldPressure()
@@ -338,6 +344,7 @@ void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
 {
 	fuelFlow.setValue(fuelFlowValue);
 	fuelManagement.setFuelFlow(fuelFlowValue);
+    fuelDisplay.setFuelFlow(fuelFlowValue);
 	fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
 }
 
@@ -345,6 +352,7 @@ void EngineMonitor::setTimeToDestination(double time)
 {
 	timeToDestinationItem.setPlainText(QString::number(time, 'f', 1).prepend("Time to destination: ").append(" minutes"));
 	fuelManagement.setTimeToDestination(time);
+    fuelDisplay.setTimeToDestination(time);
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
@@ -462,6 +470,8 @@ void EngineMonitor::demoFunction()
 	fuelFlow.setValue(flow);
 	fuelManagement.setFuelFlow(flow);
 	fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
+    fuelDisplay.setFuelFlow(flow);
+    fuelDisplay.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
 
 	static double airTemp = -10.0;
 	airTemp += 0.07;
