@@ -324,7 +324,7 @@ void EngineMonitor::setupFuelManagement()
 	fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
-    graphicsScene.addItem(&fuelDisplay);
+    //graphicsScene.addItem(&fuelDisplay);
 }
 
 void EngineMonitor::setupManifoldPressure()
@@ -382,8 +382,8 @@ void EngineMonitor::demoFunction()
 //	}
     rpmIndicator.setValue(rpm);
 
-    static double basicEGT = 690.0;
-	static bool egtUp = true;
+    static double basicEGT = 750.0;
+    static bool egtUp = true;
 	static bool leaned = false;
 	static double off13 = 0.0;
 	static double off24 = 0.0;
@@ -412,15 +412,15 @@ void EngineMonitor::demoFunction()
 		leaned = true;
 		egtUp = true;
 	}
-	exhaustGasTemperature.setValues(basicEGT+20.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
+    exhaustGasTemperature.setValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
-    static double basicCHT = 135.0;
-	basicCHT += 1.0;
-	if(basicCHT > 250.0)
+    static double basicCHT = 130.0;
+    basicCHT += 1.0;
+    if(basicCHT > 190.0)
 	{
 		basicCHT = 0.0;
 	}
-	static double offset1 = double(qrand())/double(RAND_MAX)*25.0;
+    static double offset1 = double(qrand())/double(RAND_MAX)*50.0;
 	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
 	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
 	static double offset4 = double(qrand())/double(RAND_MAX)*9.0;

@@ -45,21 +45,21 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 	//Draw the side legend
 	painter->setBrush(Qt::green);
 	painter->setPen(QPen(Qt::green, 0));
-    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(minValue)), QPointF(-60.0, calculateLocalValue(greenYellowValue))));
+    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(minValue)), QPointF(-70.0, calculateLocalValue(greenYellowValue))));
 	painter->setBrush(Qt::yellow);
 	painter->setPen(QPen(Qt::yellow, 0));
-    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(greenYellowValue)), QPointF(-60.0, calculateLocalValue(yellowRedValue))));
+    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(greenYellowValue)), QPointF(-70.0, calculateLocalValue(yellowRedValue))));
 	painter->setBrush(Qt::red);
 	painter->setPen(QPen(Qt::red, 0));
-    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(yellowRedValue)), QPointF(-60.0, calculateLocalValue(maxValue))));
+    painter->drawRect(QRectF(QPointF(-80.0, calculateLocalValue(yellowRedValue)), QPointF(-70.0, calculateLocalValue(maxValue))));
 
 	//Set painter for texts
 	painter->setPen(QPen(Qt::white, 1));
 	painter->setFont(QFont("Arial", 12));
 
 	//Draw the static texts
-	painter->drawText(QRectF(-130.0, -165.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
-	painter->drawText(QRectF(-130.0, 40.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignBottom, QString::fromUtf8("°C"));
+    painter->drawText(QRectF(-130.0, -125.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
+    painter->drawText(QRectF(-130.0, 40.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignBottom, QString::fromUtf8("°C"));
 
 	//Draw the ticks and numbers at the legend
 	if(leanAssistActive)
@@ -84,19 +84,23 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 	//Draw the red line to define warning area
 	painter->setPen(Qt::red);
-	painter->drawLine(-35, calculateLocalValue(yellowRedValue), 125, calculateLocalValue(yellowRedValue));
+    painter->drawLine(-65, calculateLocalValue(yellowRedValue), 105, calculateLocalValue(yellowRedValue));
 
 	//Draw center dashed line where the graphs are running
 	painter->setPen(QPen(Qt::white, 1, Qt::DashLine));
 	for(int i = 0; i < 4; i++)
 	{
-		painter->drawLine(i*40-15, -120, i*40-15, 60);
+        if (i==0 || i==2) {
+            painter->drawLine(i*40-50, -100, i*40-50, 60);
+        } else {
+            painter->drawLine(i*40-50, -120, i*40-50, 60);
+        }
 	}
 
 	//Draw the bar graphs
 	for(int i = 0; i < 4; i++)
 	{
-		QRectF barRect = QRectF(QPointF(i*40-30, 60), QPointF(i*40-0, calculateLocalValue(currentValues.value(i))));
+        QRectF barRect = QRectF(QPointF(i*40-60, 60), QPointF(i*40-40, calculateLocalValue(currentValues.value(i))));
 		if(currentValues.at(i) > yellowRedValue)
 		{
 			//If value is in warning area, bar is drawn red
@@ -169,10 +173,10 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 		}
 		//Define text position and move to correct column
         QRectF textRect(-30, -20, 35, 20);
-		textRect.moveCenter(QPointF(i*40-15, -135));
+        textRect.moveCenter(QPointF(i*40-50, -110));
 		if(i%2)
 		{
-			textRect.translate(QPointF(0.0, -20.0));
+            textRect.translate(QPointF(0.0, -20.0));
 		}
 
 		//Draw the readout
