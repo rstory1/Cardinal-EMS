@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 #else
 	engineMonitor.show();
     engineMonitor.move(0, 0);
-	engineMonitor.resize(800, 480);
+    engineMonitor.resize(640, 480);
 #endif
 	splash.finish(&engineMonitor);
 
