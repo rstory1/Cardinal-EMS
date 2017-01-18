@@ -88,8 +88,8 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     //Draw Texts around (title, min and max value)
     painter->setPen(Qt::gray);
     isPenAlarmColored = false;
-    painter->drawText(QRectF(-25, -80, 50, 15), Qt::AlignCenter,titleText);
-    painter->drawText(QRectF(-25, -65, 50, 15), Qt::AlignCenter,unitText);
+    painter->drawText(QRectF(-25, -85, 50, 15), Qt::AlignCenter,titleText);
+    painter->drawText(QRectF(-25, -70, 50, 15), Qt::AlignCenter,unitText);
     painter->setPen(Qt::white);
     //painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
     //painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
@@ -135,7 +135,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     font.setBold(true);
     font.setPointSize(18);
     painter->setFont(font);
-    painter->drawText(QRectF(-25, 50, 50, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+    painter->drawText(QRectF(-25, 55, 50, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
 
 	//Draw marker
 	if((currentValue>minValue) && (currentValue<maxValue))

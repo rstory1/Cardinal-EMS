@@ -247,7 +247,7 @@ void EngineMonitor::setupBarGraphs()
 //    oilPressure.addBetweenValue(gaugeSettings.value("OilPress/max",0).toInt());
 	graphicsScene.addItem(&oilPressure);
 
-    voltMeter.setPos(0, -10);
+    voltMeter.setPos(0, -50);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
 	voltMeter.setBorders(10.0, 16.0);
@@ -257,7 +257,7 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.setPrecision(1, 1);
 	graphicsScene.addItem(&voltMeter);
 
-    ampereMeter.setPos(100, -10);
+    ampereMeter.setPos(100, -50);
 	ampereMeter.setTitle("AMPS");
 	ampereMeter.setUnit("A");
 	ampereMeter.setBorders(-50.0, 50.0);
@@ -266,7 +266,7 @@ void EngineMonitor::setupBarGraphs()
 	ampereMeter.addBetweenValue(0.0);
 	graphicsScene.addItem(&ampereMeter);
 
-	fuelFlow.setPos(0, 150);
+    fuelFlow.setPos(0, 130);
 	fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
 	fuelFlow.setBorders(0, 30);

@@ -2,11 +2,11 @@
 
 AlarmBox::AlarmBox(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
-    wiringPiSetupSys();
-    pinMode(18, OUTPUT);
-    pinMode(17, INPUT);
+//    wiringPiSetupSys();
+//    pinMode(18, OUTPUT);
+//    pinMode(17, INPUT);
 
-    wiringPiISR(17,INT_EDGE_FALLING, &buttonClicked);
+//    wiringPiISR(17,INT_EDGE_FALLING, &buttonClicked);
 
 }
 
