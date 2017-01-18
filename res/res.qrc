@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>splashscreen.png</file>
-	<file>MS33558.ttf</file>
+        <file>MS33558.ttf</file>
+        <file>gaugeSettings.ini</file>
+        <file>settings.ini</file>
     </qresource>
 </RCC>

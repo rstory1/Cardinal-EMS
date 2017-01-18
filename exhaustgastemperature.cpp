@@ -55,7 +55,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 
 	//Set painter for texts
 	painter->setPen(QPen(Qt::white, 1));
-	painter->setFont(QFont("Arial", 12));
+    painter->setFont(QFont("Arial", 18));
 
 	//Draw the static texts
     painter->drawText(QRectF(-130.0, -125.0, 35.0, 20.0), Qt::AlignLeft | Qt::AlignVCenter, "EGT");
@@ -172,7 +172,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
 			painter->setPen(Qt::white);
 		}
 		//Define text position and move to correct column
-        QRectF textRect(-30, -20, 35, 20);
+        QRectF textRect(-35, -20, 50, 20);
         textRect.moveCenter(QPointF(i*40-50, -110));
 		if(i%2)
 		{
@@ -194,7 +194,7 @@ void ExhaustGasTemperature::paint(QPainter *painter, const QStyleOptionGraphicsI
             QRectF peakRect(-30, -20, 35, 20);
 			peakRect.moveCenter(QPointF(i*40-15, 40));
 			painter->setPen(Qt::white);
-			painter->drawText(peakRect, Qt::AlignHCenter | Qt::AlignBottom, QString::number(peakOrder.at(i)));
+            painter->drawText(peakRect, Qt::AlignHCenter | Qt::AlignCenter, QString::number(peakOrder.at(i)));
 		}
 		else
 		{

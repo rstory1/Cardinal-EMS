@@ -2,15 +2,12 @@
 
 AlarmBox::AlarmBox(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
-//    wiringPiSetupSys();
-//    pinMode(18, OUTPUT);
-//    pinMode(17, INPUT);
+    wiringPiSetupSys();
+    pinMode(18, OUTPUT);
+    pinMode(17, INPUT);
 
-//    wiringPiISR(17,INT_EDGE_FALLING, &buttonClicked);
+    wiringPiISR(17,INT_EDGE_FALLING, &buttonClicked);
 
-//    QTimer *flashTimer = new QTimer(this);
-//        connect(flashTimer, SIGNAL(timeout()), this, SLOT(changeFlashState()));
-//        flashTimer->start(1000);
 }
 
 QRectF AlarmBox::boundingRect() const
@@ -52,7 +49,7 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setPen(Qt::white);
     painter->drawText(QRectF(-40, -100, 80, 20), Qt::AlignCenter, "ALARMS");
 
-    QFont font = QFont("Arial", 12);
+    QFont font = QFont("Arial", 18);
     font.setBold(true);
     painter->setFont(font);
 

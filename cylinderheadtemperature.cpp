@@ -52,11 +52,11 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 
 	//Set painter for texts
 	painter->setPen(QPen(Qt::white, 1));
-	painter->setFont(QFont("Arial", 12));
+    painter->setFont(QFont("Arial", 18));
 
 	//Draw the static texts
-	painter->drawText(QRectF(90.0, -165.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignVCenter, "CHT");
-	painter->drawText(QRectF(90.0, 40.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignBottom, QString::fromUtf8("°C"));
+    painter->drawText(QRectF(75.0, -165.0, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+    painter->drawText(QRectF(90.0, 40.0, 40.0, 20.0), Qt::AlignRight | Qt::AlignBottom, QString::fromUtf8("°C"));
 
 	//Draw the ticks and numbers
 	foreach(double value, betweenValues)
@@ -121,7 +121,7 @@ void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphic
 		}
 
 		//Define text position and move to current column
-        QRectF textRect(-30, -20, 30, 20);
+        QRectF textRect(-35, -20, 40, 20);
 		textRect.moveCenter(QPointF(i*40-105, -135));
 
 		if(i%2)

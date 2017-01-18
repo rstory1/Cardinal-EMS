@@ -97,11 +97,11 @@ int main(int argc, char *argv[])
 //            qDebug() << family;
 //        }
 
-    QFont font;
-//    font.setFamily("Liberation Sans");
-    font.setBold(true);
+//    QFont font;
+//    font.setFamily("MS 33558");
+//    font.setBold(true);
 //    font.setPointSize(12);
-    a.setFont(font);
+//    a.setFont(font);
 
 
 	//Create the engine monitor and show after splashscreen delay
@@ -111,8 +111,9 @@ int main(int argc, char *argv[])
 	engineMonitor.showFullScreen();
 #else
 	engineMonitor.show();
-    engineMonitor.move(0, 0);
-    engineMonitor.resize(640, 480);
+    engineMonitor.showFullScreen();
+    //engineMonitor.move(0, 0);
+    //engineMonitor.resize(1024, 768);
 #endif
 	splash.finish(&engineMonitor);
 

@@ -24,8 +24,8 @@
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
-  , settings("./settings.ini", QSettings::IniFormat, parent)
-  , gaugeSettings("./gaugeSettings.ini", QSettings::IniFormat, parent)
+  , settings(":/settings.ini", QSettings::IniFormat, parent)
+  , gaugeSettings(":/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
@@ -223,7 +223,7 @@ void EngineMonitor::setupCylinderHeadTemperature()
 
 void EngineMonitor::setupBarGraphs()
 {
-	oilTemperature.setPos(0, -150);
+    oilTemperature.setPos(0, -230);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     oilTemperature.setBorders(gaugeSettings.value("OilTemp/minReading",0).toInt(),gaugeSettings.value("OilTemp/maxReading",0).toInt());
@@ -233,7 +233,7 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/maxReading",0).toInt()));
     graphicsScene.addItem(&oilTemperature);
 
-	oilPressure.setPos(100, -150);
+    oilPressure.setPos(100, -230);
 	oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
     oilPressure.setBorders(0.0, gaugeSettings.value("OilPress/maxReading",0).toInt());
@@ -247,7 +247,7 @@ void EngineMonitor::setupBarGraphs()
 //    oilPressure.addBetweenValue(gaugeSettings.value("OilPress/max",0).toInt());
 	graphicsScene.addItem(&oilPressure);
 
-	voltMeter.setPos(0, 0);
+    voltMeter.setPos(0, -10);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
 	voltMeter.setBorders(10.0, 16.0);
@@ -257,7 +257,7 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.setPrecision(1, 1);
 	graphicsScene.addItem(&voltMeter);
 
-	ampereMeter.setPos(100, 0);
+    ampereMeter.setPos(100, -10);
 	ampereMeter.setTitle("AMPS");
 	ampereMeter.setUnit("A");
 	ampereMeter.setBorders(-50.0, 50.0);
