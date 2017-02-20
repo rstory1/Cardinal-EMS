@@ -54,6 +54,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
     connect(flashTimer, SIGNAL(timeout()), &cylinderHeadTemperature, SLOT(changeFlashState()));
     connect(flashTimer, SIGNAL(timeout()), &exhaustGasTemperature, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
 //    connect(flashTimer, SIGNAL(timeout()), &fuelFlow, SLOT(changeFlashState()));
 //    connect(flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
 //    connect(flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
@@ -221,7 +222,7 @@ void EngineMonitor::setupCylinderHeadTemperature()
 //	graphicsScene.addItem(&cylinderHeadTemperature);
 
     chtEgt.setPos(-200, 175);
-    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0);
+    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0, 300.0, 1200.0);
 //    chtEgt.addBetweenValue(80);
 //    chtEgt.addBetweenValue(100);
 //    chtEgt.addBetweenValue(120);

@@ -30,14 +30,15 @@ public:
     explicit ChtEgt(QGraphicsObject * parent = 0);
 	QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
-	void setBorders(double minimum, double maximum, double yellowBorder, double redBorder);
+    void setBorders(double minimum, double maximum, double yellowBorder, double redBorder, double minEgt, double maxEgt);
 	void addBetweenValue(double value);
     void setChtValues(double val1, double val2, double val3, double val4);
     void setEgtValues(double val1, double val2, double val3, double val4);
     const QList<double> &getCurrentChtValues() {return currentChtValues;};
     const QList<double> &getCurrentEgtValues() {return currentEgtValues;};
 private:
-	double calculateLocalValue(double value) const;
+    double calculateLocalChtValue(double value) const;
+    double calculateLocalEgtValue(double value) const;
     double minChtValue, maxChtValue;
     double greenYellowChtValue, yellowRedChtValue;
     QList<double> currentChtValues;
