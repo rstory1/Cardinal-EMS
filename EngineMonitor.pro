@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     circulargauge.cpp \
     alarmBox.cpp \
     textBoxGauge.cpp \
-    fueldisplay.cpp
+    fueldisplay.cpp \
+    chtegtgauge.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -58,7 +59,8 @@ HEADERS  += enginemonitor.h \
     circulargauge.h \
     alarmBox.h \
     textBoxGauge.h \
-    fueldisplay.h
+    fueldisplay.h \
+    chtegtgauge.h
 
 RESOURCES += \
     res/res.qrc

@@ -36,7 +36,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 	//Setting up the items to be displayed
 	setupRpmIndicator();
-	setupExhaustGasTemperature();
+    //setupExhaustGasTemperature();
 	setupCylinderHeadTemperature();
 	setupBarGraphs();
     setupStatusItem();
@@ -210,15 +210,25 @@ void EngineMonitor::setupExhaustGasTemperature()
 
 void EngineMonitor::setupCylinderHeadTemperature()
 {
-	cylinderHeadTemperature.setPos(-200, 175);
-	cylinderHeadTemperature.setBorders(60.0, 160.0, 140.0, 150.0);
-	cylinderHeadTemperature.addBetweenValue(80);
-	cylinderHeadTemperature.addBetweenValue(100);
-	cylinderHeadTemperature.addBetweenValue(120);
-	cylinderHeadTemperature.addBetweenValue(140);
-	cylinderHeadTemperature.addBetweenValue(150);
-	cylinderHeadTemperature.addBetweenValue(160);
-	graphicsScene.addItem(&cylinderHeadTemperature);
+//	cylinderHeadTemperature.setPos(-200, 175);
+//	cylinderHeadTemperature.setBorders(60.0, 160.0, 140.0, 150.0);
+//	cylinderHeadTemperature.addBetweenValue(80);
+//	cylinderHeadTemperature.addBetweenValue(100);
+//	cylinderHeadTemperature.addBetweenValue(120);
+//	cylinderHeadTemperature.addBetweenValue(140);
+//	cylinderHeadTemperature.addBetweenValue(150);
+//	cylinderHeadTemperature.addBetweenValue(160);
+//	graphicsScene.addItem(&cylinderHeadTemperature);
+
+    chtEgt.setPos(-200, 175);
+    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0);
+//    chtEgt.addBetweenValue(80);
+//    chtEgt.addBetweenValue(100);
+//    chtEgt.addBetweenValue(120);
+//    chtEgt.addBetweenValue(140);
+//    chtEgt.addBetweenValue(150);
+//    chtEgt.addBetweenValue(160);
+    graphicsScene.addItem(&chtEgt);
 }
 
 void EngineMonitor::setupBarGraphs()
@@ -413,6 +423,7 @@ void EngineMonitor::demoFunction()
 		egtUp = true;
 	}
     exhaustGasTemperature.setValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
+    chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
     static double basicCHT = 130.0;
     basicCHT += 1.0;
@@ -428,6 +439,10 @@ void EngineMonitor::demoFunction()
 									  basicCHT+offset2,
 									  basicCHT+offset3,
 									  basicCHT+offset4);
+    chtEgt.setChtValues(basicCHT+offset1,
+                        basicCHT+offset2,
+                        basicCHT+offset3,
+                        basicCHT+offset4);
 
 	static double oilTemp = 160.0;
 	if(oilTemp < 120.0)
@@ -507,6 +522,8 @@ void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quin
     voltMeter.setValue(volts);
     exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
     cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
+    chtEgt.setEgtValues(egt1, egt2, egt3, egt4);
+    chtEgt.setChtValues(cht1, cht2, cht3, cht4);
     outsideAirTemperature.setValue(oat);
     insideAirTemperature.setValue(iat);
 

@@ -32,6 +32,7 @@
 #include "alarmBox.h"
 #include "textBoxGauge.h"
 #include "fueldisplay.h"
+#include "chtegtgauge.h"
 
 class EngineMonitor : public QGraphicsView
 {
@@ -76,6 +77,7 @@ private:
     AlarmBox alarmWindow;
     int warmupTemp;
     QTimer flashTimer;
+    ChtEgt chtEgt;
 
 private slots:
 	void demoFunction();
