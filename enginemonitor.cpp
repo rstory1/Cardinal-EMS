@@ -35,15 +35,14 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 
 	//Setting up the items to be displayed
-	setupRpmIndicator();
-    //setupExhaustGasTemperature();
-	setupCylinderHeadTemperature();
+    setupRpmIndicator();
 	setupBarGraphs();
     setupStatusItem();
 	setupTimeToDestinationItem();
 	setupFuelManagement();
 	setupManifoldPressure();
     setupAlarm();
+    setupChtEgt();
     graphicsScene.update();
 	setupLogFile();
 
@@ -52,13 +51,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     flashTimer->start(1000);
     connect(flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
     connect(flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &cylinderHeadTemperature, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &exhaustGasTemperature, SLOT(changeFlashState()));
     connect(flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
-//    connect(flashTimer, SIGNAL(timeout()), &fuelFlow, SLOT(changeFlashState()));
-//    connect(flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
-//    connect(flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
-
 
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
@@ -70,13 +63,9 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
-    //  Connect signal for alarm from CHT
-    connect(&cylinderHeadTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&cylinderHeadTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from EGT
-    connect(&exhaustGasTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&exhaustGasTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    //  Connect signal for alarm from CHT/EGT
+    connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&chtEgt, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     //  Connect signal for alarm from Volt Meter
     connect(&voltMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
@@ -140,12 +129,12 @@ void EngineMonitor::writeLogFile()
 	static quint64 sample = 0;
 	logFile->write(QString::number(sample).append(';').toLatin1());
 	logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
-	QList<double> egtValues = exhaustGasTemperature.getCurrentValues();
+    QList<double> egtValues = chtEgt.getCurrentEgtValues();
 	logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
-	QList<double> chtValues = cylinderHeadTemperature.getCurrentValues();
+    QList<double> chtValues = chtEgt.getCurrentChtValues();
 	logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
@@ -159,7 +148,7 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(manifoldPressure.getValue(), 'f', 1).append(';').toLatin1());
 	logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(';').toLatin1());
-	logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append("\r\n").toLatin1());
+    //logFile->write(QString(exhaustGasTemperature.isLeanAssistActive() ? "1" : "0").append("\r\n").toLatin1());
 	logFile->flush();
 	++sample;
 }
@@ -195,22 +184,22 @@ void EngineMonitor::setupRpmIndicator()
 	graphicsScene.addItem(&rpmIndicator);
 }
 
-void EngineMonitor::setupExhaustGasTemperature()
-{
-	exhaustGasTemperature.setPos(-475, 175);
-	exhaustGasTemperature.setBorders(300.0, 850.0, 750.0, 800.0);
-	exhaustGasTemperature.addBetweenValue(450);
-	exhaustGasTemperature.addBetweenValue(550);
-	exhaustGasTemperature.addBetweenValue(650);
-	exhaustGasTemperature.addBetweenValue(750);
-	exhaustGasTemperature.addBetweenValue(800);
-	exhaustGasTemperature.addBetweenValue(850);
-	exhaustGasTemperature.setLeanWindow(200.0);
-	graphicsScene.addItem(&exhaustGasTemperature);
-}
+//void EngineMonitor::setupExhaustGasTemperature()
+//{
+//	exhaustGasTemperature.setPos(-475, 175);
+//	exhaustGasTemperature.setBorders(300.0, 850.0, 750.0, 800.0);
+//	exhaustGasTemperature.addBetweenValue(450);
+//	exhaustGasTemperature.addBetweenValue(550);
+//	exhaustGasTemperature.addBetweenValue(650);
+//	exhaustGasTemperature.addBetweenValue(750);
+//	exhaustGasTemperature.addBetweenValue(800);
+//	exhaustGasTemperature.addBetweenValue(850);
+//	exhaustGasTemperature.setLeanWindow(200.0);
+//    graphicsScene.addItem(&exhaustGasTemperature);
+//}
 
-void EngineMonitor::setupCylinderHeadTemperature()
-{
+//void EngineMonitor::setupCylinderHeadTemperature()
+//{
 //	cylinderHeadTemperature.setPos(-200, 175);
 //	cylinderHeadTemperature.setBorders(60.0, 160.0, 140.0, 150.0);
 //	cylinderHeadTemperature.addBetweenValue(80);
@@ -221,14 +210,18 @@ void EngineMonitor::setupCylinderHeadTemperature()
 //	cylinderHeadTemperature.addBetweenValue(160);
 //	graphicsScene.addItem(&cylinderHeadTemperature);
 
-    chtEgt.setPos(-200, 175);
-    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0, 300.0, 1200.0);
 //    chtEgt.addBetweenValue(80);
 //    chtEgt.addBetweenValue(100);
 //    chtEgt.addBetweenValue(120);
 //    chtEgt.addBetweenValue(140);
 //    chtEgt.addBetweenValue(150);
 //    chtEgt.addBetweenValue(160);
+//}
+
+void EngineMonitor::setupChtEgt()
+{
+    chtEgt.setPos(-200, 175);
+    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0, 300.0, 1200.0);
     graphicsScene.addItem(&chtEgt);
 }
 
@@ -422,8 +415,7 @@ void EngineMonitor::demoFunction()
 	{
 		leaned = true;
 		egtUp = true;
-	}
-    exhaustGasTemperature.setValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
+    }
     chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
     static double basicCHT = 130.0;
@@ -435,11 +427,7 @@ void EngineMonitor::demoFunction()
     static double offset1 = double(qrand())/double(RAND_MAX)*50.0;
 	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
 	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
-	static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
-	cylinderHeadTemperature.setValues(basicCHT+offset1,
-									  basicCHT+offset2,
-									  basicCHT+offset3,
-									  basicCHT+offset4);
+    static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
     chtEgt.setChtValues(basicCHT+offset1,
                         basicCHT+offset2,
                         basicCHT+offset3,
@@ -521,8 +509,6 @@ void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quin
     oilPressure.setValue(oilPress);
     ampereMeter.setValue(amps);
     voltMeter.setValue(volts);
-    exhaustGasTemperature.setValues(egt1, egt2, egt3, egt4);
-    cylinderHeadTemperature.setValues(cht1, cht2, cht3, cht4);
     chtEgt.setEgtValues(egt1, egt2, egt3, egt4);
     chtEgt.setChtValues(cht1, cht2, cht3, cht4);
     outsideAirTemperature.setValue(oat);

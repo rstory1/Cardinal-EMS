@@ -208,7 +208,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));
 
         //  Draw the markers for the EGT gauge
-        QRectF EgtRect = QRectF(QPointF(i*60-182, calculateLocalEgtValue(currentEgtValues.value(i))-2), QPointF(i*60-138, calculateLocalEgtValue(currentEgtValues.value(i))+2));
+        QRectF EgtRect = QRectF(QPointF(i*60-185, calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-135, calculateLocalEgtValue(currentEgtValues.value(i))+3));
 
         if((currentEgtValues.at(i) > minEgtValue) &&
                 (currentEgtValues.at(i) < maxEgtValue))
@@ -225,16 +225,17 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             marker2.append(QPointF(i*60-130, calculateLocalEgtValue(currentEgtValues.value(i))-10));
 
 
-            painter->setPen(Qt::white);
+            painter->setPen(Qt::black);
             painter->setBrush(Qt::white);
             painter->drawRect(EgtRect);
+            painter->setPen(Qt::white);
             //painter->drawPolygon(marker1);
             //painter->drawPolygon(marker2);
         }
 
 
 
-        update();
+        //update();
 	}
 
     if ((isAlarmedRed == true)) {
@@ -270,6 +271,8 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         painter->setFont(QFont("Arial", 16));
         painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
     }
+
+    update();
 
 }
 

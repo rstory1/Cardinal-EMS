@@ -24,8 +24,6 @@
 #include <QtGui>
 
 #include "rpmindicator.h"
-#include "exhaustgastemperature.h"
-#include "cylinderheadtemperature.h"
 #include "bargraph.h"
 #include "fuelmanagement.h"
 #include "manifoldpressure.h"
@@ -51,13 +49,12 @@ private:
 	void setupFuelManagement();
 	void setupManifoldPressure();
 	void setupLogFile();
+    void setupChtEgt();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
     void handleAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
     void cancelAlarm(QString alarmGauge);
 	QGraphicsScene graphicsScene;
-	RpmIndicator rpmIndicator;
-	ExhaustGasTemperature exhaustGasTemperature;
-	CylinderHeadTemperature cylinderHeadTemperature;
+    RpmIndicator rpmIndicator;
 	BarGraph oilTemperature;
 	BarGraph oilPressure;
 	BarGraph voltMeter;

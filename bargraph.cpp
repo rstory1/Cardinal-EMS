@@ -34,7 +34,7 @@ BarGraph::BarGraph(QGraphicsObject *parent)
 
 QRectF BarGraph::boundingRect() const
 {
-    return QRectF(-25, -75, 50, 160);
+    return QRectF(-45, -75, 75, 160);
 }
 
 void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -135,7 +135,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     font.setBold(true);
     font.setPointSize(18);
     painter->setFont(font);
-    painter->drawText(QRectF(-25, 55, 50, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+    painter->drawText(QRectF(-40, 55, 80, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
 
 	//Draw marker
 	if((currentValue>minValue) && (currentValue<maxValue))
