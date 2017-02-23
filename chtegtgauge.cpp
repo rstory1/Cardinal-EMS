@@ -65,14 +65,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
     //Set painter for texts
     painter->setPen(QPen(Qt::white, 1));
-    painter->setFont(QFont("Arial", 18));
-
-	//Draw the ticks and numbers
-	foreach(double value, betweenValues)
-	{
-        painter->drawLine(80, calculateLocalChtValue(value), 90, calculateLocalChtValue(value));
-        painter->drawText(QRectF(90.0, calculateLocalChtValue(value)-10.0, 35.0, 20.0), Qt::AlignRight | Qt::AlignVCenter, QString::number(value, 'f', 0));
-	}
+    painter->setFont(QFont("Arial", 18, QFont::Bold));
 
 	//Draw the red line to define warning range
 	painter->setPen(Qt::red);
@@ -95,12 +88,12 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     painter->drawLine(-210, calculateLocalChtValue(maxChtValue)-2, -200, calculateLocalChtValue(maxChtValue)-2);
     painter->drawLine(-210, calculateLocalChtValue(minChtValue)+2, -210, calculateLocalChtValue(maxChtValue)-2);
 
-	//Draw center dashed lines
-//	painter->setPen(QPen(Qt::white, 1, Qt::DashLine));
-//	for(int i = 0; i < 4; i++)
-//	{
-//        painter->drawLine(i*60-160, -120, i*60-160, 60);
-//	}
+    //Draw center lines
+    painter->setPen(QPen(Qt::white, 1, Qt::SolidLine));
+    for(int i = 0; i < 4; i++)
+    {
+        painter->drawLine(i*60-160, -120, i*60-160, 60);
+    }
 
 	//Draw the bar graphes
 	for(int i = 0; i < 4; i++)
@@ -137,16 +130,6 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             barRect = QRectF(QPointF(i*60-180, 60), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
             painter->setPen(painter->brush().color());
             painter->drawRect(barRect);
-//			//If value is outside the displayed range, draw a red cross
-//			painter->setPen(QPen(Qt::red, 2));
-//			painter->drawLine(barRect.left(), 60, barRect.right(), -120);
-//			painter->drawLine(barRect.left(), -120, barRect.right(), 60);
-        }
-        else if (currentChtValues.at(i) < minChtValue)
-        {
-            //barRect = QRectF(QPointF(i*60-180, 60), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
-            //painter->setPen(painter->brush().color());
-            //painter->drawRect(barRect);
         }
 
 		if(painter->brush().color() == Qt::green)
@@ -156,14 +139,8 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 		}
 
         //Define CHT text position and move to current column
-        QRectF textRect(-35, -20, 40, 20);
+        QRectF textRect(-40, -20, 50, 20);
         textRect.moveCenter(QPointF(i*60-160, -135));
-
-//		if(i%2)
-//		{
-//			//All odd values should be raised
-//			textRect.translate(QPointF(0.0, -20.0));
-//		}
 
         //
         if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
@@ -193,16 +170,13 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             }
         } else {
             //Draw the readout
-            painter->setFont(QFont("Arial", 18));
             painter->setPen(Qt::white);
             painter->drawText(textRect, Qt::AlignCenter, QString::number(currentChtValues.at(i), 'f', 0));
         }
 
-        painter->setFont(QFont("Arial", 18));
-
         //Define EGT text position and move to current column
         painter->setPen(Qt::white);
-        QRectF textRectEgt(-40, 65, 50, 20);
+        QRectF textRectEgt(-45, 65, 65, 20);
         textRectEgt.moveCenter(QPointF(i*60-160, 75));
 
         painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));

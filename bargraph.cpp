@@ -34,7 +34,7 @@ BarGraph::BarGraph(QGraphicsObject *parent)
 
 QRectF BarGraph::boundingRect() const
 {
-    return QRectF(-45, -75, 75, 160);
+    return QRectF(-45, -75, 85, 160);
 }
 
 void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -62,6 +62,13 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         painter->drawRect(QRectF(QPointF(-50.0, -10.0), QPointF(50.0, 10.0)));
     } else {
         painter->drawRect(QRectF(QPointF(-10.0, -50.0), QPointF(10.0, 50.0)));
+
+        //Draw the white line to define top of bar
+        painter->setPen(Qt::white);
+        painter->drawLine(-15, calculateLocalValue(maxValue)-2, 15, calculateLocalValue(maxValue)-2);
+
+        //Draw the white line to define base of bar
+        painter->drawLine(-15, calculateLocalValue(minValue)+2, 15, calculateLocalValue(minValue)+2);
     }
 
 	if(!colorStops.isEmpty())
@@ -82,11 +89,13 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         }
     }
 
+
+
 	//Restore the painter with antialising
 	painter->restore();
 
     //Draw Texts around (title, min and max value)
-    painter->setPen(Qt::gray);
+    painter->setPen(Qt::white);
     isPenAlarmColored = false;
     painter->drawText(QRectF(-25, -85, 50, 15), Qt::AlignCenter,titleText);
     painter->drawText(QRectF(-25, -70, 50, 15), Qt::AlignCenter,unitText);
@@ -94,6 +103,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     //painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
     //painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
 
+    //  Determine if there should be an alarm
     for (int i=0;i<colorStops.count();i++) {
         if ((currentValue >= colorStops[i].minValue && currentValue <= colorStops[i].maxValue) && (colorStops[i].color == Qt::red || colorStops[i].color == Qt::yellow)) {
             painter->setPen(colorStops[i].color);
@@ -122,6 +132,40 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         }
     }
 
+    //Set readout details
+    font.setBold(true);
+    font.setPointSize(18);
+    painter->setFont(font);
+
+    if (isAlarmedRed) {
+        if (flashState) {
+            painter->setPen(Qt::red);
+            painter->setBrush(Qt::red);
+            painter->drawRect(QRectF(-40, 55, 80, 22));
+            painter->setPen(Qt::white);
+            painter->drawText(QRectF(-40, 55, 80, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+
+         } else {
+            painter->setPen(Qt::red);
+            painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+        }
+    } else if (isAlarmedYellow) {
+        if (flashState) {
+            painter->setPen(Qt::yellow);
+            painter->setBrush(Qt::yellow);
+            painter->drawRect(QRectF(-40, 55, 80, 22));
+            painter->setPen(Qt::black);
+            painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+
+         } else {
+            painter->setPen(Qt::yellow);
+            painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+        }
+    } else {
+        painter->setPen(Qt::white);
+        painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+    }
+
     if (isPenAlarmColored == false) {
         if (isAlarmedRed == true || isAlarmedYellow == true) {
             emit cancelAlarm(titleText);
@@ -129,13 +173,6 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
             isAlarmedYellow = false;
         }
     }
-
-
-    //Draw readout
-    font.setBold(true);
-    font.setPointSize(18);
-    painter->setFont(font);
-    painter->drawText(QRectF(-40, 55, 80, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
 
 	//Draw marker
 	if((currentValue>minValue) && (currentValue<maxValue))
@@ -200,4 +237,13 @@ void BarGraph::setValue(double value)
 void BarGraph::addColorStop(ColorStop stop)
 {
 	colorStops.append(stop);
+}
+
+void BarGraph::changeFlashState()
+{
+    if (flashState == false) {
+        flashState  = true;
+    } else {
+        flashState = false;
+    }
 }

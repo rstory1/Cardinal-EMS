@@ -20,6 +20,11 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    if (alarmCount > 0) {
+        setVisible(true);
+    } else {
+        setVisible(false);
+    }
 
     //Save thje painter and deactivate Antialising for rectangle drawing
     painter->save();
@@ -38,7 +43,7 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 painter->setPen(alarmColor[i]);
                 painter->setBrush(alarmColor[i]);
 
-                painter->drawRect(QRectF(boundingX + 2, boundingY + 21 + (20 * i), boundingWidth - 4, 18));
+                painter->drawRect(QRectF(boundingX + 2, boundingY + 23 + (22 * i), boundingWidth - 4, 20));
             }
         }
     }
@@ -66,7 +71,7 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 painter->setPen(alarmColor[i]);
             }
 
-            painter->drawText(QRectF(boundingX + 2, boundingY + 21 + (20 * i), boundingWidth - 4, 18), Qt::AlignCenter, alarmText[i]);
+            painter->drawText(QRectF(boundingX + 2, boundingY + 23 + (22 * i), boundingWidth - 4, 20), Qt::AlignCenter, alarmText[i]);
         }
     }
 

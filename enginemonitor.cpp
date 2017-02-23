@@ -52,6 +52,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
     connect(flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
     connect(flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
+    connect(flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
 
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();

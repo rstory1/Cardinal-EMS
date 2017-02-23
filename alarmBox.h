@@ -20,9 +20,9 @@ private:
     int alarmCount = 0;
     QRectF textRect1;
     QString textForAlarm;
-    int boundingX = -40;
+    int boundingX = -50;
     int boundingY = -100;
-    int boundingWidth = 80;
+    int boundingWidth = 100;
     int boundingHeight = 200;
     bool flashState = false;
 

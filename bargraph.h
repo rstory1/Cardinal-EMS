@@ -49,7 +49,8 @@ public:
     QString gaugeName;
 public slots:
 	void makeVisible() {setVisible(true);};
-	void makeInvisible() {setVisible(false);};
+    void makeInvisible() {setVisible(false);};
+    void changeFlashState();
 private:
 	double calculateLocalValue(double value) const;
 	QString titleText, unitText;

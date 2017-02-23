@@ -168,10 +168,6 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         if (isWarmup && (currentValue > yellowRedBorderWarmup || currentValue < redYellowBorderWarmup))
         {
             if (flashState == false) {
-                painter->setPen(Qt::white);
-                painter->setBrush(Qt::white);
-
-                painter->drawRect(QRectF(-22.5, 35, 177.5, 65));
 
                 painter->setPen(Qt::red);
 
@@ -179,7 +175,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 painter->setPen(Qt::red);
                 painter->setBrush(Qt::red);
 
-                painter->drawRect(QRectF(-22.5, 35, 175, 65));
+                painter->drawRect(QRectF(-40, 35, 190, 65));
 
                 painter->setPen(Qt::white);
             }
@@ -193,10 +189,6 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         {
 
             if (flashState == false) {
-                painter->setPen(Qt::white);
-                painter->setBrush(Qt::white);
-
-                painter->drawRect(QRectF(-22.5, 35, 177.5, 65));
 
                 painter->setPen(Qt::red);
 
@@ -204,7 +196,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 painter->setPen(Qt::red);
                 painter->setBrush(Qt::red);
 
-                painter->drawRect(QRectF(-22.5, 35, 175, 65));
+                painter->drawRect(QRectF(-100, 35, 175, 65));
 
                 painter->setPen(Qt::white);
             }
@@ -235,7 +227,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 	//Set position and font for the value and draw it
     QRectF textRect(-100, 35, 170, 65);
-	painter->setFont(QFont("Arial", 30, 1));
+    painter->setFont(QFont("Arial", 30, QFont::Bold));
 	painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
 	//Set position and font for the unit and draw it
 	QRectF unitRect(90, 35, 100, 65);
