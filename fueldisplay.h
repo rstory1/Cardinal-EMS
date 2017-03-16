@@ -26,6 +26,8 @@ private:
     double timeToDestination;
     QRectF remainingFuelRect;
     QRectF remainingFuelAtDestinationRect;
+    QRectF mpgRect;
+    QRectF rangeRect;
     BarGraph fuelFlowGraph;
 };
 

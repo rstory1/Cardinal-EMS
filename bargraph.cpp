@@ -194,6 +194,9 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 		painter->drawPolygon(marker);
 	}
+
+
+    update();
 }
 
 void BarGraph::setTitle(QString title)
@@ -230,8 +233,7 @@ double BarGraph::calculateLocalValue(double value) const
 
 void BarGraph::setValue(double value)
 {
-	currentValue = value;
-	update();
+    currentValue = value;
 }
 
 void BarGraph::addColorStop(ColorStop stop)

@@ -31,6 +31,7 @@
 #include "textBoxGauge.h"
 #include "fueldisplay.h"
 #include "chtegtgauge.h"
+#include <buttonbar.h>
 
 class EngineMonitor : public QGraphicsView
 {
@@ -75,6 +76,7 @@ private:
     int warmupTemp;
     QTimer flashTimer;
     ChtEgt chtEgt;
+    ButtonBar buttonBar;
 
 private slots:
 	void demoFunction();

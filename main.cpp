@@ -111,9 +111,13 @@ int main(int argc, char *argv[])
 	engineMonitor.showFullScreen();
 #else
 	engineMonitor.show();
-    engineMonitor.showFullScreen();
-    //engineMonitor.move(0, 0);
-    //engineMonitor.resize(1024, 768);
+    //engineMonitor.showFullScreen();
+    engineMonitor.move(0, 0);
+    engineMonitor.resize(900, 700);
+    engineMonitor.setMaximumWidth(900);
+    engineMonitor.setMaximumHeight(700);
+    engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #endif
 	splash.finish(&engineMonitor);
 
@@ -132,7 +136,7 @@ int main(int argc, char *argv[])
 
 	NMEAconnect nmeaConnect;
 	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
-	a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
+    a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
 #ifndef QT_DEBUG
 	nmeaConnect.start();
 #endif
