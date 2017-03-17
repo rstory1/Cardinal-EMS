@@ -2,6 +2,7 @@
 #define BUTTONBAR_H
 
 #include <QtWidgets>
+#include <QFile>
 
 class ButtonBar : public QGraphicsObject
 {

@@ -59,20 +59,26 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF clickedPos = event->buttonDownPos(Qt::LeftButton);
 
+    qDebug() << clickedPos;
+
     switch(buttonDisplay) {
     case 1: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
             emit sendAlarmAck();
+
         } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
             buttonDisplay = 2;
+
         } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
             buttonDisplay = 3;
         }
 
     case 2: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
             buttonDisplay = 1;
+
         } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
             // emit a signal to increase the fuel quantity
             emit sendFuelChange("+");
+
         } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
             // emit a signal to decrease the fuel quantity
             emit sendFuelChange("-");
@@ -80,11 +86,15 @@ void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
     case 3: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
             buttonDisplay = 1;
+
         } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
             // emit a signal to show log file export dialog
+
         } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
             // emit a signal to show a software update dialog
+            QFile::copy("app.exe", "update.exe");
         }
     }
 
+    QGraphicsItem::mousePressEvent(event);
 }
