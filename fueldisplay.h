@@ -29,6 +29,9 @@ private:
     QRectF mpgRect;
     QRectF rangeRect;
     BarGraph fuelFlowGraph;
+
+public slots:
+    void onFuelAmountChange(QString changeDirection); // Direction is + or -
 };
 
 #endif // FUELDISPLAY_H

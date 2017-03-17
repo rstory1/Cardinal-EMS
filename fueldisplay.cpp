@@ -75,3 +75,11 @@ void FuelDisplay::setTimeToDestination(double time)
 {
     timeToDestination = time;
 }
+
+void FuelDisplay::onFuelAmountChange(QString changeDirection) {
+    if (changeDirection=="+") {
+        fuelAmount++;
+    } else {
+        fuelAmount--;
+    }
+}

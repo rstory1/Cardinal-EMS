@@ -94,6 +94,12 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
+    // Connect buttonBar to the alarm window for alarm acknowledgement
+    connect(&buttonBar, SIGNAL(sendAlarmAck()), &alarmWindow, SLOT(onAlarmAck()));
+
+    // Connect buttonBar to the fuelDisplay window to increment fuel amount
+    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
+
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
 	QTimer *demoTimer = new QTimer(this);

@@ -61,7 +61,7 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     for (int i=0;i<=9;i++) {
         if (alarmText[i] != "")
         {
-            if (flashState == true) {
+            if (flashState == true && alarmFlash[i] == true || alarmFlash[i] == false) {
                 if (alarmColor[i] == Qt::yellow) {
                     painter->setPen(Qt::black);
                 } else {
@@ -106,6 +106,7 @@ void AlarmBox::onRemoveAlarm(QString text)
                 for (int a = removedItem + 1;a<=alarmCount;a++) {
                     alarmText[a-1] = alarmText[a];
                     alarmColor[a-1] =  alarmColor[a];
+                    alarmFlash[a-1] = alarmFlash[a];
                 }
 
                 alarmCount = alarmCount - 1;
@@ -134,5 +135,13 @@ void AlarmBox::changeFlashState()
         flashState  = true;
     } else {
         flashState = false;
+    }
+}
+
+void AlarmBox::onAlarmAck() {
+    for (int i = 0; i <= 9; i++) {
+        if (alarmFlash[i]==true) {
+            alarmFlash[i]=false;
+        }
     }
 }

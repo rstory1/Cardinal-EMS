@@ -16,13 +16,6 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->setPen(Qt::white);
     painter->setFont(QFont("Arial", 14, QFont::Bold));
 
-    QRectF buttonRect1 = QRectF(0,-50.0,100,50);
-    QRectF buttonRect2 = QRectF(100,-50.0,100,50);
-    QRectF buttonRect3 = QRectF(200,-50.0,100,50);
-    QRectF buttonRect4 = QRectF(300,-50.0,100,50);
-    QRectF buttonRect5 = QRectF(400,-50.0,100,50);
-    QRectF buttonRect6 = QRectF(500,-50.0,100,50);
-
     //Save thje painter and deactivate Antialising for rectangle drawing
     //painter->save();
     painter->setRenderHint(QPainter::Antialiasing, false);
@@ -41,19 +34,57 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
             painter->drawText(buttonRect3, Qt::AlignCenter,"Settings");
             break;
 
-    case 2: painter->drawRect(buttonRect2);
+    case 2: painter->drawRect(buttonRect1);
+            painter->drawRect(buttonRect2);
             painter->drawRect(buttonRect3);
-            painter->drawRect(buttonRect4);
-            painter->drawRect(buttonRect5);
-            painter->drawRect(buttonRect6);
 
-            painter->drawText(buttonRect2, Qt::AlignCenter,"Full");
-            painter->drawText(buttonRect3, Qt::AlignCenter,"+1");
-            painter->drawText(buttonRect4, Qt::AlignCenter,"+5");
-            painter->drawText(buttonRect5, Qt::AlignCenter,"-1");
-            painter->drawText(buttonRect6, Qt::AlignCenter,"-5");
+            painter->drawText(buttonRect1, Qt::AlignCenter,"<-Menu");
+            painter->drawText(buttonRect2, Qt::AlignCenter,"+");
+            painter->drawText(buttonRect3, Qt::AlignCenter,"-");
+            break;
+
+    case 3: painter->drawRect(buttonRect1);
+            painter->drawRect(buttonRect2);
+            painter->drawRect(buttonRect3);
+
+            painter->drawText(buttonRect1, Qt::AlignCenter,"<-Menu");
+            painter->drawText(buttonRect2, Qt::AlignCenter,"Export");
+            painter->drawText(buttonRect3, Qt::AlignCenter,"Update");
             break;
     }
 
     update();
+}
+
+void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    QPointF clickedPos = event->buttonDownPos(Qt::LeftButton);
+
+    switch(buttonDisplay) {
+    case 1: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
+            emit sendAlarmAck();
+        } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
+            buttonDisplay = 2;
+        } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
+            buttonDisplay = 3;
+        }
+
+    case 2: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
+            buttonDisplay = 1;
+        } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
+            // emit a signal to increase the fuel quantity
+            emit sendFuelChange("+");
+        } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
+            // emit a signal to decrease the fuel quantity
+            emit sendFuelChange("-");
+        }
+
+    case 3: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
+            buttonDisplay = 1;
+        } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
+            // emit a signal to show log file export dialog
+        } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
+            // emit a signal to show a software update dialog
+        }
+    }
+
 }

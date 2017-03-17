@@ -39,9 +39,8 @@ public:
 public slots:
     void onAlarm(QString text, QColor color, bool flashing);
     void onRemoveAlarm(QString text);
-
-public slots:
     void changeFlashState();
+    void onAlarmAck();
 
 };
 
