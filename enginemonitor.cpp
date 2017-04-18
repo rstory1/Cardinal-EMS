@@ -51,6 +51,37 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     graphicsScene.addItem(&buttonBar);
     graphicsScene.update();
 
+    // Plot stuff
+    customPlot = new QCustomPlot();
+
+    QGraphicsProxyWidget *test;
+    test = new QGraphicsProxyWidget();
+    test->setWidget(customPlot);
+    test->setPos(100, 100);
+
+
+    graphicsScene.addItem(test);
+
+
+    customPlot->setMinimumHeight(200);
+    customPlot->setMinimumWidth(200);
+    customPlot->addGraph(); // blue line
+    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+    customPlot->addGraph(); // red line
+    customPlot->graph(1)->setPen(QPen(QColor(255, 110, 40)));
+
+    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    timeTicker->setTimeFormat("%h:%m:%s");
+    customPlot->xAxis->setTicker(timeTicker);
+    customPlot->axisRect()->setupFullAxesBox();
+    customPlot->yAxis->setRange(0, 250);
+
+    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+    dataTimer.start(0); // Interval 0 means to refresh as fast as possible
+
+    // End plot stuff
+
     setupLogFile();
 
     // Initialize the timer to flash values on alarm
@@ -522,5 +553,28 @@ void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quin
     }
 }
 
+void EngineMonitor::realtimeDataSlot()
+{
+  static QTime time(QTime::currentTime());
+  // calculate two new data points:
+  double key = time.elapsed()/1000.0; // time elapsed since start of demo, in seconds
+  static double lastPointKey = 0;
+  if (key-lastPointKey > 1.000 /*.002*/) // at most add point every 2 ms
+  {
+    // add data to lines:
+    customPlot->graph(0)->addData(key, chtEgt.getCurrentChtValues().at(1));
+    customPlot->graph(1)->addData(key, chtEgt.getCurrentChtValues().at(2));
+    //customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+    // rescale value (vertical) axis to fit the current data:
+    customPlot->graph(0)->rescaleValueAxis();
+    customPlot->graph(1)->rescaleValueAxis(true);
+    lastPointKey = key;
+
+    // make key axis range scroll with the data (at a constant range size of 8):
+    customPlot->xAxis->setRange(key, 8, Qt::AlignRight);
+    customPlot->replot();
+  }
+
+}
 
 

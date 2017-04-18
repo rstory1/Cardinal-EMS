@@ -32,6 +32,7 @@
 #include "fueldisplay.h"
 #include "chtegtgauge.h"
 #include <buttonbar.h>
+#include <qcustomplot/qcustomplot.h>
 
 class EngineMonitor : public QGraphicsView
 {
@@ -77,10 +78,14 @@ private:
     QTimer flashTimer;
     ChtEgt chtEgt;
     ButtonBar buttonBar;
+    QCustomPlot *customPlot;
+    QCPGraph *graphic;
+    QTimer dataTimer;
 
 private slots:
 	void demoFunction();
-	void writeLogFile();
+    void writeLogFile();
+    void realtimeDataSlot();
 public slots:
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
