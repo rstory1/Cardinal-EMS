@@ -4,5 +4,6 @@
         <file>MS33558.ttf</file>
         <file>gaugeSettings.ini</file>
         <file>settings.ini</file>
+        <file>elevator-ding.wav</file>
     </qresource>
 </RCC>

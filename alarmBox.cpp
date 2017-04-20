@@ -125,7 +125,7 @@ void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 
     alarmCount++;
 
-    QSound::play("elevator-ding.wav");
+    QSound::play(":/elevator-ding.wav");
 
 }
 
