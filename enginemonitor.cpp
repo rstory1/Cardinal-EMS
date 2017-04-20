@@ -53,17 +53,17 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     // Plot stuff
     customPlot = new QCustomPlot();
+    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
 
     QGraphicsProxyWidget *test;
     test = new QGraphicsProxyWidget();
     test->setWidget(customPlot);
-    test->setPos(100, 400);
+    test->setPos(325, 540);
 
     graphicsScene.addItem(test);
 
-
-    customPlot->setMinimumHeight(200);
-    customPlot->setMinimumWidth(500);
+    customPlot->setFixedHeight(150);
+    customPlot->setFixedWidth(300);
     customPlot->addGraph(); // blue line
     customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
     customPlot->addGraph(); // red line
@@ -77,12 +77,13 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     timeTicker->setTimeFormat("%h:%m:%s");
     customPlot->xAxis->setTicker(timeTicker);
     customPlot->axisRect()->setupFullAxesBox();
-    customPlot->yAxis->setRange(0, 250);
+    customPlot->yAxis->setRange(0, 300);
     customPlot->setBackground(Qt::black);
     customPlot->yAxis->setTickLabelColor(Qt::white);
     customPlot->xAxis->setTickLabelColor(Qt::white);
     customPlot->xAxis->setTicks(false);
     customPlot->xAxis->grid()->setVisible(false);
+
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
     connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
@@ -210,7 +211,7 @@ void EngineMonitor::writeLogFile()
 
 void EngineMonitor::setupAlarm()
 {
-    alarmWindow.setPos(100, 200);
+    alarmWindow.setPos(100, 125);
     graphicsScene.addItem(&alarmWindow);
 }
 
@@ -229,7 +230,7 @@ void EngineMonitor::setupRpmIndicator()
     greenYellowWarmup = gaugeSettings.value("RPM/warmupGreenHigh",0).toInt();
     redYellowWarmup = gaugeSettings.value("RPM/warmupRedLow",0).toInt();
     yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
-    rpmIndicator.setPos(425, 200);
+    rpmIndicator.setPos(425, 160);
 	rpmIndicator.setStartSpan(230.0, 240.0);
     rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
 
@@ -275,8 +276,8 @@ void EngineMonitor::setupRpmIndicator()
 
 void EngineMonitor::setupChtEgt()
 {
-    chtEgt.setPos(500, 475);
-    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0, 300.0, 1200.0);
+    chtEgt.setPos(525, 440);
+    chtEgt.setBorders(40.0, 250.0, 230.0, 248.0, 300.0, 1200.0);
     graphicsScene.addItem(&chtEgt);
 }
 
@@ -367,7 +368,7 @@ void EngineMonitor::setupFuelManagement()
     fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
-    fuelDisplay.setPos(125,450);
+    fuelDisplay.setPos(125,350);
     graphicsScene.addItem(&fuelDisplay);
 }
 
@@ -458,20 +459,22 @@ void EngineMonitor::demoFunction()
     }
     chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
-    static double basicCHT = 130.0;
-    basicCHT += 1.0;
-    if(basicCHT > 190.0)
+    static double basicCHT = 0.0;
+
+    if(basicCHT > 250.0)
 	{
-		basicCHT = 0.0;
-	}
+        basicCHT -= 0.5;
+    } else {
+        basicCHT += 0.5;
+    }
     static double offset1 = double(qrand())/double(RAND_MAX)*50.0;
 	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
 	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
     static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
     chtEgt.setChtValues(basicCHT+offset1,
-                        basicCHT+offset2,
+                        basicCHT-offset2,
                         basicCHT+offset3,
-                        basicCHT+offset4);
+                        basicCHT-offset4);
 
 	static double oilTemp = 160.0;
 	if(oilTemp < 120.0)
