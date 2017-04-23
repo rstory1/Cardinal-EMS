@@ -47,6 +47,7 @@ public:
     void setValue(double value);
     double getValue() {return currentValue;};
     QString gaugeName;
+    void setIndicatorSide(QString side);
 public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
@@ -65,6 +66,7 @@ private:
     QPen pen;
     QFont font;
     bool horizontal=false;
+    QString indicatorSide = "right";
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)

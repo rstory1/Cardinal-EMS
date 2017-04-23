@@ -186,9 +186,15 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
             marker.append(QPointF(7.0,-20));
             painter->translate(QPointF(calculateLocalValue(currentValue),0.0));
         } else {
-            marker.append(QPointF(-10,0.0));
-            marker.append(QPointF(20,-7.0));
-            marker.append(QPointF(20,7.0));
+            if (indicatorSide=="right") {
+                marker.append(QPointF(-10,0.0));
+                marker.append(QPointF(20,-7.0));
+                marker.append(QPointF(20,7.0));
+            } else {
+                marker.append(QPointF(10,0.0));
+                marker.append(QPointF(-20,-7.0));
+                marker.append(QPointF(-20,7.0));
+            }
             painter->translate(QPointF(0.0,calculateLocalValue(currentValue)));
         }
 
@@ -248,4 +254,9 @@ void BarGraph::changeFlashState()
     } else {
         flashState = false;
     }
+}
+
+void BarGraph::setIndicatorSide(QString side)
+{
+    indicatorSide = side;
 }

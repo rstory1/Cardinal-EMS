@@ -35,13 +35,13 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 	//Setting up the items to be displayed
     setupRpmIndicator();
-	setupBarGraphs();
-    setupStatusItem();
+    setupBarGraphs();
     setupTimeToDestinationItem();
     //setupManifoldPressure();
     setupAlarm();
     setupChtEgt();
     setupFuelManagement();
+    setupStatusItem();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
@@ -52,42 +52,42 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     graphicsScene.update();
 
     // Plot stuff
-    customPlot = new QCustomPlot();
-    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
+//    customPlot = new QCustomPlot();
+//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
 
-    QGraphicsProxyWidget *test;
-    test = new QGraphicsProxyWidget();
-    test->setWidget(customPlot);
-    test->setPos(325, 540);
+//    QGraphicsProxyWidget *test;
+//    test = new QGraphicsProxyWidget();
+//    test->setWidget(customPlot);
+//    test->setPos(325, 540);
 
-    graphicsScene.addItem(test);
+//    graphicsScene.addItem(test);
 
-    customPlot->setFixedHeight(150);
-    customPlot->setFixedWidth(300);
-    customPlot->addGraph(); // blue line
-    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-    customPlot->addGraph(); // red line
-    customPlot->graph(1)->setPen(QPen(Qt::green));
-    customPlot->addGraph(); // red line
-    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
-    customPlot->addGraph(); // red line
-    customPlot->graph(3)->setPen(QPen(Qt::yellow));
+//    customPlot->setFixedHeight(150);
+//    customPlot->setFixedWidth(300);
+//    customPlot->addGraph(); // blue line
+//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(1)->setPen(QPen(Qt::green));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
 
-    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    timeTicker->setTimeFormat("%h:%m:%s");
-    customPlot->xAxis->setTicker(timeTicker);
-    customPlot->axisRect()->setupFullAxesBox();
-    customPlot->yAxis->setRange(0, 300);
-    customPlot->setBackground(Qt::black);
-    customPlot->yAxis->setTickLabelColor(Qt::white);
-    customPlot->xAxis->setTickLabelColor(Qt::white);
-    customPlot->xAxis->setTicks(false);
-    customPlot->xAxis->grid()->setVisible(false);
+//    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+//    timeTicker->setTimeFormat("%h:%m:%s");
+//    customPlot->xAxis->setTicker(timeTicker);
+//    customPlot->axisRect()->setupFullAxesBox();
+//    customPlot->yAxis->setRange(0, 300);
+//    customPlot->setBackground(Qt::black);
+//    customPlot->yAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTicks(false);
+//    customPlot->xAxis->grid()->setVisible(false);
 
 
-    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
+//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
 
     // End plot stuff
 
@@ -283,7 +283,7 @@ void EngineMonitor::setupChtEgt()
 
 void EngineMonitor::setupBarGraphs()
 {
-    oilTemperature.setPos(700, 125);
+    oilTemperature.setPos(715, 125);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     oilTemperature.setBorders(gaugeSettings.value("OilTemp/minReading",0).toInt(),gaugeSettings.value("OilTemp/maxReading",0).toInt());
@@ -291,6 +291,7 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/min",0).toInt(), gaugeSettings.value("OilTemp/normalLow",0).toInt()));
     oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/max",0).toInt()));
     oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/maxReading",0).toInt()));
+    oilTemperature.setIndicatorSide("left");
     graphicsScene.addItem(&oilTemperature);
 
     oilPressure.setPos(800, 125);
@@ -303,7 +304,7 @@ void EngineMonitor::setupBarGraphs()
     oilPressure.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilPress/max",0).toInt(), gaugeSettings.value("OilPress/maxReading",0).toInt()));
 	graphicsScene.addItem(&oilPressure);
 
-    voltMeter.setPos(700, 300);
+    voltMeter.setPos(715, 300);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
 	voltMeter.setBorders(10.0, 16.0);
@@ -311,6 +312,7 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.9, 12.4));
 	voltMeter.addColorStop(ColorStop(Qt::red, 14.5, 16.0));
 	voltMeter.setPrecision(1, 1);
+    voltMeter.setIndicatorSide("left");
 	graphicsScene.addItem(&voltMeter);
 
     ampereMeter.setPos(800, 300);
@@ -322,11 +324,12 @@ void EngineMonitor::setupBarGraphs()
 	ampereMeter.addBetweenValue(0.0);
 	graphicsScene.addItem(&ampereMeter);
 
-    fuelFlow.setPos(700, 475);
+    fuelFlow.setPos(715, 475);
 	fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
     fuelFlow.setBorders(gaugeSettings.value("Fuel/minFlow",0).toDouble(), gaugeSettings.value("Fuel/maxFlow",0).toDouble());
     fuelFlow.setPrecision(1);
+    fuelFlow.setIndicatorSide("left");
 	graphicsScene.addItem(&fuelFlow);
 
     insideAirTemperature.setPos(800, 425);
@@ -352,6 +355,7 @@ void EngineMonitor::setupStatusItem()
 {
     statusItem.setPos(400, 65);
 	graphicsScene.addItem(&statusItem);
+    statusItem.setVisible(true);
 }
 
 void EngineMonitor::setupTimeToDestinationItem()
