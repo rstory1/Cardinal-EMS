@@ -27,6 +27,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , settings(":/settings.ini", QSettings::IniFormat, parent)
   , gaugeSettings(":/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
+
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
     graphicsScene.setBackgroundBrush(Qt::black);
@@ -112,7 +113,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     //  Connect signal for alarm from rpm indicator
     connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    connect(&rpmIndicator, SIGNAL(cancelAlrm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     //  Connect signal for alarm from CHT/EGT
     connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
@@ -147,6 +148,16 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	demoTimer->setSingleShot(false);
 	demoTimer->start(200);
 #endif
+
+    socket = new QUdpSocket(this);
+
+    qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
+
+    connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
+
+    qDebug()<<"Creating";
+    qDebug()<<socket->BoundState;
+
 }
 
 EngineMonitor::~EngineMonitor()
@@ -593,5 +604,26 @@ void EngineMonitor::realtimeDataSlot()
   }
 
 }
+
+void EngineMonitor::processPendingDatagrams() {
+//    QByteArray datagram;
+//    datagram.resize(socket->pendingDatagramSize());
+//    socket->readDatagram(datagram.data(), datagram.size());
+
+//    qDebug()<<"Processing";
+//    qDebug()<<"Message: " << tr("Received datagram: \"%1\"").arg(datagram.data());
+
+    QString msg;
+    while (socket->hasPendingDatagrams()) {
+        QByteArray buffer;
+        buffer.resize(socket->pendingDatagramSize());
+        socket->readDatagram(buffer.data(), buffer.size());
+        msg.append(buffer.data());
+        qDebug()<<buffer.data();
+    }
+
+    qDebug()<< msg;
+}
+
 
 

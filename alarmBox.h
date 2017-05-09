@@ -2,11 +2,12 @@
 #define ALARMBOX_H
 
 #include <QString>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #include <QtCore>
 #include <QtWidgets>
 #include <QtMultimedia/QSoundEffect>
 #include <QtMultimedia/QSound>
+#include <QtTextToSpeech/QTextToSpeech>
 
 class AlarmBox : public QGraphicsObject
 {
