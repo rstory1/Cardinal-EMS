@@ -23,7 +23,7 @@
 
 #include <QtWidgets>
 
-//! ChtEgtGauge Class
+//! CHT EGT Gauge Class
 /*!
  * This class creates a combined CHT/EGT gauge.
 */

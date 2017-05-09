@@ -4,7 +4,7 @@
 #include <QObject>
 #include "qextserialport.h"
 
-//! PortListener Class
+//! Port Listener Class
 /*!
  * This class receives data from a port
 */

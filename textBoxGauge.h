@@ -23,7 +23,7 @@
 
 #include <QtWidgets>
 
-//! TextBoxGauge Class
+//! Text Box Gauge Class
 /*!
  * This class a text display of a single sensor reading
 */

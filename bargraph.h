@@ -23,7 +23,7 @@
 
 #include <QtWidgets>
 
-//! BarGraph Class
+//! Bar Graph Class
 /*!
  * This class creates a bar graph gauge to be used to display a single sensor reading.
 */

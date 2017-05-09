@@ -13,7 +13,7 @@
 #include <QtCore>
 #include <math.h>
 
-//! SensorConvert Class
+//! Sensor Convert Class
 /*!
  * This class converts raw sensor values to meaningful numbers.
 */

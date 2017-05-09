@@ -4,7 +4,7 @@
 #include <QtWidgets>
 #include <QFile>
 
-//! ButtonBar Class
+//! Button Bar Class
 /*!
  * This class creates a row of buttons to facilitate user interaction
 */

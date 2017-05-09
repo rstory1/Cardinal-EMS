@@ -25,7 +25,7 @@
 #include <QtCore>
 #include <alarmBox.h>
 
-//! RpmIndicator Class
+//! RPM Indicator Class
 /*!
  * This class creates an RPM gauge
 */

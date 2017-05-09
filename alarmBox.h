@@ -29,7 +29,7 @@
 #include <QtMultimedia/QSound>
 #include <QtTextToSpeech/QTextToSpeech>
 
-//! AlarmBox Class
+//! Alarm Box Class
 /*!
  * This class creates a box to display alarms created from the gauge instances and show the user.
 */
