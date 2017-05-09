@@ -7,4 +7,3 @@ bin/*
 *.Debug
 *.Release
 *.DS_Store
-docs/
