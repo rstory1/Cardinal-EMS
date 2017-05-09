@@ -24,6 +24,7 @@
 #include "nmeaconnect.h"
 #include "PortListener.h"
 #include "sensorconvert.h"
+#include "udpsocket.h"
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
@@ -33,9 +34,9 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
 		switch (type)
 		{
-//        case QtInfoMsg:
-//            debugString.append("Info: ");
-//            break;
+        case QtInfoMsg:
+            debugString.append("Info: ");
+            break;
 		case QtDebugMsg:
 			debugString.append("Debug: ");
 			break;
