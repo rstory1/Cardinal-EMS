@@ -24,6 +24,11 @@
 #include <QtCore>
 #include <QtGui/QColor>
 
+//! NmeaConnect Class
+/*!
+ * This class interprets data from an NMEA source
+*/
+
 class NMEAconnect : public QThread
 {
 	Q_OBJECT

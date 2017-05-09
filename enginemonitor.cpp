@@ -27,6 +27,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , settings(":/settings.ini", QSettings::IniFormat, parent)
   , gaugeSettings(":/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
+
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
     graphicsScene.setBackgroundBrush(Qt::black);
@@ -35,13 +36,13 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 	//Setting up the items to be displayed
     setupRpmIndicator();
-	setupBarGraphs();
-    setupStatusItem();
+    setupBarGraphs();
     setupTimeToDestinationItem();
     //setupManifoldPressure();
     setupAlarm();
     setupChtEgt();
     setupFuelManagement();
+    setupStatusItem();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
@@ -50,6 +51,46 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     buttonBar.setPos(0,graphicsScene.height());
     graphicsScene.addItem(&buttonBar);
     graphicsScene.update();
+
+    // Plot stuff
+//    customPlot = new QCustomPlot();
+//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
+
+//    QGraphicsProxyWidget *test;
+//    test = new QGraphicsProxyWidget();
+//    test->setWidget(customPlot);
+//    test->setPos(325, 540);
+
+//    graphicsScene.addItem(test);
+
+//    customPlot->setFixedHeight(150);
+//    customPlot->setFixedWidth(300);
+//    customPlot->addGraph(); // blue line
+//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(1)->setPen(QPen(Qt::green));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
+
+//    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+//    timeTicker->setTimeFormat("%h:%m:%s");
+//    customPlot->xAxis->setTicker(timeTicker);
+//    customPlot->axisRect()->setupFullAxesBox();
+//    customPlot->yAxis->setRange(0, 300);
+//    customPlot->setBackground(Qt::black);
+//    customPlot->yAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTicks(false);
+//    customPlot->xAxis->grid()->setVisible(false);
+
+
+//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
+
+    // End plot stuff
 
     setupLogFile();
 
@@ -72,7 +113,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     //  Connect signal for alarm from rpm indicator
     connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    connect(&rpmIndicator, SIGNAL(cancelAlrm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     //  Connect signal for alarm from CHT/EGT
     connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
@@ -107,6 +148,16 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	demoTimer->setSingleShot(false);
 	demoTimer->start(200);
 #endif
+
+    socket = new QUdpSocket(this);
+
+    qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
+
+    connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
+
+    qDebug()<<"Creating";
+    qDebug()<<socket->BoundState;
+
 }
 
 EngineMonitor::~EngineMonitor()
@@ -171,7 +222,7 @@ void EngineMonitor::writeLogFile()
 
 void EngineMonitor::setupAlarm()
 {
-    alarmWindow.setPos(100, 200);
+    alarmWindow.setPos(100, 125);
     graphicsScene.addItem(&alarmWindow);
 }
 
@@ -190,7 +241,7 @@ void EngineMonitor::setupRpmIndicator()
     greenYellowWarmup = gaugeSettings.value("RPM/warmupGreenHigh",0).toInt();
     redYellowWarmup = gaugeSettings.value("RPM/warmupRedLow",0).toInt();
     yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
-    rpmIndicator.setPos(425, 200);
+    rpmIndicator.setPos(425, 160);
 	rpmIndicator.setStartSpan(230.0, 240.0);
     rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
 
@@ -236,14 +287,14 @@ void EngineMonitor::setupRpmIndicator()
 
 void EngineMonitor::setupChtEgt()
 {
-    chtEgt.setPos(500, 475);
-    chtEgt.setBorders(60.0, 160.0, 140.0, 150.0, 300.0, 1200.0);
+    chtEgt.setPos(525, 440);
+    chtEgt.setBorders(40.0, 250.0, 230.0, 248.0, 300.0, 1200.0);
     graphicsScene.addItem(&chtEgt);
 }
 
 void EngineMonitor::setupBarGraphs()
 {
-    oilTemperature.setPos(700, 125);
+    oilTemperature.setPos(715, 125);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     oilTemperature.setBorders(gaugeSettings.value("OilTemp/minReading",0).toInt(),gaugeSettings.value("OilTemp/maxReading",0).toInt());
@@ -251,6 +302,7 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/min",0).toInt(), gaugeSettings.value("OilTemp/normalLow",0).toInt()));
     oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/max",0).toInt()));
     oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/maxReading",0).toInt()));
+    oilTemperature.setIndicatorSide("left");
     graphicsScene.addItem(&oilTemperature);
 
     oilPressure.setPos(800, 125);
@@ -263,7 +315,7 @@ void EngineMonitor::setupBarGraphs()
     oilPressure.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilPress/max",0).toInt(), gaugeSettings.value("OilPress/maxReading",0).toInt()));
 	graphicsScene.addItem(&oilPressure);
 
-    voltMeter.setPos(700, 300);
+    voltMeter.setPos(715, 300);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
 	voltMeter.setBorders(10.0, 16.0);
@@ -271,6 +323,7 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.9, 12.4));
 	voltMeter.addColorStop(ColorStop(Qt::red, 14.5, 16.0));
 	voltMeter.setPrecision(1, 1);
+    voltMeter.setIndicatorSide("left");
 	graphicsScene.addItem(&voltMeter);
 
     ampereMeter.setPos(800, 300);
@@ -282,11 +335,12 @@ void EngineMonitor::setupBarGraphs()
 	ampereMeter.addBetweenValue(0.0);
 	graphicsScene.addItem(&ampereMeter);
 
-    fuelFlow.setPos(700, 475);
+    fuelFlow.setPos(715, 475);
 	fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
     fuelFlow.setBorders(gaugeSettings.value("Fuel/minFlow",0).toDouble(), gaugeSettings.value("Fuel/maxFlow",0).toDouble());
     fuelFlow.setPrecision(1);
+    fuelFlow.setIndicatorSide("left");
 	graphicsScene.addItem(&fuelFlow);
 
     insideAirTemperature.setPos(800, 425);
@@ -312,6 +366,7 @@ void EngineMonitor::setupStatusItem()
 {
     statusItem.setPos(400, 65);
 	graphicsScene.addItem(&statusItem);
+    statusItem.setVisible(true);
 }
 
 void EngineMonitor::setupTimeToDestinationItem()
@@ -328,7 +383,7 @@ void EngineMonitor::setupFuelManagement()
     fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
-    fuelDisplay.setPos(125,450);
+    fuelDisplay.setPos(125,350);
     graphicsScene.addItem(&fuelDisplay);
 }
 
@@ -419,20 +474,22 @@ void EngineMonitor::demoFunction()
     }
     chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
-    static double basicCHT = 130.0;
-    basicCHT += 1.0;
-    if(basicCHT > 190.0)
+    static double basicCHT = 0.0;
+
+    if(basicCHT > 250.0)
 	{
-		basicCHT = 0.0;
-	}
+        basicCHT -= 0.5;
+    } else {
+        basicCHT += 0.5;
+    }
     static double offset1 = double(qrand())/double(RAND_MAX)*50.0;
 	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
 	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
     static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
     chtEgt.setChtValues(basicCHT+offset1,
-                        basicCHT+offset2,
+                        basicCHT-offset2,
                         basicCHT+offset3,
-                        basicCHT+offset4);
+                        basicCHT-offset4);
 
 	static double oilTemp = 160.0;
 	if(oilTemp < 120.0)
@@ -520,6 +577,52 @@ void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quin
     } else {
         rpmIndicator.isWarmup = false;
     }
+}
+
+void EngineMonitor::realtimeDataSlot()
+{
+  static QTime time(QTime::currentTime());
+  // calculate two new data points:
+  double key = time.elapsed()/1000.0; // time elapsed since start of demo, in seconds
+  static double lastPointKey = 0;
+  if (key-lastPointKey > 0.500 /*.002*/) // at most add point every 2 ms
+  {
+    // add data to lines:
+    customPlot->graph(0)->addData(key, chtEgt.getCurrentChtValues().at(0));
+    customPlot->graph(1)->addData(key, chtEgt.getCurrentChtValues().at(1));
+    customPlot->graph(2)->addData(key, chtEgt.getCurrentChtValues().at(2));
+    customPlot->graph(3)->addData(key, chtEgt.getCurrentChtValues().at(3));
+    //customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+    // rescale value (vertical) axis to fit the current data:
+//    customPlot->graph(0)->rescaleValueAxis();
+//    customPlot->graph(1)->rescaleValueAxis(true);
+    lastPointKey = key;
+
+    // make key axis range scroll with the data (at a constant range size of 8):
+    customPlot->xAxis->setRange(key, 120, Qt::AlignRight);
+    customPlot->replot();
+  }
+
+}
+
+void EngineMonitor::processPendingDatagrams() {
+//    QByteArray datagram;
+//    datagram.resize(socket->pendingDatagramSize());
+//    socket->readDatagram(datagram.data(), datagram.size());
+
+//    qDebug()<<"Processing";
+//    qDebug()<<"Message: " << tr("Received datagram: \"%1\"").arg(datagram.data());
+
+    QString msg;
+    while (socket->hasPendingDatagrams()) {
+        QByteArray buffer;
+        buffer.resize(socket->pendingDatagramSize());
+        socket->readDatagram(buffer.data(), buffer.size());
+        msg.append(buffer.data());
+        qDebug()<<buffer.data();
+    }
+
+    qDebug()<< msg;
 }
 
 

@@ -2,6 +2,14 @@
 
 ButtonBar::ButtonBar(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
+    gradient1.setColorAt(1, Qt::black);
+    gradient1.setColorAt(0, Qt::darkGray);
+
+    gradient2.setColorAt(1, Qt::black);
+    gradient2.setColorAt(0, Qt::darkGray);
+
+    gradient3.setColorAt(1, Qt::black);
+    gradient3.setColorAt(0, Qt::darkGray);
 }
 
 QRectF ButtonBar::boundingRect() const
@@ -12,7 +20,7 @@ QRectF ButtonBar::boundingRect() const
 
 void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    painter->setBrush(Qt::darkBlue);
+    //painter->setBrush(Qt::darkBlue);
     painter->setPen(Qt::white);
     painter->setFont(QFont("Arial", 14, QFont::Bold));
 
@@ -22,7 +30,9 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
     //painter->restore();
 
-
+    painter->fillRect(buttonRect1, gradient1);
+    painter->fillRect(buttonRect2, gradient2);
+    painter->fillRect(buttonRect3, gradient3);
 
     switch(buttonDisplay) {
     case 1: painter->drawRect(buttonRect1);

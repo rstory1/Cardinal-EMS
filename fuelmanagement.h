@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! FuelManagement Class
+/*!
+ * This class creates a window to manage fuel settings and view fuel related data
+*/
+
 class FuelManagement : public QGraphicsObject
 {
 	Q_OBJECT

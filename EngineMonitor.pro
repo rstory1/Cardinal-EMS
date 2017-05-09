@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets multimedia #svg
+QT       += core gui widgets multimedia printsupport texttospeech#svg
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -44,7 +44,9 @@ SOURCES += main.cpp\
     textBoxGauge.cpp \
     fueldisplay.cpp \
     chtegtgauge.cpp \
-    buttonbar.cpp
+    buttonbar.cpp \
+    qcustomplot/qcustomplot.cpp \
+    udpsocket.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -62,11 +64,14 @@ HEADERS  += enginemonitor.h \
     textBoxGauge.h \
     fueldisplay.h \
     chtegtgauge.h \
-    buttonbar.h
+    buttonbar.h \
+    qcustomplot/qcustomplot.h \
+    wiringPi/wiringPi/wiringPi.h \
+    udpsocket.h
 
 RESOURCES += \
     res/res.qrc
 
-LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
+#LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
 
 include(./qextserialport/qextserialport.pri)

@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! CylinderHeadTemperature Class
+/*!
+ * This class creates stand alone CHT gauge
+*/
+
 class CylinderHeadTemperature : public QGraphicsObject
 {
     Q_OBJECT

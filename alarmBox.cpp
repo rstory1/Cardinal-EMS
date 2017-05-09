@@ -81,12 +81,12 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
 void AlarmBox::soundAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge)
 {
-    digitalWrite(18, HIGH);
+    //digitalWrite(18, HIGH);
 }
 
 void AlarmBox::buttonClicked()
 {
-    digitalWrite(18, LOW);
+    //digitalWrite(18, LOW);
 }
 
 void AlarmBox::onRemoveAlarm(QString text)
@@ -125,8 +125,14 @@ void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 
     alarmCount++;
 
-    QSound::play("elevator-ding.wav");
+    QSound::play(":/elevator-ding.wav");
+//    QTextToSpeech *m_speech;
+//    m_speech = new QTextToSpeech(this);
+//    m_speech->say("Hello World!");
 
+//    delete m_speech;
+
+//    qDebug() << m_speech->availableEngines();
 }
 
 void AlarmBox::changeFlashState()

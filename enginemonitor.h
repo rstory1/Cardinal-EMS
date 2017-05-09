@@ -32,6 +32,13 @@
 #include "fueldisplay.h"
 #include "chtegtgauge.h"
 #include <buttonbar.h>
+#include <qcustomplot/qcustomplot.h>
+#include <udpsocket.h>
+
+//! EngineMonitor Class
+/*!
+ * This class is the main class and handles the overall function of the app. The grpahics scene is setup here and multiple signal/slots are connected here as well.
+*/
 
 class EngineMonitor : public QGraphicsView
 {
@@ -77,16 +84,22 @@ private:
     QTimer flashTimer;
     ChtEgt chtEgt;
     ButtonBar buttonBar;
+    QCustomPlot *customPlot;
+    QCPGraph *graphic;
+    QTimer dataTimer;
+    QUdpSocket *socket;
 
 private slots:
 	void demoFunction();
-	void writeLogFile();
+    void writeLogFile();
+    void realtimeDataSlot();
 public slots:
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
     void showStatusMessage(QString text, QColor color);
     void setValuesBulkUpdate(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
+    void processPendingDatagrams();
 
 };
 

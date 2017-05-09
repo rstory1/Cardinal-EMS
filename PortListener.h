@@ -4,6 +4,11 @@
 #include <QObject>
 #include "qextserialport.h"
 
+//! PortListener Class
+/*!
+ * This class receives data from a port
+*/
+
 class PortListener : public QObject
 {
 Q_OBJECT

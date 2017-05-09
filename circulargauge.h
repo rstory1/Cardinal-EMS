@@ -10,6 +10,11 @@
 #include <QtWidgets>
 #include <QtCore>
 
+//! CircularGauge Class
+/*!
+ * This class creates generic circular gauge to display information from a single sensor. Currently unused.
+*/
+
 class circularGauge : public QGraphicsItem
 {
 public:
@@ -22,7 +27,6 @@ public:
 	void addBetweenValue(double value);
 	void setValue(double value);
     double getValue() {return currentValue;};
-    bool isWarmup;
 private:
 	double calculateLocalValue(double value) const;
 	double minValue, maxValue, currentValue;
@@ -32,6 +36,7 @@ private:
     QSettings gaugeSettings;
     void paintWarmup(QPainter parentPainter);
     void paintNormal(QPainter parentPainter);
+    bool isWarmup;
 
 };
 

@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! BarGraph Class
+/*!
+ * This class creates a bar graph gauge to be used to display a single sensor reading.
+*/
+
 struct ColorStop
 {
 	ColorStop() : color(QColor()), minValue(0.0), maxValue(0.0) {};
@@ -47,6 +52,7 @@ public:
     void setValue(double value);
     double getValue() {return currentValue;};
     QString gaugeName;
+    void setIndicatorSide(QString side);
 public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
@@ -65,6 +71,7 @@ private:
     QPen pen;
     QFont font;
     bool horizontal=false;
+    QString indicatorSide = "right";
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)

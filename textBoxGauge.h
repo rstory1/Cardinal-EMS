@@ -23,13 +23,10 @@
 
 #include <QtWidgets>
 
-//struct ColorStop
-//{
-//	ColorStop() : color(QColor()), minValue(0.0), maxValue(0.0) {};
-//	ColorStop(QColor col, double minVal, double maxVal) : color(col), minValue(minVal), maxValue(maxVal) {};
-//	QColor color;
-//	double minValue, maxValue;
-//};
+//! TextBoxGauge Class
+/*!
+ * This class a text display of a single sensor reading
+*/
 
 class TextBox : public QGraphicsObject
 {
