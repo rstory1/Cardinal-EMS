@@ -37,6 +37,10 @@ QRectF ChtEgt::boundingRect() const
     return QRectF(-240, -170, 340, 260);
 }
 
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	//Set Clipping Rect

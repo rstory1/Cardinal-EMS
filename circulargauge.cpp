@@ -42,6 +42,10 @@ QRectF circularGauge::boundingRect() const
 	return QRectF(-200.0, -140.0, 400.0, 280.0);
 }
 
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void circularGauge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);

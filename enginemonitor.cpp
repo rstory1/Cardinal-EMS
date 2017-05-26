@@ -43,6 +43,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setupChtEgt();
     setupFuelManagement();
     setupStatusItem();
+    setupWindVector();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
@@ -625,5 +626,14 @@ void EngineMonitor::processPendingDatagrams() {
     qDebug()<< msg;
 }
 
+void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
+    windVector.updateWind(spd, dir, mHdg);
+}
+
+void EngineMonitor::setupWindVector() {
+    windVector.setPos(100, 600);
+    graphicsScene.addItem(&windVector);
+    windVector.setVisible(true);
+}
 
 

@@ -34,6 +34,7 @@
 #include <buttonbar.h>
 #include <qcustomplot/qcustomplot.h>
 #include <udpsocket.h>
+#include <windvector.h>
 
 //! Engine Monitor Class
 /*!
@@ -58,6 +59,7 @@ private:
 	void setupManifoldPressure();
 	void setupLogFile();
     void setupChtEgt();
+    void setupWindVector();
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
     void handleAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
     void cancelAlarm(QString alarmGauge);
@@ -88,11 +90,13 @@ private:
     QCPGraph *graphic;
     QTimer dataTimer;
     QUdpSocket *socket;
+    WindVector windVector;
 
 private slots:
 	void demoFunction();
     void writeLogFile();
     void realtimeDataSlot();
+
 public slots:
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
@@ -100,6 +104,7 @@ public slots:
     void setValuesBulkUpdate(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
+    void onUpdateWindInfo(float spd, float dir, float mHdg);
 
 };
 
