@@ -33,8 +33,9 @@ public:
     void updateWind(float spd, float dir, float mHdg);
 
 private:
-    QPolygonF vector;
+    QPolygonF vector1;
     QPolygonF vector2;
+    QPolygonF vector3;
     QTransform t;
     float windSpd = 0.0;
     float windDir = 0.0; // This is the compass direction the wind is from
@@ -42,7 +43,9 @@ private:
     float windX = 0.0;
     float windY = 0.0;
     QRectF spdTextRect;
+    QRectF xCompRect, yCompRect;
     float PI = 3.145;
+    bool isVector = true; //False will show the wind in components
 
 };
 
