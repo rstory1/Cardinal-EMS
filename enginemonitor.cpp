@@ -159,6 +159,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     qDebug()<<"Creating";
     qDebug()<<socket->BoundState;
 
+    QTimer *clockTimer = new QTimer(this);
+    connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+    clockTimer->start(1000);
+
 }
 
 EngineMonitor::~EngineMonitor()

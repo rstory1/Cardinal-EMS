@@ -91,11 +91,13 @@ private:
     QTimer dataTimer;
     QUdpSocket *socket;
     WindVector windVector;
+    QTimer clockTimer;
 
 private slots:
 	void demoFunction();
     void writeLogFile();
     void realtimeDataSlot();
+    void onTic();
 
 public slots:
 	void setTimeToDestination(double time);

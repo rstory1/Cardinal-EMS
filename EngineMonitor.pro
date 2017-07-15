@@ -48,7 +48,8 @@ SOURCES += main.cpp\
     qcustomplot/qcustomplot.cpp \
     udpsocket.cpp \
     flightcalculator.cpp \
-    windvector.cpp
+    windvector.cpp \
+    hourmeter.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -71,7 +72,8 @@ HEADERS  += enginemonitor.h \
     wiringPi/wiringPi/wiringPi.h \
     udpsocket.h \
     flightcalculator.h \
-    windvector.h
+    windvector.h \
+    hourmeter.h
 
 RESOURCES += \
     res/res.qrc
