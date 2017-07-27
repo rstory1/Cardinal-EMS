@@ -160,7 +160,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     qDebug()<<socket->BoundState;
 
     QTimer *clockTimer = new QTimer(this);
-    connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+    //connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
     clockTimer->start(1000);
 
 }

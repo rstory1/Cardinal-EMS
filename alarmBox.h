@@ -27,7 +27,7 @@
 #include <QtWidgets>
 #include <QtMultimedia/QSoundEffect>
 #include <QtMultimedia/QSound>
-#include <QtTextToSpeech/QTextToSpeech>
+//#include <QtTextToSpeech/QTextToSpeech>
 
 //! Alarm Box Class
 /*!

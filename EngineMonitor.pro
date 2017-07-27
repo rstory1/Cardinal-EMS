@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets multimedia printsupport texttospeech#svg
+QT       += core gui widgets multimedia printsupport #texttospeech#svg
 
 TARGET = EngineMonitor
 TEMPLATE = app
