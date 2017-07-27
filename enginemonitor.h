@@ -35,6 +35,7 @@
 #include <qcustomplot/qcustomplot.h>
 #include <udpsocket.h>
 #include <windvector.h>
+#include <hourmeter.h>
 
 //! Engine Monitor Class
 /*!
@@ -92,12 +93,12 @@ private:
     QUdpSocket *socket;
     WindVector windVector;
     QTimer clockTimer;
+    HourMeter *hobbs;
 
 private slots:
 	void demoFunction();
     void writeLogFile();
     void realtimeDataSlot();
-    void onTic();
 
 public slots:
 	void setTimeToDestination(double time);

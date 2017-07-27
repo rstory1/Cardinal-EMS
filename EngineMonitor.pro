@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets multimedia printsupport texttospeech#svg
+QT       += core gui widgets multimedia printsupport texttospeech sql#svg
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -49,7 +49,9 @@ SOURCES += main.cpp\
     udpsocket.cpp \
     flightcalculator.cpp \
     windvector.cpp \
-    hourmeter.cpp
+    hourmeter.cpp \
+    spatial.cpp \
+    sqlite3.c
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -73,7 +75,9 @@ HEADERS  += enginemonitor.h \
     udpsocket.h \
     flightcalculator.h \
     windvector.h \
-    hourmeter.h
+    hourmeter.h \
+    spatial.h \
+    sqlite3.h
 
 RESOURCES += \
     res/res.qrc
@@ -81,3 +85,6 @@ RESOURCES += \
 #LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
 
 include(./qextserialport/qextserialport.pri)
+
+DISTFILES += \
+    mod_spatialite-4.3.0a-win-x86/mod_spatialite.dll \

@@ -26,6 +26,7 @@
 #include "sensorconvert.h"
 #include "udpsocket.h"
 #include "flightcalculator.h"
+#include "spatial.h"
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
@@ -176,6 +177,8 @@ int main(int argc, char *argv[])
     qDebug() << msg;
 
     //QString hexMsg =
+
+    spatial testDB;
 
 	return a.exec();
 }

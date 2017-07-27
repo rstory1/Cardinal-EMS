@@ -160,7 +160,8 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     qDebug()<<socket->BoundState;
 
     QTimer *clockTimer = new QTimer(this);
-    connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+    hobbs = new HourMeter(this);
+    connect(clockTimer, SIGNAL(timeout()), hobbs, SLOT(onTic()));
     clockTimer->start(1000);
 
 }
@@ -639,5 +640,3 @@ void EngineMonitor::setupWindVector() {
     graphicsScene.addItem(&windVector);
     windVector.setVisible(true);
 }
-
-
