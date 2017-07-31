@@ -10,17 +10,6 @@ void flightCalculator::run() {
 }
 
 void flightCalculator::calculateWindVector() {
-//    if (magHdg < track) {
-//        wca = track - magHdg;
-//    } else if (magHdg > track) {
-//        wca = magHdg - track;
-//    }
-
-
-//    windSpd = sqrt(tas*tas + gs*gs - 2*tas*gs*cos(magHdg*(PI/180)));
-
-//    float radAngle = asin(gs*(sin(wca)/windSpd));
-
     float gs_x = gs * cos((450-track)*PI/180);
     float gs_y = gs * sin((450-track)*PI/180);
     float tas_x = -tas * cos((450-magHdg)*PI/180);
@@ -50,14 +39,14 @@ void flightCalculator::calculateWindVector() {
     if (windDir >= 360.0) {
         windDir = windDir - 360.0;
     }
-    qDebug() << windDir << "!";
+   // qDebug() << windDir << "!";
     if (windDir <=180) {
         windDir = windDir +180;
     } else {
         windDir = windDir - 180;
     }
 
-    qDebug() << windDir << ";" << (windDir - magHdg);
+    //qDebug() << windDir << ";" << (windDir - magHdg);
 
     updateWindVector(windSpd, windDir, magHdg);
 }

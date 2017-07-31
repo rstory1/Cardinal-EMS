@@ -1,26 +1,45 @@
 #include "hourmeter.h"
 
-hourMeter::hourMeter()
+HourMeter::HourMeter(QObject *parent) : QObject(parent)
 {
-//    hour=0;
-//    min=0;
-//    sec=0;
+    hobbs.hour = 0;
+    hobbs.min = 0;
+    hobbs.sec = 0;
+
+    flight.hour = 0;
+    flight.min = 0;
+    flight.sec = 0;
 }
 
 
-//void hourMeter::onTic() {
-//    if (sec < 60) {
-//        sec = sec + 1;
-//    } else {
-//        sec = 0;
+void HourMeter::onTic(bool isFlying) {
+    if (hobbs.sec < 59) {
+        hobbs.sec = hobbs.sec + 1;
+    } else {
+        hobbs.sec = 0;
 
-//        if (min < 60) {
-//            min = min + 1;
-//        } else {
-//            min = 0;
-//            hour = hour + 1;
-//        }
-//    }
+        if (hobbs.min < 59) {
+            hobbs.min = hobbs.min + 1;
+        } else {
+            hobbs.min = 0;
+            hobbs.hour = hobbs.hour + 1;
+        }
+    }
 
-//    qDebug() << QString::number(hour, 'f', 1).rightJustified(2,'0').append(QString(":").append(QString::number(min, 'f',1).rightJustified(2,'0')).append(QString::number(sec, 'f',1).rightJustified(2,'0')));
-//}
+    if (isFlying) {
+        if (flight.sec < 59) {
+            flight.sec = flight.sec + 1;
+        } else {
+            flight.sec = 0;
+
+            if (flight.min < 59) {
+                flight.min = flight.min + 1;
+            } else {
+                hobbs.min = 0;
+                flight.hour = flight.hour + 1;
+            }
+        }
+    }
+
+    qDebug() << QString::number(hobbs.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(hobbs.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(hobbs.sec, 'f',0).rightJustified(2,'0')));
+}
