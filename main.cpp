@@ -144,15 +144,23 @@ int main(int argc, char *argv[])
 	nmeaConnect.start();
 #endif
 
-    SensorConvert sensorConvert;
-    a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
-    a.connect(&sensorConvert, SIGNAL(updateMonitor(quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setValuesBulkUpdate(quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16)));
-    a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor, SLOT(setFuelData(double,double)));
-    a.connect(&sensorConvert, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
+    //SensorConvert sensorConvert;
+    //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
+//SLOT(userMessageHandler(QString,QString,bool)));
+    //a.connect(&sensorConvert, 
+//SIGNAL(updateMonitor(quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16)), 
+//&engineMonitor, 
+//SLOT(setValuesBulkUpdate(quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16,quint16)));
+    //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor, 
+//SLOT(setFuelData(double,double)));
+    //a.connect(&sensorConvert, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, 
+//SLOT(showStatusMessage(QString,QColor)));
 
-    QString portName = QLatin1String("ttyACM0");              // update this to use your port of choice
-    PortListener listener(portName);        // signals get hooked up internally
-    a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, SLOT(processData(QString)));
+    //QString portName = QLatin1String("ttyACM0");              // update this to use your 
+//port of choice
+    //PortListener listener(portName);        // signals get hooked up internally
+    //a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, 
+//SLOT(processData(QString)));
 
     flightCalculator flightCalc;
     QTimer *flightTimer = new QTimer();
@@ -178,7 +186,7 @@ int main(int argc, char *argv[])
 
     //QString hexMsg =
 
-    spatial testDB;
+    //spatial testDB;
 
 	return a.exec();
 }

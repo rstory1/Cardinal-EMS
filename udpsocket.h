@@ -2,7 +2,7 @@
 #define UDPSOCKET_H
 
 #include <QObject>
-#include <QUdpSocket>
+//#include <QUdpSocket>
 
 class UdpSocket : public QObject
 {
@@ -18,7 +18,7 @@ public slots:
     void processPendingDatagrams();
 
 private:
-    QUdpSocket *socket;
+    //QUdpSocket *socket;
 };
 
 #endif // UDPSOCKET_H

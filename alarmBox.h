@@ -25,8 +25,8 @@
 //#include <wiringPi.h>
 #include <QtCore>
 #include <QtWidgets>
-#include <QtMultimedia/QSoundEffect>
-#include <QtMultimedia/QSound>
+//#include <QtMultimedia/QSoundEffect>
+//#include <QtMultimedia/QSound>
 //#include <QtTextToSpeech/QTextToSpeech>
 
 //! Alarm Box Class

@@ -3,16 +3,17 @@
 
 spatial::spatial(QObject *parent) : QObject(parent)
 {
-    QSqlDatabase db =  QSqlDatabase::addDatabase("QSQLITE");
+    //QSqlDatabase db =  QSqlDatabase::addDatabase("QSQLITE");
 
-    db.setDatabaseName("C:/Users/rstor/Documents/Airplane/Avionics/ems/res/spatialite_nasr.sqlite");
-    if (!db.open()) {
-        qDebug()<<"not open";
-    }
+    
+//db.setDatabaseName("C:/Users/rstor/Documents/Airplane/Avionics/ems/res/spatialite_nasr.sqlite");
+    //if (!db.open()) {
+    //    qDebug()<<"not open";
+    //}
 
-    qDebug()<<enable_spatialite(db);
+    //qDebug()<<enable_spatialite(db);
 
-    QSqlQuery query;
+    //QSqlQuery query;
 
     //qDebug()<<query.exec("CREATE TABLE test_geom (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, measured_value DOUBLE NOT NULL);");
     //qDebug()<<query.exec("SELECT AddGeometryColumn('test_geom', 'the_geom', 4326, 'POINT', 'XY');");
@@ -26,18 +27,19 @@ spatial::spatial(QObject *parent) : QObject(parent)
 //        qDebug()<< i<<query.exec();
 //    }
 
-    qDebug()<<query.exec("SELECT id, name, measured_value,  AsText(the_geom), ST_GeometryType(the_geom), ST_Srid(the_geom) FROM test_geom");
+    //qDebug()<<query.exec("SELECT id, name, measured_value,  AsText(the_geom), 
+//ST_GeometryType(the_geom), ST_Srid(the_geom) FROM test_geom");
 
 
-    while (query.next()) {
-        QString str;
-        for(int i=0; i < query.record().count(); i++)
-            str += query.value(i).toString() + " ";
-        qDebug()<<str;
-    }
+    //while (query.next()) {
+    //    QString str;
+    //    for(int i=0; i < query.record().count(); i++)
+    //        str += query.value(i).toString() + " ";
+    //    qDebug()<<str;
+    //}
 }
 
-int spatial::enable_spatialite(QSqlDatabase db){
+/*int spatial::enable_spatialite(QSqlDatabase db){
     QVariant v = db.driver()->handle();
     if (v.isValid() && qstrcmp(v.typeName(), "sqlite3*") == 0)
     {
@@ -59,6 +61,6 @@ int spatial::enable_spatialite(QSqlDatabase db){
         }
     }
     return 0;
-}
+}*/
 
 

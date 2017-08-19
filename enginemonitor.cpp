@@ -150,22 +150,22 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	demoTimer->start(200);
 #endif
 
-    socket = new QUdpSocket(this);
+    //socket = new QUdpSocket(this);
 
-    qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
+    //qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
 
-    connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
+    //connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
 
     qDebug()<<"Creating";
-    qDebug()<<socket->BoundState;
+    //qDebug()<<socket->BoundState;
 
     QTimer *clockTimer = new QTimer(this);
-<<<<<<< HEAD
+
     //connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
-=======
+
     hobbs = new HourMeter(this);
     connect(clockTimer, SIGNAL(timeout()), hobbs, SLOT(onTic()));
->>>>>>> 331e1d434344aa897695cacd69d1ae8acc84ab0f
+
     clockTimer->start(1000);
 
 }
@@ -624,13 +624,13 @@ void EngineMonitor::processPendingDatagrams() {
 //    qDebug()<<"Message: " << tr("Received datagram: \"%1\"").arg(datagram.data());
 
     QString msg;
-    while (socket->hasPendingDatagrams()) {
-        QByteArray buffer;
-        buffer.resize(socket->pendingDatagramSize());
-        socket->readDatagram(buffer.data(), buffer.size());
-        msg.append(buffer.data());
-        qDebug()<<buffer.data();
-    }
+    //while (socket->hasPendingDatagrams()) {
+    //    QByteArray buffer;
+    //    buffer.resize(socket->pendingDatagramSize());
+    //    socket->readDatagram(buffer.data(), buffer.size());
+    //    msg.append(buffer.data());
+    //    qDebug()<<buffer.data();
+    //}
 
     qDebug()<< msg;
 }

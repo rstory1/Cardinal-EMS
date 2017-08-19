@@ -90,7 +90,7 @@ private:
     QCustomPlot *customPlot;
     QCPGraph *graphic;
     QTimer dataTimer;
-    QUdpSocket *socket;
+    //QUdpSocket *socket;
     WindVector windVector;
     QTimer clockTimer;
     HourMeter *hobbs;
