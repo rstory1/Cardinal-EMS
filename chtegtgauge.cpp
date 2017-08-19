@@ -34,7 +34,7 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 QRectF ChtEgt::boundingRect() const
 {
-    return QRectF(-240, -170, 340, 260);
+    return QRectF(-240, -170, 340, 190);
 }
 
 /*! \brief Handles drawing of the object
@@ -63,7 +63,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 	//Draw the static texts
     QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0);
-    painter->drawText(QRectF(-240.0, calculateLocalChtValue(minChtValue)+5, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
+    painter->drawText(QRectF(-240.0, calculateLocalChtValue(minChtValue)+7, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
     painter->drawText(QRectF(-240.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
 
 
@@ -96,13 +96,13 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     painter->setPen(QPen(Qt::white, 1, Qt::SolidLine));
     for(int i = 0; i < 4; i++)
     {
-        painter->drawLine(i*60-160, -120, i*60-160, 60);
+        painter->drawLine(i*60-160, -110, i*60-160, -10);
     }
 
 	//Draw the bar graphes
 	for(int i = 0; i < 4; i++)
 	{
-        QRectF barRect = QRectF(QPointF(i*60-180, 60), QPointF(i*60-140, calculateLocalChtValue(currentChtValues.value(i))));
+        QRectF barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, calculateLocalChtValue(currentChtValues.value(i))));
         if(currentChtValues.at(i) > yellowRedChtValue)
 		{
 			//If value is in warning area, bar is drawn red
@@ -131,7 +131,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 		}
         else if (currentChtValues.at(i) > maxChtValue)
         {
-            barRect = QRectF(QPointF(i*60-180, 60), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
+            barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
             painter->setPen(painter->brush().color());
             painter->drawRect(barRect);
         }
@@ -144,7 +144,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
         //Define CHT text position and move to current column
         QRectF textRect(-40, -20, 50, 20);
-        textRect.moveCenter(QPointF(i*60-160, -135));
+        textRect.moveCenter(QPointF(i*60-160, -125));
 
         //
         if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
@@ -181,7 +181,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         //Define EGT text position and move to current column
         painter->setPen(Qt::white);
         QRectF textRectEgt(-45, 65, 65, 20);
-        textRectEgt.moveCenter(QPointF(i*60-160, 75));
+        textRectEgt.moveCenter(QPointF(i*60-160, 5));
 
         painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));
 
@@ -256,12 +256,12 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 double ChtEgt::calculateLocalChtValue(double value) const
 {
-    return -(value-minChtValue)/(maxChtValue-minChtValue)*180.0+60.0;
+    return -(value-minChtValue)/(maxChtValue-minChtValue)*100.0+(-10.0);
 }
 
 double ChtEgt::calculateLocalEgtValue(double value) const
 {
-    return -(value-minEgtValue)/(maxEgtValue-minEgtValue)*180.0+60.0;
+    return -(value-minEgtValue)/(maxEgtValue-minEgtValue)*100.0+(-10.0);
 }
 
 void ChtEgt::addBetweenValue(double value)

@@ -116,9 +116,9 @@ int main(int argc, char *argv[])
 	engineMonitor.show();
     //engineMonitor.showFullScreen();
     engineMonitor.move(0, 0);
-    engineMonitor.resize(900, 700);
-    engineMonitor.setMaximumWidth(900);
-    engineMonitor.setMaximumHeight(700);
+    engineMonitor.resize(800, 480);
+    engineMonitor.setMaximumWidth(800);
+    engineMonitor.setMaximumHeight(400);
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #endif

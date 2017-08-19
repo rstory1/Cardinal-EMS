@@ -17,7 +17,7 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
 
 QRectF FuelDisplay::boundingRect() const
 {
-    return QRectF(-100, -100, 200, 200);
+    return QRectF(-100, -100, 200, 150);
 }
 
 /*! \brief Handles drawing of the object
