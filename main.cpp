@@ -74,6 +74,8 @@ int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
 
+    QApplication::setOverrideCursor(Qt::BlankCursor);
+
 #ifdef QT_NO_DEBUG
 	QFile debugfile("EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
