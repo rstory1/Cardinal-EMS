@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     engineMonitor.move(0, 0);
     engineMonitor.resize(800, 480);
     engineMonitor.setMaximumWidth(800);
-    engineMonitor.setMaximumHeight(400);
+    engineMonitor.setMaximumHeight(480);
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 #endif

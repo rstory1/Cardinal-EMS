@@ -48,7 +48,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
 
-    graphicsScene.setSceneRect(0,0,800,400);
+    graphicsScene.setSceneRect(0,0,800,480);
     buttonBar.setPos(0,graphicsScene.height());
     graphicsScene.addItem(&buttonBar);
     graphicsScene.update();
@@ -251,7 +251,7 @@ void EngineMonitor::setupRpmIndicator()
     greenYellowWarmup = gaugeSettings.value("RPM/warmupGreenHigh",0).toInt();
     redYellowWarmup = gaugeSettings.value("RPM/warmupRedLow",0).toInt();
     yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
-    rpmIndicator.setPos(375, 140);
+    rpmIndicator.setPos(385, 140);
 	rpmIndicator.setStartSpan(230.0, 240.0);
     rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
 
@@ -297,14 +297,14 @@ void EngineMonitor::setupRpmIndicator()
 
 void EngineMonitor::setupChtEgt()
 {
-    chtEgt.setPos(700, 375);
+    chtEgt.setPos(700, 450);
     chtEgt.setBorders(40.0, 250.0, 230.0, 248.0, 300.0, 1200.0);
     graphicsScene.addItem(&chtEgt);
 }
 
 void EngineMonitor::setupBarGraphs()
 {
-    oilTemperature.setPos(620, 35);
+    oilTemperature.setPos(620, 60);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     oilTemperature.setBorders(gaugeSettings.value("OilTemp/minReading",0).toInt(),gaugeSettings.value("OilTemp/maxReading",0).toInt());
@@ -315,7 +315,7 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.setIndicatorSide("left");
     graphicsScene.addItem(&oilTemperature);
 
-    oilPressure.setPos(690, 35);
+    oilPressure.setPos(690, 60);
 	oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
     oilPressure.setBorders(0.0, gaugeSettings.value("OilPress/maxReading",0).toInt());
@@ -325,7 +325,7 @@ void EngineMonitor::setupBarGraphs()
     oilPressure.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilPress/max",0).toInt(), gaugeSettings.value("OilPress/maxReading",0).toInt()));
 	graphicsScene.addItem(&oilPressure);
 
-    voltMeter.setPos(760, 35);
+    voltMeter.setPos(760, 60);
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
 	voltMeter.setBorders(10.0, 16.0);
@@ -336,7 +336,7 @@ void EngineMonitor::setupBarGraphs()
     voltMeter.setIndicatorSide("left");
 	graphicsScene.addItem(&voltMeter);
 
-    ampereMeter.setPos(690, 155);
+    ampereMeter.setPos(690, 200);
 	ampereMeter.setTitle("AMPS");
 	ampereMeter.setUnit("A");
 	ampereMeter.setBorders(-50.0, 50.0);
@@ -345,7 +345,7 @@ void EngineMonitor::setupBarGraphs()
 	ampereMeter.addBetweenValue(0.0);
 	graphicsScene.addItem(&ampereMeter);
 
-    fuelFlow.setPos(760, 155);
+    fuelFlow.setPos(760, 200);
 	fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
     fuelFlow.setBorders(gaugeSettings.value("Fuel/minFlow",0).toDouble(), gaugeSettings.value("Fuel/maxFlow",0).toDouble());

@@ -238,7 +238,7 @@ void BarGraph::addBetweenValue(double value)
 
 double BarGraph::calculateLocalValue(double value) const
 {
-    return -(value-minValue)/(maxValue-minValue)*50.0+50.0;
+    return -(value-minValue)/(maxValue-minValue)*75.0+50.0;
 }
 
 void BarGraph::setValue(double value)
