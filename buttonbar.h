@@ -33,10 +33,18 @@ private:
     QLinearGradient gradient1 = QLinearGradient(buttonRect1.topLeft(), QPointF(0,0.7*buttonRect1.top()));
     QLinearGradient gradient2 = QLinearGradient(buttonRect2.topLeft(), QPointF(buttonRect2.left(),0.7*buttonRect2.top()));
     QLinearGradient gradient3 = QLinearGradient(buttonRect3.topLeft(), QPointF(buttonRect3.left(),0.7*buttonRect3.top()));
+    QLinearGradient gradient4 = QLinearGradient(buttonRect4.topLeft(), QPointF(buttonRect4.left(),0.7*buttonRect4.top()));
+
+    bool isAlarmFlashing = false;
+
+    void ackPressed();
 
 signals:
     void sendAlarmAck();
     void sendFuelChange(QString changeDirection); //  + or -
+
+public slots:
+    void onAlarmFlash(); /*!< This slot is entered when a flashing alarm is created */
 };
 
 #endif // BUTTONBAR_H

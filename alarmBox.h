@@ -68,6 +68,10 @@ public slots:
     void changeFlashState();
     void onAlarmAck();
 
+signals:
+    void flashingAlarm();
+    void stopAlarmFlash();
+
 };
 
 #endif // ALARMBOX_H

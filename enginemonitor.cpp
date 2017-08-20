@@ -142,6 +142,16 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     // Connect buttonBar to the fuelDisplay window to increment fuel amount
     connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
 
+    // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
+    connect(&alarmWindow, SIGNAL(flashingAlarm()), &buttonBar, SLOT(onAlarmFlash()));
+
+    // Connect signal to stop flashing alarm after it has been acknowledged
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &chtEgt, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &voltMeter, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilTemperature, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
+
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
 	QTimer *demoTimer = new QTimer(this);
@@ -234,6 +244,7 @@ void EngineMonitor::setupAlarm()
 {
     alarmWindow.setPos(50, 100);
     graphicsScene.addItem(&alarmWindow);
+    alarmWindow.setVisible(false);
 }
 
 void EngineMonitor::setupRpmIndicator()
@@ -393,7 +404,7 @@ void EngineMonitor::setupFuelManagement()
     fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
-    fuelDisplay.setPos(100,275);
+    fuelDisplay.setPos(100,100);
     graphicsScene.addItem(&fuelDisplay);
 }
 
@@ -640,7 +651,7 @@ void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
 }
 
 void EngineMonitor::setupWindVector() {
-    windVector.setPos(100, 600);
+    windVector.setPos(50, 400);
     graphicsScene.addItem(&windVector);
     windVector.setVisible(true);
 }

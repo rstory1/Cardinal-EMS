@@ -55,12 +55,16 @@ private:
     bool isAlarmedYellow = false;
     bool flashState = false;
     int cylinderAlarm;
+    bool isAcknowledged = false;
+
+
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
 
 public slots:
     void changeFlashState();
+    void onAlarmAck();
 };
 
 #endif // CHTEGTGAUGE_H

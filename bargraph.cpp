@@ -117,6 +117,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 if (isAlarmedYellow) {
                     emit cancelAlarm(titleText);
                     isAlarmedYellow = false;
+                    isAcknowledged = false;
                 }
 
                 emit sendAlarm(titleText, colorStops[i].color, true);
@@ -127,6 +128,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 if (isAlarmedRed) {
                     emit cancelAlarm(titleText);
                     isAlarmedRed = false;
+                    isAcknowledged = false;
                 }
 
                 emit sendAlarm(titleText, colorStops[i].color, true);
@@ -142,7 +144,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setFont(font);
 
     if (isAlarmedRed) {
-        if (flashState) {
+        if (flashState || isAcknowledged) {
             painter->setPen(Qt::red);
             painter->setBrush(Qt::red);
             painter->drawRect(QRectF(-30, 55, 60, 22));
@@ -154,7 +156,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
             painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
         }
     } else if (isAlarmedYellow) {
-        if (flashState) {
+        if (flashState || isAcknowledged) {
             painter->setPen(Qt::yellow);
             painter->setBrush(Qt::yellow);
             painter->drawRect(QRectF(-30, 55, 60, 22));
@@ -175,6 +177,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
             emit cancelAlarm(titleText);
             isAlarmedRed = false;
             isAlarmedYellow = false;
+            isAcknowledged = false;
         }
     }
 
@@ -263,4 +266,10 @@ void BarGraph::changeFlashState()
 void BarGraph::setIndicatorSide(QString side)
 {
     indicatorSide = side;
+}
+
+void BarGraph::onAlarmAck() {
+    if (isPenAlarmColored) {
+        isAcknowledged = true;
+    }
 }

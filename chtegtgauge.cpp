@@ -217,7 +217,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 	}
 
     if ((isAlarmedRed == true)) {
-        if (flashState) {
+        if (flashState || isAcknowledged) {
             painter->setPen(Qt::red);
             painter->setBrush(Qt::red);
             painter->drawRect(chtTitleRect);
@@ -232,7 +232,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         }
 
     } else if ((isAlarmedYellow)) {
-        if (flashState) {
+        if (flashState || isAcknowledged) {
             painter->setPen(Qt::yellow);
             painter->setBrush(Qt::yellow);
             painter->drawRect(chtTitleRect);
@@ -292,6 +292,7 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
         {
             emit cancelAlarm("CHT");
             isAlarmedYellow = false;
+            isAcknowledged = false;
 
             emit sendAlarm("CHT", Qt::red, true);
             isAlarmedRed = true;
@@ -308,12 +309,16 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
         emit cancelAlarm("CHT");
 
         isAlarmedRed = false;
+
+        isAcknowledged = false;
     }
     else if ((isAlarmedYellow) && (val1 < greenYellowChtValue && val2 < greenYellowChtValue && val3 < greenYellowChtValue && val4 < greenYellowChtValue))
     {
         emit cancelAlarm("CHT");
 
         isAlarmedYellow = false;
+
+        isAcknowledged = false;
     }
 
 
@@ -346,4 +351,8 @@ void ChtEgt::changeFlashState()
     } else {
         flashState = false;
     }
+}
+
+void ChtEgt::onAlarmAck() {
+    isAcknowledged = false;
 }
