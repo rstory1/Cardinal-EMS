@@ -23,6 +23,8 @@
 
 #include <QtCore>
 #include <QtGui/QColor>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 
 //! RDAC Connect Class
 /*!
@@ -34,8 +36,25 @@ struct RDACmessage1
 {
 public:
 	RDACmessage1();
-	quint16 pulses;
-	quint16 timing;
+    quint16 pulse1;
+    quint16 timing1;
+    quint16 pulse2;
+    quint16 timing2;
+    quint16 thermocouple[12];
+    quint16 oilTemp;
+    quint16 oilPress;
+    quint16 aux1;
+    quint16 aux2;
+    quint16 fuelPress;
+    quint16 coolant;
+    quint16 fuelLevel1;
+    quint16 fuelLevel2;
+    quint16 rpm1;
+    quint16 rpm2;
+    quint16 map;
+    quint16 current;
+    quint16 internalTemp;
+    quint16 volts;
 };
 
 struct RDACmessage2
@@ -68,12 +87,11 @@ public:
 };
 #pragma pack()
 
-class RDACconnect : public QThread
+class RDACconnect : public QObject
 {
 	Q_OBJECT
 public:
-	RDACconnect(QObject *parent = 0);
-	void run();
+    RDACconnect(QObject *parent = 0);
 	static quint8 calculateChecksum1(QByteArray data);
 	static quint8 calculateChecksum2(QByteArray data);
 	enum rdacResults {
@@ -93,6 +111,18 @@ private:
 	void handleMessage3(QByteArray *data);
 	void handleMessage4(QByteArray *data);
 	QSettings settings;
+    QSerialPort *serial;
+    QByteArray data;
+
+public slots:
+    void openSerialPort();
+    void closeSerialPort();
+
+private slots:
+    void writeData(const QByteArray &data);
+    void readData();
+    void handleError(QSerialPort::SerialPortError error);
+
 signals:
 	void updateDataMessage1(double fuelFlowValue, double fuelAbsoluteValue);
 	void updateDataMessage2(double insideAirTemperatureValue, double outsideAirTemperatureValue, double ampereValue, double oilTemperatureValue, double oilPressureValue, double voltageValue, double manifoldPressure);

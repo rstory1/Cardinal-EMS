@@ -124,8 +124,8 @@ int main(int argc, char *argv[])
 #endif
 	splash.finish(&engineMonitor);
 
-//	//Create the RDAC connector
-//	RDACconnect rdacConnect;
+    //Create the RDAC connector
+    RDACconnect rdac;
 //	a.connect(&rdacConnect, SIGNAL(updateDataMessage1(double, double)), &engineMonitor, SLOT(setDataMessage1(double, double)));
 //	a.connect(&rdacConnect, SIGNAL(updateDataMessage2(double,double,double,double,double,double,double)), &engineMonitor, SLOT(setDataMessage2(double,double,double,double,double,double,double)));
 //	a.connect(&rdacConnect, SIGNAL(updateDataMessage3(double)), &engineMonitor, SLOT(setDataMessage3(double)));
@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
 //#ifndef QT_DEBUG
 //	rdacConnect.start();
 //#endif
+    rdac.openSerialPort();
 
 	NMEAconnect nmeaConnect;
 	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));

@@ -20,7 +20,22 @@
 
 #include "rdacconnect.h"
 
-RDACmessage1::RDACmessage1() : pulses(0), timing(0)
+RDACmessage1::RDACmessage1() : pulse1(0)
+  , timing1(0)
+  , pulse2(0)
+  , timing2(0)
+  , oilTemp(0)
+  , oilPress(0)
+  , aux1(0)
+  , aux2(0)
+  , fuelPress(0)
+  , coolant(0)
+  , fuelLevel1(0)
+  , fuelLevel2(0)
+  , rpm1(0)
+  , rpm2(0)
+  , internalTemp(0)
+  , volts(0)
 {
 }
 
@@ -44,110 +59,85 @@ RDACmessage4::RDACmessage4()
 {
 }
 
-RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
+RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
   , settings("./settings.ini", QSettings::IniFormat, parent)
 {
+    serial = new QSerialPort(this);
+
+    connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
+                SLOT(handleError(QSerialPort::SerialPortError)));
+
+
+    connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 }
 
-void RDACconnect::run()
+void RDACconnect::readData()
 {
-	QString portString = "\\\\.\\";
-	portString.append(settings.value("Communication/Port", "COM1").toString());
-	wchar_t portArray[portString.length() + 1];
-	portString.toWCharArray(portArray);
-	portArray[portString.length()] = '\0';
-	portString.replace("\\\\.\\", "");
-
-    // Need to convert to C++/Linux library to open serial port.
-    //HANDLE serialhCom = CreateFile(portArray, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, NULL);
-//	if(serialhCom != INVALID_HANDLE_VALUE)
-//	{
-//		qDebug() << "Succesful opening" << portString;
-//	}
-//	else
-//	{
-//		qDebug() << "Could not open" << portString;
-//		emit userMessage("COM error", "Unable to open " + portString + '\n' + "Settings file: " + settings.fileName() + '\n' + "Closing Application", true);
-//		exec();
-//	}
-
-	QByteArray data;
 	bool startPatternFound = false;
-	forever
-	{
-		quint8 byte;
-        //DWORD nrBytes = 0;
-//		if(ReadFile(serialhCom, &byte, 1, &nrBytes, NULL))
-//		{
-//			if(nrBytes == 1)
-//			{
-//				data.append(byte);
-//			}
-//		}
-//		else
-//		{
-//			emit userMessage("RDAC COM error", "Error reading data, closing application", true);
-//			exec();
-//		}
 
-		if(searchStart(&data))
-		{
-			startPatternFound = true;
-			quint8 messageType = 0x00;
-			switch(checkPatternValidity(&data, messageType))
-			{
-			case rdacResultMessageComplete:
-				emit statusMessage("Everything OK\nLast RPM update: " + lastMessageReception.value(3).toString("hh:mm:ss.zzz"), Qt::white);
-				switch(messageType)
-				{
-					case 0x01:
-						handleMessage1(&data);
-						break;
-					case 0x02:
-						handleMessage2(&data);
-						break;
-					case 0x03:
-						handleMessage3(&data);
-						break;
-					case 0x04:
-						handleMessage4(&data);
-						break;
-					default:
-						data.remove(0, 1);
-						break;
-				}
-				break;
-			case rdacResultMessageIncomplete:
-				break;
-			default:
-				emit statusMessage("Found pattern not valid", Qt::yellow);
-				break;
-			}
-		}
-		if(!startPatternFound)
-		{
-			emit statusMessage("No start pattern found yet", Qt::red);
-		}
-	}
-	exec();
+    data.append(serial->read(1));
+
+//            emit userMessage("RDAC COM error", "Error reading data, closing application", true);
+//            exec();
+//        }
+
+    if(searchStart(&data))
+    {
+        startPatternFound = true;
+        quint8 messageType = 0x00;
+        switch(checkPatternValidity(&data, messageType))
+        {
+        case rdacResultMessageComplete:
+            emit statusMessage("Everything OK\nLast RPM update: " + lastMessageReception.value(3).toString("hh:mm:ss.zzz"), Qt::white);
+            switch(messageType)
+            {
+                case 0x01:
+                    handleMessage1(&data);
+                    break;
+                case 0x02:
+                    handleMessage2(&data);
+                    break;
+                case 0x03:
+                    handleMessage3(&data);
+                    break;
+                case 0x04:
+                    handleMessage4(&data);
+                    break;
+                default:
+                    data.remove(0, 1);
+                    break;
+            }
+            break;
+        case rdacResultMessageIncomplete:
+            break;
+        default:
+            emit statusMessage("Found pattern not valid", Qt::yellow);
+            break;
+        }
+    }
+    if(!startPatternFound)
+    {
+        emit statusMessage("No start pattern found yet", Qt::red);
+    }
 }
 
 quint8 RDACconnect::calculateChecksum1(QByteArray data)
 {
-	quint8 checksum = 0xAA;
-	for(int i = 0; i < data.size(); ++i)
+    quint8 checksum = 0x55;
+    qDebug() << checksum;
+    for(int i = 2; i < data.size()-2; ++i)
 	{
-		checksum += quint8(data.at(i));
+        checksum += quint8(data.at(i));
 	}
 	return checksum;
 }
 
 quint8 RDACconnect::calculateChecksum2(QByteArray data)
 {
-	quint8 checksum = 0x55;
-	for(int i = 0; i < data.size(); ++i)
+    quint8 checksum = 0xAA;
+    for(int i = 2; i < data.size()-2; ++i)
 	{
-		checksum ^= quint8(data.at(i));
+        checksum += quint8(data.at(i));
 	}
 	return checksum;
 }
@@ -155,13 +145,14 @@ quint8 RDACconnect::calculateChecksum2(QByteArray data)
 bool RDACconnect::searchStart(QByteArray *data)
 {
 	while(data->size() >= 3)
-	{
-		if(quint8(data->at(0)) == 0xD5)
-		{
-			if(quint8(data->at(1)) == 0x02)
+    {
+        if(data->at(0) == 0x05)
+        {
+            if(data->at(1) == 0x02)
 			{
-				if((quint8(data->at(2)) >= 0x01) && (quint8(data->at(2)) <= 0x04))
+                if((data->at(2) == 0x01))
 				{
+                    qDebug() << "It worked!";
 					return true;
 				}
 			}
@@ -175,11 +166,11 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 {
 	// Determine and check neccessary size of data
 	quint8 requiredSize = 0;
-	messageType = quint8(data->at(2));
+    messageType = data->at(2);
 	switch(messageType)
 	{
 		case 0x01:
-			requiredSize = 9;
+            requiredSize = 66;
 			break;
 		case 0x02:
 			requiredSize = 23;
@@ -200,9 +191,9 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 	}
 
 	// Calculate and check checksums
-	if(quint8(data->at(requiredSize - 2)) == calculateChecksum1(data->mid(2, requiredSize - 4)))
+    if(quint8(data->at(requiredSize - 2)) == calculateChecksum1(data->mid(0, requiredSize)))
 	{
-		if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(2, requiredSize - 4)))
+        if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(0, requiredSize)))
 		{
 			return rdacResultMessageComplete;
 		}
@@ -225,17 +216,38 @@ void RDACconnect::handleMessage1(QByteArray *data)
 {
 	lastMessageReception.insert(1, QDateTime::currentDateTimeUtc());
 	RDACmessage1 message;
-	memcpy(&message, data->mid(3, 4).constData(), 4);
-	data->remove(0, 9);
+    memcpy(&message, data->mid(4, 62).constData(), 62);
 
-	qDebug() << Q_FUNC_INFO << "Pulses" << message.pulses;
-	qDebug() << Q_FUNC_INFO << "Timing" << message.timing;
+    if (message.timing1 == 65535) {
+        message.timing1 = 0;
+    }
+
+    if (message.timing2 == 65535) {
+        message.timing2 = 0;
+    }
+
+    qDebug() << Q_FUNC_INFO << "Pulses" << message.pulse1;
+    qDebug() << Q_FUNC_INFO << "Timing" << message.timing1;
+    qDebug() << Q_FUNC_INFO << "Pulses" << message.pulse2;
+    qDebug() << Q_FUNC_INFO << "Timing" << message.timing2;
+
+    double voltage = round(message.volts/5.73758)*0.1;
+    double oilPressure = 0.3320318366 * message.oilPress - 31.2628022226;
+    if(oilPressure < 0.0)
+    {
+        oilPressure = 0.0;
+    }
+
+    qDebug() << "Volts:" << voltage;
+    qDebug() << "Oil Pres:" << oilPressure;
 
 	qreal seconds = qreal(lastMessage1.msecsTo(QDateTime::currentDateTimeUtc())) / 1000.0;
 	lastMessage1 = QDateTime::currentDateTimeUtc();
 
+    qDebug() << message.internalTemp * 1.8 + 32;
+
 	qreal k_factor = 1.0;
-	qreal absoluteFuel = qreal(message.pulses) * k_factor / 60.0 / 60.0;
+    qreal absoluteFuel = qreal(message.pulse1) * k_factor / 60.0 / 60.0;
 	qreal fuelflow = absoluteFuel / seconds * 60.0 * 60.0;
 	emit updateDataMessage1(fuelflow, absoluteFuel);
 }
@@ -288,4 +300,69 @@ void RDACconnect::handleMessage4(QByteArray *data)
 
 	emit updateDataMessage4egt(message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3]);
 	emit updateDataMessage4cht(message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7]);
+}
+
+void RDACconnect::openSerialPort()
+{
+    QSerialPortInfo portToUse;
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+        QString s = QObject::tr("Port:") + info.portName() + "\n"
+                    + QObject::tr("Location:") + info.systemLocation() + "\n"
+                    + QObject::tr("Description:") + info.description() + "\n"
+                    + QObject::tr("Manufacturer:") + info.manufacturer() + "\n"
+                    + QObject::tr("Serial number:") + info.serialNumber() + "\n"
+                    + QObject::tr("Vendor Identifier:") + (info.hasVendorIdentifier() ? QString::number(info.vendorIdentifier(), 16) : QString()) + "\n"
+                    + QObject::tr("Product Identifier:") + (info.hasProductIdentifier() ? QString::number(info.productIdentifier(), 16) : QString()) + "\n"
+                    + QObject::tr("Busy:") + (info.isBusy() ? QObject::tr("Yes") : QObject::tr("No")) + "\n";
+
+        if(!info.isBusy() && (info.description().contains("Arduino") || info.manufacturer().contains("Arduino")))
+            portToUse = info;
+        qDebug() << s;
+    }
+
+    if(portToUse.isNull() || !portToUse.isValid())
+    {
+        qDebug() << "port is not valid:" << portToUse.portName();
+        return;
+    }
+
+    // Enumerate the serial port
+    // Find one that sounds like Arduino, or the highest one on the list
+    // Open it if it isn't busy
+
+    serial->setPortName(portToUse.portName());
+    serial->setBaudRate(QSerialPort::Baud38400);
+    serial->setDataBits(QSerialPort::Data8);
+    serial->setParity(QSerialPort::NoParity);
+    serial->setStopBits(QSerialPort::OneStop);
+    serial->setFlowControl(QSerialPort::NoFlowControl);
+    if (serial->open(QIODevice::ReadWrite)) {
+        qDebug() << "Connected to" << portToUse.description() << "on" << portToUse.portName();
+    } else {
+        qCritical() << "Serial Port error:" << serial->errorString();
+
+        qDebug() << tr("Open error");
+    }
+}
+
+
+
+void RDACconnect::closeSerialPort()
+{
+    serial->close();
+    qDebug() << tr("Disconnected");
+}
+
+void RDACconnect::writeData(const QByteArray &data)
+{
+    serial->write(data);
+}
+
+void RDACconnect::handleError(QSerialPort::SerialPortError error)
+{
+    if (error == QSerialPort::ResourceError) {
+        qCritical() << "Serial Port error:" << serial->errorString();
+        closeSerialPort();
+    }
 }
