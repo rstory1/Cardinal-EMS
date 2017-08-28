@@ -179,7 +179,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 painter->setPen(Qt::red);
                 painter->setBrush(Qt::red);
 
-                painter->drawRect(QRectF(-40, 35, 190, 65));
+                painter->drawRect(QRectF(-40, 45, 190, 45));
 
                 painter->setPen(Qt::white);
             }

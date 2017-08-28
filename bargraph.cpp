@@ -65,7 +65,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     if (horizontal) {
         painter->drawRect(QRectF(QPointF(-50.0, -10.0), QPointF(50.0, 10.0)));
     } else {
-        painter->drawRect(QRectF(QPointF(-10.0, -50.0), QPointF(10.0, 50.0)));
+        painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(maxValue)), QPointF(10.0, calculateLocalValue(minValue))));
 
         //Draw the white line to define top of bar
         painter->setPen(Qt::white);
@@ -101,8 +101,8 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     //Draw Texts around (title, min and max value)
     painter->setPen(Qt::white);
     isPenAlarmColored = false;
-    painter->drawText(QRectF(-25, -85, 50, 15), Qt::AlignCenter,titleText);
-    painter->drawText(QRectF(-25, -70, 50, 15), Qt::AlignCenter,unitText);
+    painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-35, 50, 15), Qt::AlignCenter,titleText);
+    painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-20, 50, 15), Qt::AlignCenter,unitText);
     painter->setPen(Qt::white);
     //painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
     //painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
@@ -117,6 +117,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 if (isAlarmedYellow) {
                     emit cancelAlarm(titleText);
                     isAlarmedYellow = false;
+                    isAcknowledged = false;
                 }
 
                 emit sendAlarm(titleText, colorStops[i].color, true);
@@ -127,6 +128,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 if (isAlarmedRed) {
                     emit cancelAlarm(titleText);
                     isAlarmedRed = false;
+                    isAcknowledged = false;
                 }
 
                 emit sendAlarm(titleText, colorStops[i].color, true);
@@ -142,32 +144,32 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setFont(font);
 
     if (isAlarmedRed) {
-        if (flashState) {
+        if (flashState || isAcknowledged) {
             painter->setPen(Qt::red);
             painter->setBrush(Qt::red);
-            painter->drawRect(QRectF(-40, 55, 80, 22));
+            painter->drawRect(QRectF(-30, 55, 60, 22));
             painter->setPen(Qt::white);
-            painter->drawText(QRectF(-40, 55, 80, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+            painter->drawText(QRectF(-30, 55, 60, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
 
          } else {
             painter->setPen(Qt::red);
-            painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
         }
     } else if (isAlarmedYellow) {
-        if (flashState) {
+        if (flashState || isAcknowledged) {
             painter->setPen(Qt::yellow);
             painter->setBrush(Qt::yellow);
-            painter->drawRect(QRectF(-40, 55, 80, 22));
+            painter->drawRect(QRectF(-30, 55, 60, 22));
             painter->setPen(Qt::black);
-            painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
 
          } else {
             painter->setPen(Qt::yellow);
-            painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
         }
     } else {
         painter->setPen(Qt::white);
-        painter->drawText(QRectF(-40, 55, 80, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+        painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
     }
 
     if (isPenAlarmColored == false) {
@@ -175,6 +177,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
             emit cancelAlarm(titleText);
             isAlarmedRed = false;
             isAlarmedYellow = false;
+            isAcknowledged = false;
         }
     }
 
@@ -238,7 +241,7 @@ void BarGraph::addBetweenValue(double value)
 
 double BarGraph::calculateLocalValue(double value) const
 {
-	return -(value-minValue)/(maxValue-minValue)*100.0+50.0;
+    return -(value-minValue)/(maxValue-minValue)*75.0+50.0;
 }
 
 void BarGraph::setValue(double value)
@@ -263,4 +266,10 @@ void BarGraph::changeFlashState()
 void BarGraph::setIndicatorSide(QString side)
 {
     indicatorSide = side;
+}
+
+void BarGraph::onAlarmAck() {
+    if (isPenAlarmColored) {
+        isAcknowledged = true;
+    }
 }

@@ -57,6 +57,7 @@ public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
     void changeFlashState();
+    void onAlarmAck();
 private:
 	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
@@ -72,6 +73,7 @@ private:
     QFont font;
     bool horizontal=false;
     QString indicatorSide = "right";
+    bool isAcknowledged = false;
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)

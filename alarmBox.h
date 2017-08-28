@@ -49,7 +49,7 @@ private:
     int boundingX = -50;
     int boundingY = -100;
     int boundingWidth = 100;
-    int boundingHeight = 200;
+    int boundingHeight = 150;
     bool flashState = false;
 
 public:
@@ -67,6 +67,10 @@ public slots:
     void onRemoveAlarm(QString text);
     void changeFlashState();
     void onAlarmAck();
+
+signals:
+    void flashingAlarm();
+    void stopAlarmFlash();
 
 };
 

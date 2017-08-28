@@ -138,6 +138,10 @@ void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 
     alarmCount++;
 
+    if (flashing) {
+        emit flashingAlarm();
+    }
+
 //    QSound::play(":/elevator-ding.wav");
 //    QTextToSpeech *m_speech;
 //    m_speech = new QTextToSpeech(this);
@@ -163,4 +167,6 @@ void AlarmBox::onAlarmAck() {
             alarmFlash[i]=false;
         }
     }
+
+    emit stopAlarmFlash();
 }
