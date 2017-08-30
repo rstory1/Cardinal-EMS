@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! CHT EGT Gauge Class
+/*!
+ * This class creates a combined CHT/EGT gauge.
+*/
+
 class ChtEgt : public QGraphicsObject
 {
     Q_OBJECT

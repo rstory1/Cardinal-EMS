@@ -17,57 +17,48 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>. //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+#ifndef FLIGHTCALCULATOR_H
+#define FLIGHTCALCULATOR_H
 
-#ifndef ALARMBOX_H
-#define ALARMBOX_H
-
-#include <QString>
-//#include <wiringPi.h>
 #include <QtCore>
-#include <QtWidgets>
-#include <QtMultimedia/QSoundEffect>
-#include <QtMultimedia/QSound>
-//#include <QtTextToSpeech/QTextToSpeech>
+#include <QObject>
+#include <math.h>
 
-//! Alarm Box Class
+#define PI 3.14159265
+
+//! flightCalculator Class
 /*!
- * This class creates a box to display alarms created from the gauge instances and show the user.
+ * This class runs various calculations from engine/GPS data to be displayed
 */
 
-class AlarmBox : public QGraphicsObject
+class flightCalculator : public QThread
 {
     Q_OBJECT
+public:
+    explicit flightCalculator(QObject *parent = 0);
+    void run();
+    void setTas(float tas);
+    void setMagHdg(float magHdg);
+    void setGs(float gs);
+    void setTrack(float track);
 
 private:
-    quint64 counter = 1;
-    QString alarmText[10];
-    QColor alarmColor[10];
-    bool alarmFlash[10];
-    int alarmCount = 0;
-    QRectF textRect1;
-    QString textForAlarm;
-    int boundingX = -50;
-    int boundingY = -100;
-    int boundingWidth = 100;
-    int boundingHeight = 200;
-    bool flashState = false;
+    float tas;
+    float magHdg;
+    float gs;
+    float track;
+    float windSpd;
+    float windDir;
+    float fuelFlow;
+    float wca;
 
-public:
-    explicit AlarmBox(QGraphicsObject * parent = 0);
-    QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void soundAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
-    void clearRpmAlarm();
-    static void buttonClicked();
-    void hideAlarmBox();
-    void setText(QString text);
+    void calculateWindVector();
+
+signals:
+    void updateWindVector(float dir, float spd, float mHdg);
 
 public slots:
-    void onAlarm(QString text, QColor color, bool flashing);
-    void onRemoveAlarm(QString text);
-    void changeFlashState();
-    void onAlarmAck();
-
+    void onSpeedAndHeadingUpdate(/*float trueas, float magneticHdg, float grounds, float gpsTrack*/);
 };
 
-#endif // ALARMBOX_H
+#endif // FLIGHTCALCULATOR_H

@@ -24,6 +24,11 @@
 #include <QtCore>
 #include <QtGui/QColor>
 
+//! RDAC Connect Class
+/*!
+ * This class interprets the messages coming from the MGL RDAC.
+*/
+
 #pragma pack(1)
 struct RDACmessage1
 {

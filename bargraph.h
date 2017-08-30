@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! Bar Graph Class
+/*!
+ * This class creates a bar graph gauge to be used to display a single sensor reading.
+*/
+
 struct ColorStop
 {
 	ColorStop() : color(QColor()), minValue(0.0), maxValue(0.0) {};

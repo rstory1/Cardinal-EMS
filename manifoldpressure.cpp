@@ -40,6 +40,10 @@ QRectF ManifoldPressure::boundingRect() const
 	return QRectF(-80.0, -80.0, 170.0, 160.0);
 }
 
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);

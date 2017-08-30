@@ -4,6 +4,11 @@
 #include <QtWidgets>
 #include "bargraph.h"
 
+//! FuelDisplay Class
+/*!
+ * This class creates a compact fuel window to display various calculations related to fuel flow and flight plan information if available.
+*/
+
 class FuelDisplay : public QGraphicsObject
 {
     Q_OBJECT

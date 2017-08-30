@@ -43,6 +43,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setupChtEgt();
     setupFuelManagement();
     setupStatusItem();
+    setupWindVector();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
@@ -157,6 +158,15 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     qDebug()<<"Creating";
     qDebug()<<socket->BoundState;
+
+    QTimer *clockTimer = new QTimer(this);
+<<<<<<< HEAD
+    //connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+=======
+    hobbs = new HourMeter(this);
+    connect(clockTimer, SIGNAL(timeout()), hobbs, SLOT(onTic()));
+>>>>>>> 331e1d434344aa897695cacd69d1ae8acc84ab0f
+    clockTimer->start(1000);
 
 }
 
@@ -625,5 +635,12 @@ void EngineMonitor::processPendingDatagrams() {
     qDebug()<< msg;
 }
 
+void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
+    windVector.updateWind(spd, dir, mHdg);
+}
 
-
+void EngineMonitor::setupWindVector() {
+    windVector.setPos(100, 600);
+    graphicsScene.addItem(&windVector);
+    windVector.setVisible(true);
+}

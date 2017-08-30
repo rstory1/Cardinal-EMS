@@ -25,6 +25,8 @@
 #include "PortListener.h"
 #include "sensorconvert.h"
 #include "udpsocket.h"
+#include "flightcalculator.h"
+#include "spatial.h"
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
@@ -151,6 +153,32 @@ int main(int argc, char *argv[])
     QString portName = QLatin1String("ttyACM0");              // update this to use your port of choice
     PortListener listener(portName);        // signals get hooked up internally
     a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, SLOT(processData(QString)));
+
+    flightCalculator flightCalc;
+    QTimer *flightTimer = new QTimer();
+    flightTimer->start(5000);
+    a.connect(flightTimer, SIGNAL(timeout()), &flightCalc, SLOT(onSpeedAndHeadingUpdate(/*float, float, float, float*/)));
+
+    a.connect(&flightCalc, SIGNAL(updateWindVector(float,float,float)), &engineMonitor, SLOT(onUpdateWindInfo(float,float,float)));
+
+    uint mhz = 119;
+    QString mHex = QString("%1").arg(mhz, 0, 16);
+    qDebug() << mHex;
+    QString mHextext = QString::fromLocal8Bit(QByteArray::fromHex(mHex.toLatin1())).toUpper();
+    qDebug() << mHextext;
+
+    uint khz = 325;
+    QString kHex = "3" + QString("%1").arg(khz/25, 0, 16);
+    qDebug() << kHex;
+    QString kHextext = QString::fromLocal8Bit(QByteArray::fromHex(kHex.toLatin1())).toUpper();
+    qDebug() << kHextext;
+
+    QString msg = "$PGRMC15" + mHextext + kHextext + "N0KCID0" + "1310";
+    qDebug() << msg;
+
+    //QString hexMsg =
+
+    spatial testDB;
 
 	return a.exec();
 }

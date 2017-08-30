@@ -34,6 +34,10 @@ QRectF CylinderHeadTemperature::boundingRect() const
 	return QRectF(-125, -170, 250, 230);
 }
 
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void CylinderHeadTemperature::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	//Set Clipping Rect

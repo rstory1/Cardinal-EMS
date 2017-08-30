@@ -18,70 +18,35 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef FUELMANAGEMENT_H
-#define FUELMANAGEMENT_H
+#ifndef WINDVECTOR_H
+#define WINDVECTOR_H
 
 #include <QtWidgets>
 
-//! FuelManagement Class
-/*!
- * This class creates a window to manage fuel settings and view fuel related data
-*/
-
-class FuelManagement : public QGraphicsObject
+class WindVector : public QGraphicsObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit FuelManagement(QGraphicsObject* parent = 0);
-	QRectF boundingRect() const;
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	void setFuelFlow(double value);
-	void setTimeToDestination(double time);
-	void reduceFuelAmount(double fuel)
-	{
-		fuelAmount -= fuel;
-		this->update();
-	}
+    explicit WindVector(QGraphicsObject * parent = 0);
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    void updateWind(float spd, float dir, float mHdg);
 
-public slots:
-	void activateOverlay()
-	{
-		setVisible(true);
-	}
-	void removeOverlay()
-	{
-		setVisible(false);
-	}
-	void saveFuelState()
-	{
-		settings.setValue("Fueling/LastShutdown", fuelAmount);
-	}
-protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 private:
-	enum fuelingMode
-	{
-		fuelModeManagement,
-		fuelModeFueling
-	};
-	QSettings settings;
-	double fuelAmount;
-	double fuelFlow;
-	double timeToDestination;
-	fuelingMode currentMode;
-	QRectF remainingFuelRect;
-	QRectF remainingFuelAtDestinationRect;
-	QRectF fuelFlowRect;
-	QRectF fuelingRect;
-	QRectF homeRect;
-    QRectF addUnitsTextRect;
-    QRectF add50UnitsRect;
-    QRectF add10UnitsRect;
-    QRectF add5UnitsRect;
-    QRectF add1UnitsRect;
-	QRectF clearRect;
-    QRectF fuelTopRect;
-    QString fuelUnits;
+    QPolygonF vector1;
+    QPolygonF vector2;
+    QPolygonF vector3;
+    QTransform t;
+    float windSpd = 0.0;
+    float windDir = 0.0; // This is the compass direction the wind is from
+    float magHdg = 0.0;
+    float windX = 0.0;
+    float windY = 0.0;
+    QRectF spdTextRect;
+    QRectF xCompRect, yCompRect;
+    float PI = 3.145;
+    bool isVector = true; //False will show the wind in components
+
 };
 
-#endif // FUELMANAGEMENT_H
+#endif // WINDVECTOR_H

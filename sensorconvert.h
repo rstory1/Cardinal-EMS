@@ -13,6 +13,11 @@
 #include <QtCore>
 #include <math.h>
 
+//! Sensor Convert Class
+/*!
+ * This class converts raw sensor values to meaningful numbers.
+*/
+
 class SensorConvert : public QThread
 {
     Q_OBJECT

@@ -17,7 +17,10 @@ QRectF ButtonBar::boundingRect() const
     return QRectF(0.0, -50.0, 600.0, 50.0);
 }
 
-
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     //painter->setBrush(Qt::darkBlue);

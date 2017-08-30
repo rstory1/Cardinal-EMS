@@ -50,6 +50,10 @@ QRectF FuelManagement::boundingRect() const
     return QRectF(0, 0, 215, 160);
 }
 
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void FuelManagement::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	Q_UNUSED(option);

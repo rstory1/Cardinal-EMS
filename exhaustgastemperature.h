@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! ExhaustGasTemperature Class
+/*!
+ * This class creates a stand alone EGT gauge
+*/
+
 class ExhaustGasTemperature : public QGraphicsObject
 {
     Q_OBJECT

@@ -23,6 +23,11 @@
 
 #include <QtWidgets>
 
+//! ManifoldPressure Class
+/*!
+ * This class creates a circular manifold pressure gauge
+*/
+
 class ManifoldPressure : public QGraphicsItem
 {
 public:

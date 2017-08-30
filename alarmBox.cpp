@@ -10,11 +10,17 @@ AlarmBox::AlarmBox(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 }
 
+/*! \brief Defines a rectangle that is used to determine what should be redrawn during the update
+*/
 QRectF AlarmBox::boundingRect() const
 {
     return QRectF(boundingX, boundingY, boundingWidth, boundingHeight);
 }
 
+/*! \brief Handles drawing of the object
+*
+* This member handles all of the painting logic used to draw the item and the associated style.
+*/
 void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
@@ -26,7 +32,7 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         setVisible(false);
     }
 
-    //Save thje painter and deactivate Antialising for rectangle drawing
+    //Save the painter and deactivate Antialising for rectangle drawing
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
@@ -79,6 +85,8 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     update();
 }
 
+/*! \brief
+*/
 void AlarmBox::soundAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge)
 {
     //digitalWrite(18, HIGH);
@@ -117,6 +125,11 @@ void AlarmBox::onRemoveAlarm(QString text)
 
 }
 
+/*! \brief Slot called when the AlarmBox receives an alarm signal.
+ *
+ *  This receives the alarm text, color, and whether or not it should be flashing.
+ *  It then adds these values to the corresponding arrays and increments the alarmCount variable by 1 and plays a tone.
+*/
 void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 {
     alarmText[alarmCount] = text;
