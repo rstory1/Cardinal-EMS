@@ -26,13 +26,14 @@ public:
 
 private:
     QSettings settings;
+    QSettings gaugeSettings;
     QString thermocoupleTypeCht;
     QString thermocoupleTypeEgt;
     QString temperatureScale;
 
-    quint16 kFactor;
+    qreal kFactor;
 
-    double rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat;
+    qreal rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat;
 
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
@@ -55,12 +56,15 @@ private:
 
     double convertTemperature(double temp);
 
+    void setKFactor(qreal kFac);
+
 signals:
     void userMessage(QString,QString,bool);
-    void updateMonitor(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
+    void updateMonitor(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat);
 
 public slots:
     void processData(QString data);
+    void onRdacUpdate(qreal fuelFlowPulses, qreal volts);
 };
 
 #endif // SENSORCONVERT_H

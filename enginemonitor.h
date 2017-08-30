@@ -104,7 +104,7 @@ public slots:
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
     void showStatusMessage(QString text, QColor color);
-    void setValuesBulkUpdate(quint16 rpm, quint16 fuelFlow, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat);
+    void setValuesBulkUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat);
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
     void onUpdateWindInfo(float spd, float dir, float mHdg);

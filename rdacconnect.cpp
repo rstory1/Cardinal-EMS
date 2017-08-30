@@ -20,10 +20,10 @@
 
 #include "rdacconnect.h"
 
-RDACmessage1::RDACmessage1() : pulse1(0)
-  , timing1(0)
-  , pulse2(0)
-  , timing2(0)
+RDACmessage1::RDACmessage1() : flow1(0)
+  , pulseRatio1(0)
+  , flow2(0)
+  , pulseRatio2(0)
   , oilTemp(0)
   , oilPress(0)
   , aux1(0)
@@ -151,8 +151,8 @@ bool RDACconnect::searchStart(QByteArray *data)
             if(data->at(1) == 0x02)
 			{
                 if((data->at(2) == 0x01))
-				{
-                    qDebug() << "It worked!";
+                {
+                    //numTries += 1;
 					return true;
 				}
 			}
@@ -195,6 +195,8 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 	{
         if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(0, requiredSize)))
 		{
+            //numSuccess += 1;
+            //qDebug() << "Sucesses:" << numSuccess << "; Tries:" << numTries << "; " << numSuccess/numTries << "%";
 			return rdacResultMessageComplete;
 		}
 		else
@@ -218,38 +220,24 @@ void RDACconnect::handleMessage1(QByteArray *data)
 	RDACmessage1 message;
     memcpy(&message, data->mid(4, 62).constData(), 62);
 
-    if (message.timing1 == 65535) {
-        message.timing1 = 0;
+    if (message.pulseRatio1 == 65535) {
+        message.pulseRatio1 = 0;
     }
 
-    if (message.timing2 == 65535) {
-        message.timing2 = 0;
+    if (message.pulseRatio2 == 65535) {
+        message.pulseRatio2 = 0;
     }
 
-    qDebug() << Q_FUNC_INFO << "Pulses" << message.pulse1;
-    qDebug() << Q_FUNC_INFO << "Timing" << message.timing1;
-    qDebug() << Q_FUNC_INFO << "Pulses" << message.pulse2;
-    qDebug() << Q_FUNC_INFO << "Timing" << message.timing2;
+    qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
 
-    double voltage = round(message.volts/5.73758)*0.1;
-    double oilPressure = 0.3320318366 * message.oilPress - 31.2628022226;
-    if(oilPressure < 0.0)
-    {
-        oilPressure = 0.0;
-    }
+    volts = round(message.volts/5.73758)*0.1;
 
-    qDebug() << "Volts:" << voltage;
-    qDebug() << "Oil Pres:" << oilPressure;
+    lastMessage1 = QDateTime::currentDateTimeUtc();
 
-	qreal seconds = qreal(lastMessage1.msecsTo(QDateTime::currentDateTimeUtc())) / 1000.0;
-	lastMessage1 = QDateTime::currentDateTimeUtc();
+    qreal oilPressVolt = message.oilPress / (4096/5);
 
-    qDebug() << message.internalTemp * 1.8 + 32;
-
-	qreal k_factor = 1.0;
-    qreal absoluteFuel = qreal(message.pulse1) * k_factor / 60.0 / 60.0;
-	qreal fuelflow = absoluteFuel / seconds * 60.0 * 60.0;
-	emit updateDataMessage1(fuelflow, absoluteFuel);
+    qreal fuelflow = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+    emit rdacUpdateMessage(fuelflow, volts);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)

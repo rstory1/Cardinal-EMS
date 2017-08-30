@@ -1,12 +1,14 @@
 #include "sensorconvert.h"
 
 SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
-  ,settings("./settings.ini", QSettings::IniFormat, parent)
+  ,settings(":/settings.ini", QSettings::IniFormat, parent)
+  ,gaugeSettings(":/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
     //Let's set what type of thermocouple we are using
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "K").toString());
     setThermocoupleTypeEgt(settings.value("Sensors/egtThermocoupleType", "K").toString());
     setTemperatureScale(settings.value("Units/temp", "F").toString());
+    setKFactor(gaugeSettings.value("Fuel/kfactor", "F").toString().toDouble());
 
 }
 
@@ -34,9 +36,10 @@ void SensorConvert::convertOilTemp(double resistance)
 
 }
 
-void SensorConvert::convertFuelFlow(double pulses)
+void SensorConvert::convertFuelFlow(qreal pulses)
 {
-    // User enters k factor which is pulse for one volumetric unit of fluid
+    // User enters k factor which is pulse for one volumetric unit of fluid.
+    // The eninge interface data will be coming in pulses per hour.
     fuelFlow = pulses / kFactor;
 }
 
@@ -122,3 +125,12 @@ void SensorConvert::processData(QString data)
     emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
 }
 
+void SensorConvert::onRdacUpdate(qreal fuelFlowPulses, qreal voltage) {
+    convertFuelFlow(fuelFlowPulses);
+
+    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, voltage, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
+}
+
+void SensorConvert::setKFactor(qreal kFac) {
+    kFactor = kFac;
+}
