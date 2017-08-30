@@ -91,5 +91,3 @@ RESOURCES += \
     res/res.qrc
 
 #LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
-
-include(./qextserialport/qextserialport.pri)
