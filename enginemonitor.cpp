@@ -153,12 +153,12 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
 
 	//Demo timer, for testing purposes only
-#ifdef QT_DEBUG
-	QTimer *demoTimer = new QTimer(this);
-	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-	demoTimer->setSingleShot(false);
-	demoTimer->start(200);
-#endif
+//#ifdef QT_DEBUG
+//	QTimer *demoTimer = new QTimer(this);
+//	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+//	demoTimer->setSingleShot(false);
+//	demoTimer->start(200);
+//#endif
 
     //socket = new QUdpSocket(this);
 
@@ -581,9 +581,10 @@ void EngineMonitor::saveSceneToSvg(const QString fileName)
 //	painter.end();
 }
 
-void EngineMonitor::setValuesBulkUpdate(quint16 rpm, quint16 fuelFlowValue, quint16 oilTemp, quint16 oilPress, quint16 amps, quint16 volts, quint16 egt1, quint16 egt2, quint16 egt3, quint16 egt4, quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4, quint16 oat, quint16 iat) {
+void EngineMonitor::setValuesBulkUpdate(qreal rpm, qreal fuelFlowValue, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat) {
     rpmIndicator.setValue(rpm);
-    fuelManagement.setFuelFlow(fuelFlowValue);
+    fuelDisplay.setFuelFlow(fuelFlowValue);
+    fuelFlow.setValue(fuelFlowValue);
     oilTemperature.setValue(oilTemp);
     oilPressure.setValue(oilPress);
     ampereMeter.setValue(amps);

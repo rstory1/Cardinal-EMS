@@ -36,10 +36,10 @@ struct RDACmessage1
 {
 public:
 	RDACmessage1();
-    quint16 pulse1;
-    quint16 timing1;
-    quint16 pulse2;
-    quint16 timing2;
+    quint16 flow1;
+    quint16 pulseRatio1;
+    quint16 flow2;
+    quint16 pulseRatio2;
     quint16 thermocouple[12];
     quint16 oilTemp;
     quint16 oilPress;
@@ -113,6 +113,9 @@ private:
 	QSettings settings;
     QSerialPort *serial;
     QByteArray data;
+    float numTries = 0.0;
+    float numSuccess = 0.0;
+    qreal volts;
 
 public slots:
     void openSerialPort();
@@ -131,6 +134,7 @@ signals:
 	void updateDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void userMessage(QString title, QString content, bool endApplication);
 	void statusMessage(QString text, QColor color);
+    void rdacUpdateMessage(qreal fuelFlow, qreal volts);
 };
 
 #endif // RDACCONNECT_H
