@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets printsupport serialport
+QT       += core gui widgets serialport
 
 TARGET = EngineMonitor
 TEMPLATE = app
