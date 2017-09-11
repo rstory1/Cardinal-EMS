@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets serialport
+QT       += core gui widgets serialport printsupport
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -47,7 +47,6 @@ SOURCES += main.cpp\
     rdacconnect.cpp \
     nmeaconnect.cpp \
     manifoldpressure.cpp \
-    PortListener.cpp \
     sensorconvert.cpp \
     circulargauge.cpp \
     alarmBox.cpp \
@@ -71,7 +70,6 @@ HEADERS  += enginemonitor.h \
     rdacconnect.h \
     nmeaconnect.h \
     manifoldpressure.h \
-    PortListener.h \
     sensorconvert.h \
     circulargauge.h \
     alarmBox.h \

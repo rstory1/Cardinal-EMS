@@ -53,6 +53,12 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     graphicsScene.addItem(&buttonBar);
     graphicsScene.update();
 
+    //  Get the interface type, Arduino or RDAC
+    sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
+
+    // Get the temp for when the engine is warmed up
+    warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
+
     // Plot stuff
 //    customPlot = new QCustomPlot();
 //    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
@@ -95,62 +101,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     setupLogFile();
 
-    // Initialize the timer to flash values on alarm
-    QTimer *flashTimer = new QTimer(this);
-    flashTimer->start(1000);
-    connect(flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
-    connect(flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
 
-    //  Get the interface type, Arduino or RDAC
-    sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
-
-    // Get the temp for when the engine is warmed up
-    warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
-
-    //  Connect signal for alarm from rpm indicator
-    connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&rpmIndicator, SIGNAL(cancelAlrm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from CHT/EGT
-    connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&chtEgt, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from Volt Meter
-    connect(&voltMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&voltMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from OILT
-    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from OILP
-    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from ampere meter
-    connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    // Connect buttonBar to the alarm window for alarm acknowledgement
-    connect(&buttonBar, SIGNAL(sendAlarmAck()), &alarmWindow, SLOT(onAlarmAck()));
-
-    // Connect buttonBar to the fuelDisplay window to increment fuel amount
-    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
-
-    // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
-    connect(&alarmWindow, SIGNAL(flashingAlarm()), &buttonBar, SLOT(onAlarmFlash()));
-
-    // Connect signal to stop flashing alarm after it has been acknowledged
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &chtEgt, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &voltMeter, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilTemperature, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
 
 	//Demo timer, for testing purposes only
 //#ifdef QT_DEBUG
@@ -159,6 +110,8 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 //	demoTimer->setSingleShot(false);
 //	demoTimer->start(200);
 //#endif
+
+    //connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
 
     //socket = new QUdpSocket(this);
 
@@ -169,14 +122,15 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     qDebug()<<"Creating";
     //qDebug()<<socket->BoundState;
 
+    // Initialize the timer to flash values on alarm
+    QTimer *flashTimer = new QTimer(this);
+    flashTimer->start(1000);
+
+    // Initialize the timer for the Hobbs and Flight time
     QTimer *clockTimer = new QTimer(this);
-
-    //connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
-
-    hobbs = new HourMeter(this);
-    connect(clockTimer, SIGNAL(timeout()), hobbs, SLOT(onTic()));
-
     clockTimer->start(1000);
+
+    connectSignals();
 
 }
 
@@ -655,4 +609,59 @@ void EngineMonitor::setupWindVector() {
     windVector.setPos(50, 400);
     graphicsScene.addItem(&windVector);
     windVector.setVisible(true);
+}
+
+void EngineMonitor::connectSignals() {
+
+    // Connect signals for alarm flashing
+    connect(&flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
+
+    //  Connect signal for alarm from rpm indicator
+    connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&rpmIndicator, SIGNAL(cancelAlrm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    //  Connect signal for alarm from CHT/EGT
+    connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&chtEgt, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    //  Connect signal for alarm from Volt Meter
+    connect(&voltMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&voltMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    //  Connect signal for alarm from OILT
+    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    //  Connect signal for alarm from OILP
+    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    //  Connect signal for alarm from ampere meter
+    connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    // Connect buttonBar to the alarm window for alarm acknowledgement
+    connect(&buttonBar, SIGNAL(sendAlarmAck()), &alarmWindow, SLOT(onAlarmAck()));
+
+    // Connect buttonBar to the fuelDisplay window to increment fuel amount
+    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
+
+    // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
+    connect(&alarmWindow, SIGNAL(flashingAlarm()), &buttonBar, SLOT(onAlarmFlash()));
+
+    // Connect signal to stop flashing alarm after it has been acknowledged
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &chtEgt, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &voltMeter, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilTemperature, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
+
+    // Connect a timer for handling hobbs/flight time
+    connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
 }

@@ -64,6 +64,8 @@ private:
 	void saveSceneToSvg(const QString fileName = "./out/output.svg");
     void handleAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
     void cancelAlarm(QString alarmGauge);
+    void connectSignals();
+
 	QGraphicsScene graphicsScene;
     RpmIndicator rpmIndicator;
 	BarGraph oilTemperature;
@@ -93,7 +95,7 @@ private:
     //QUdpSocket *socket;
     WindVector windVector;
     QTimer clockTimer;
-    HourMeter *hobbs;
+    HourMeter hobbs;
 
 private slots:
 	void demoFunction();

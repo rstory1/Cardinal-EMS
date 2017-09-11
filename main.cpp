@@ -22,7 +22,6 @@
 #include "enginemonitor.h"
 #include "rdacconnect.h"
 #include "nmeaconnect.h"
-#include "PortListener.h"
 #include "sensorconvert.h"
 #include "udpsocket.h"
 #include "flightcalculator.h"

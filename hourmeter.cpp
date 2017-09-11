@@ -11,7 +11,6 @@ HourMeter::HourMeter(QObject *parent) : QObject(parent)
     flight.sec = 0;
 }
 
-
 void HourMeter::onTic(bool isFlying) {
     if (hobbs.sec < 59) {
         hobbs.sec = hobbs.sec + 1;

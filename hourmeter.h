@@ -10,9 +10,6 @@ public:
     explicit HourMeter(QObject *parent = 0);
 
 private:
-//    int sec;
-//    int min;
-//    int hour;
     struct clock{
         int sec;
         int min;
