@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets printsupport serialport
+QT       += core gui widgets serialport
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -91,5 +91,3 @@ RESOURCES += \
     res/res.qrc
 
 #LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
-
-include(./qextserialport/qextserialport.pri)
