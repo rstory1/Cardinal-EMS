@@ -4,12 +4,23 @@ dist: trusty
 os: linux
 compiler: g++
 language: cpp
+
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
    - secure: "WJ/bU4JxPqn2WP6tZ3h4iljEUKrqPxZGXUzMNLJ02NYM5pMl7qnPnxhkVZ2DjZGMD9gWHt9U38+kmTMc7M9VEEtt+yO1n0i2rl2YVW5uz2vC9v3e+8VSObHkhIhZHmzeNxeayXjuOtcS4ZzEHt5AdvYPoFDhBjwknuOBoBwtYEnzLfk/XPT5E7czp923jSQ1HMqeRi7FYWRdT1vta2ZJWSmrVmhzjypLpZpuIsmORuKywK83pA1cFzUE1FUTOYBZvnwQdRbfSqj1MNpUjWja8MNtn2M3h2bzurQhSet5XOtBaKlr6g8ROTC/KfGwn1KCCODktpvsAn81jrIoQNPbTc6POqqc4biP2BbJnkm2vueX0MMrGpcenqnBQ5UUZZ7cwGxwyjpCVdhSULKAtO2d7CNaXAGTed4RjjcSVmQ1GPr1DeIx5U1RhXWmgoTqzRCMcVuj7B70RVWUwzingxVPmz3/546Fh6IQeEUu9teot2Nf+sfb+/OLgbFEZn2ygIB2QA7gsbEMeYkbSV5axP+P0zTPAC3D6kwiEm60HXeNleIo4oyTOnIeLKn6522oge2/XLkWVHgptblmdReVXwRGwlCpWdr2c4301HKDw/DyfOd8kmBA/YHXI9WJoNbR8ZjZQp7dQ4DD2TqAfEcn5KWVqUNEeAAbQL7irEexBA0sytY="
-   
+
+addons:
+  coverity_scan:
+    project:
+      name: "rstory1/Cardinal-EMS"
+      description: "Build submitted via Travis CI"
+    notification_email: rstory1@gmail.com
+    build_command_prepend: "./configure; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity_scan
+ 
 before_install:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
   - sudo add-apt-repository ppa:beineri/opt-qt591-trusty -y
@@ -22,13 +33,3 @@ install:
 script:
   - /opt/qt59/bin/qmake PREFIX=/usr
   - make
-  
-  addons:
-  coverity_scan:
-    project:
-      name: "rstory1/Cardinal-EMS"
-      description: "Build submitted via Travis CI"
-    notification_email: rstory1@gmail.com
-    build_command_prepend: "./configure; make clean"
-    build_command:   "make -j 4"
-    branch_pattern: coverity_scan
