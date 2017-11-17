@@ -9,7 +9,7 @@ before_install:
  - sudo apt-get update
  
 install:
-  - sudo apt-get --yes install qtbase5-dev libqt5serialport5-dev libqt5serialport5
+  - sudo apt-get --yes install qtbase5-dev libqt5serialport5-dev libqt5serialport5 qtdeclarative5-dev
 
 script:
  - qmake EngineMonitor.pro
