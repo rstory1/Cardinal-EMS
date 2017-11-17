@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get update
  
 install:
-  - sudo apt-get install qt59base qt59widgets qt59serialport
+  - sudo apt-get install qt59base qt59serialport
   - source /opt/qt59/bin/qt59-env.sh
   
 script:
