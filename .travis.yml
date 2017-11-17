@@ -1,15 +1,22 @@
 # The Trusty beta Build Environment
 sudo: required
 dist: trusty
+os: linux
+compiler: gcc
 language: c++
   
 before_install:
- - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
- - sudo apt-get update -qq
- - sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
- - sudo apt-get install qt5-default qttools5-dev-tools
+ - sudo apt-add-repository --yes ppa:beineri/opt-qt551-trusty
+ - sudo apt-get -qq update
+
+before_script:
+  - QTDIR="/opt/qt55"
+  - PATH="$QTDIR/bin:$PATH"
+  - source /opt/qt55/bin/qt55-env.sh
+ 
+install:
+  - sudo apt-get --yes install qt55base qt55imageformats qt55svg
 
 script:
- - qmake -project
- - qmake EngineMonitor.pro
+ - qmake
  - make
