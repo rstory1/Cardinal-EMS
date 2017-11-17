@@ -15,7 +15,7 @@ before_script:
   - source /opt/qt55/bin/qt55-env.sh
  
 install:
-  - sudo apt-get --yes install qt55base qt55imageformats qt55svg qt5serialport
+  - sudo apt-get --yes install qt55base qt55imageformats qt55svg libqt5serialport5
 
 script:
  - qmake
