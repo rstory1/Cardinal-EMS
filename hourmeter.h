@@ -3,11 +3,13 @@
 
 #include <QtWidgets>
 
-class HourMeter : public QObject
+class HourMeter : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit HourMeter(QObject *parent = 0);
+    explicit HourMeter(QGraphicsObject* parent = 0);
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
     struct clock{
@@ -18,9 +20,19 @@ private:
 
     clock hobbs;
     clock flight;
+    clock engine;
+
+    QString hobbsString;
+
+    QSettings settings;
+
+    QFont font;
+
+signals:
+    void hobbsChange(float hour, float min, float sec);
 
 public slots:
-    void onTic(bool isFlying);
+    void onTic(/*bool isFlying*/);
 };
 
 #endif // HOURMETER_H

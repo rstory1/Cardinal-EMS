@@ -44,6 +44,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setupFuelManagement();
     setupStatusItem();
     setupWindVector();
+    setupHourMeter();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
@@ -68,7 +69,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     test->setWidget(customPlot);
     test->setPos(0, 200);
 
-    graphicsScene.addItem(test);
+    //graphicsScene.addItem(test);
 
     customPlot->setFixedHeight(150);
     customPlot->setFixedWidth(300);
@@ -83,7 +84,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     QVector<double> ticks;
     QVector<QString> labels;
-    ticks << 1 << 2 << 3 << 4;
+    ticks << 1 << 2 << 3 << 4 << 5;
     labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
     //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
     //timeTicker->setTimeFormat("%m:%s");
@@ -115,8 +116,6 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	demoTimer->start(200);
 #endif
 
-    connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
-
     //socket = new QUdpSocket(this);
 
     //qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
@@ -127,12 +126,12 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //qDebug()<<socket->BoundState;
 
     // Initialize the timer to flash values on alarm
-    QTimer *flashTimer = new QTimer(this);
-    flashTimer->start(1000);
+    // QTimer *flashTimer = new QTimer(this);
+    flashTimer.start(1000);
 
     // Initialize the timer for the Hobbs and Flight time
-    QTimer *clockTimer = new QTimer(this);
-    clockTimer->start(1000);
+    //clockTimer = new QTimer(this);
+    clockTimer.start(1000);
 
     connectSignals();
 
@@ -362,7 +361,7 @@ void EngineMonitor::setupFuelManagement()
     fuelManagement.setVisible(false);
 	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
 	graphicsScene.addItem(&fuelManagement);
-    fuelDisplay.setPos(100,100);
+    fuelDisplay.setPos(102,102);
     graphicsScene.addItem(&fuelDisplay);
 }
 
@@ -615,7 +614,7 @@ void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
 }
 
 void EngineMonitor::setupWindVector() {
-    windVector.setPos(50, 400);
+    windVector.setPos(50, 385);
     graphicsScene.addItem(&windVector);
     windVector.setVisible(true);
 }
@@ -633,7 +632,7 @@ void EngineMonitor::connectSignals() {
 
     //  Connect signal for alarm from rpm indicator
     connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&rpmIndicator, SIGNAL(cancelAlrm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     //  Connect signal for alarm from CHT/EGT
     connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
@@ -673,4 +672,10 @@ void EngineMonitor::connectSignals() {
 
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
+}
+
+void EngineMonitor::setupHourMeter() {
+    hobbs.setPos(250, 360);
+    graphicsScene.addItem(&hobbs);
+    hobbs.setVisible(true);
 }

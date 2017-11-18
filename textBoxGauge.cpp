@@ -50,15 +50,7 @@ void TextBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 	//Save thje painter and deactivate Antialising for rectangle drawing
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, false);
-	painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-
-	//Draw ticks with values
-//	painter->setPen(Qt::white);
-//	foreach(double value, beetweenValues)
-//	{
-//		painter->drawLine(QPointF(-20.0, calculateLocalValue(value)), QPointF(-10.0, calculateLocalValue(value)));
-//		painter->drawText(QRectF(-50, calculateLocalValue(value)-10.0, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(value, 'f', barPrecision));
-//	}
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
 
     //Define pen, brush and rect for the bar
     painter->setPen(Qt::gray);
@@ -74,43 +66,6 @@ void TextBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->drawText(QRectF(-25, -20, 50, 10), Qt::AlignCenter | Qt::AlignVCenter,titleText);
     painter->drawText(QRectF(-25, -10, 50, 10), Qt::AlignCenter | Qt::AlignVCenter,unitText);
     painter->setPen(Qt::white);
-
-//    for (int i=0;i<colorStops.count();i++) {
-//        if ((currentValue >= colorStops[i].minValue && currentValue <= colorStops[i].maxValue) && (colorStops[i].color == Qt::red || colorStops[i].color == Qt::yellow)) {
-//            painter->setPen(colorStops[i].color);
-//            isPenAlarmColored = true;
-//            if (colorStops[i].color == Qt::red && isAlarmedRed == false) {
-
-//                if (isAlarmedYellow) {
-//                    emit cancelAlarm(titleText);
-//                    isAlarmedYellow = false;
-//                }
-
-//                emit sendAlarm(titleText, colorStops[i].color, true);
-//                isAlarmedRed = true;
-
-//            } else if (colorStops[i].color == Qt::yellow && isAlarmedYellow == false) {
-
-//                if (isAlarmedRed) {
-//                    emit cancelAlarm(titleText);
-//                    isAlarmedRed = false;
-//                }
-
-//                emit sendAlarm(titleText, colorStops[i].color, true);
-//                isAlarmedYellow = true;
-
-//            }
-//        }
-//    }
-
-//    if (isPenAlarmColored == false) {
-//        if (isAlarmedRed == true || isAlarmedYellow == true) {
-//            emit cancelAlarm(titleText);
-//            isAlarmedRed = false;
-//            isAlarmedYellow = false;
-//        }
-//    }
-
 
     //Draw readout
     font.setBold(true);
@@ -146,8 +101,3 @@ void TextBox::setValue(double value)
 	currentValue = value;
 	update();
 }
-
-//void TextBox::addColorStop(ColorStop stop)
-//{
-//	colorStops.append(stop);
-//}

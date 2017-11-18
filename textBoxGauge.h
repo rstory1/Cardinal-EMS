@@ -39,8 +39,7 @@ public:
 	void setUnit(QString unit);
 	void setBorders(double minimum, double maximum);
 	void setPrecision(quint8 readout = 0, quint8 bar = 0);
-	void addBetweenValue(double value);
-    //void addColorStop(ColorStop stop);
+    void addBetweenValue(double value);
     void setValue(double value);
     double getValue() {return currentValue;};
 public slots:
@@ -50,8 +49,7 @@ private:
 	QString titleText, unitText;
 	double minValue, maxValue, currentValue;
 	QList<double> beetweenValues;
-	quint8 barPrecision, readoutPrecision;
-    //QList<ColorStop> colorStops;
+    quint8 barPrecision, readoutPrecision;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;
     bool flashState = false;

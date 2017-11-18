@@ -5,7 +5,7 @@ WindVector::WindVector(QGraphicsObject *parent) : QGraphicsObject(parent)
     vector1 << QPointF(-2,20) << QPointF(2,20) << QPointF(2,-12) << QPointF(10,-12) << QPointF(0,-27) << QPointF(-10,-12) << QPointF(-2,-12) << QPointF(-2,20);
     vector2 << vector1;
     vector3 << vector1;
-    spdTextRect = QRectF(-50, -80, 100, 100);
+    spdTextRect = QRectF(-55, -80, 100, 100);
     xCompRect = QRectF(25, -7.5, 25, 15);
     yCompRect = QRectF(-10, -40, 25, 15);
 
@@ -14,7 +14,7 @@ WindVector::WindVector(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 QRectF WindVector::boundingRect() const
 {
-    return QRectF(-100, -100, 200, 200);
+    return QRectF(-50, -50, 100, 100);
 }
 
 void WindVector::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

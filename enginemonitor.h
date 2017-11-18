@@ -65,6 +65,7 @@ private:
     void handleAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
     void cancelAlarm(QString alarmGauge);
     void connectSignals();
+    void setupHourMeter();
 
 	QGraphicsScene graphicsScene;
     RpmIndicator rpmIndicator;
