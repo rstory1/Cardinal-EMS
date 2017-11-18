@@ -60,58 +60,62 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
 
     // Plot stuff
-//    customPlot = new QCustomPlot();
-//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
+    customPlot = new QCustomPlot();
+    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
 
-//    QGraphicsProxyWidget *test;
-//    test = new QGraphicsProxyWidget();
-//    test->setWidget(customPlot);
-//    test->setPos(325, 540);
+    QGraphicsProxyWidget *test;
+    test = new QGraphicsProxyWidget();
+    test->setWidget(customPlot);
+    test->setPos(0, 200);
 
-//    graphicsScene.addItem(test);
+    graphicsScene.addItem(test);
 
-//    customPlot->setFixedHeight(150);
-//    customPlot->setFixedWidth(300);
-//    customPlot->addGraph(); // blue line
-//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(1)->setPen(QPen(Qt::green));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
+    customPlot->setFixedHeight(150);
+    customPlot->setFixedWidth(300);
+    customPlot->addGraph(); // blue line
+    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+    customPlot->addGraph(); // red line
+    customPlot->graph(1)->setPen(QPen(Qt::green));
+    customPlot->addGraph(); // red line
+    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
+    customPlot->addGraph(); // red line
+    customPlot->graph(3)->setPen(QPen(Qt::yellow));
 
-//    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-//    timeTicker->setTimeFormat("%h:%m:%s");
-//    customPlot->xAxis->setTicker(timeTicker);
-//    customPlot->axisRect()->setupFullAxesBox();
-//    customPlot->yAxis->setRange(0, 300);
-//    customPlot->setBackground(Qt::black);
-//    customPlot->yAxis->setTickLabelColor(Qt::white);
-//    customPlot->xAxis->setTickLabelColor(Qt::white);
-//    customPlot->xAxis->setTicks(false);
-//    customPlot->xAxis->grid()->setVisible(false);
+    QVector<double> ticks;
+    QVector<QString> labels;
+    ticks << 1 << 2 << 3 << 4;
+    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
+    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    //timeTicker->setTimeFormat("%m:%s");
+    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+    textTicker->addTicks(ticks, labels);
+    customPlot->xAxis->setTicker(textTicker);
+    customPlot->axisRect()->setupFullAxesBox();
+    customPlot->yAxis->setRange(0, 300);
+    customPlot->setBackground(Qt::black);
+    customPlot->yAxis->setTickLabelColor(Qt::white);
+    customPlot->xAxis->setTickLabelColor(Qt::white);
+    customPlot->xAxis->setTicks(false);
+    customPlot->xAxis->grid()->setVisible(false);
 
 
-//    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
+    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
 
     // End plot stuff
 
     setupLogFile();
 
-
-
 	//Demo timer, for testing purposes only
-//#ifdef QT_DEBUG
-//	QTimer *demoTimer = new QTimer(this);
-//	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-//	demoTimer->setSingleShot(false);
-//	demoTimer->start(200);
-//#endif
+#ifdef QT_DEBUG
+	QTimer *demoTimer = new QTimer(this);
+	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+	demoTimer->setSingleShot(false);
+	demoTimer->start(200);
+#endif
 
-    //connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+    connect(demoTimer, SIGNAL(timeout()), this, SLOT(onTic()));
 
     //socket = new QUdpSocket(this);
 
@@ -155,7 +159,7 @@ void EngineMonitor::setupLogFile()
 	}
 
 	logFile->write("[Header]\r\n");
-	logFile->write("Created with EM-one - Build BETA\r\n");
+	logFile->write("Created with Cardinal EMS - Build BETA\r\n");
 	logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
 	logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
 	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
@@ -216,7 +220,7 @@ void EngineMonitor::setupRpmIndicator()
     greenYellowWarmup = gaugeSettings.value("RPM/warmupGreenHigh",0).toInt();
     redYellowWarmup = gaugeSettings.value("RPM/warmupRedLow",0).toInt();
     yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
-    rpmIndicator.setPos(385, 140);
+    rpmIndicator.setPos(450, 140);
 	rpmIndicator.setStartSpan(230.0, 240.0);
     rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
 
@@ -472,6 +476,11 @@ void EngineMonitor::demoFunction()
 		oilTemp = 160.0;
 	}
 	oilTemp -= 0.1;
+    if (oilTemp < warmupTemp) {
+        rpmIndicator.isWarmup = true;
+    } else {
+        rpmIndicator.isWarmup = false;
+    }
 	oilTemperature.setValue(oilTemp);
 
 	static double oilPress = 0.0;
@@ -521,19 +530,19 @@ void EngineMonitor::demoFunction()
 
 }
 
-void EngineMonitor::saveSceneToSvg(const QString fileName)
-{
-//	QSvgGenerator generator;
-//	generator.setFileName(fileName);
-//	generator.setSize(QSize(800, 600));
-//	generator.setViewBox(QRect(0, 0, 800, 600));
-//	generator.setTitle(tr("SVG Generator Example Drawing"));
-//	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
-//	QPainter painter;
-//	painter.begin(&generator);
-//	graphicsScene.render(&painter);
-//	painter.end();
-}
+//void EngineMonitor::saveSceneToSvg(const QString fileName)
+//{
+//    QSvgGenerator generator;
+//    generator.setFileName(fileName);
+////	generator.setSize(QSize(800, 600));
+////	generator.setViewBox(QRect(0, 0, 800, 600));
+////	generator.setTitle(tr("SVG Generator Example Drawing"));
+////	generator.setDescription(tr("An SVG drawing created by the SVG Generator"));
+////	QPainter painter;
+////	painter.begin(&generator);
+////	graphicsScene.render(&painter);
+////	painter.end();
+//}
 
 void EngineMonitor::setValuesBulkUpdate(qreal rpm, qreal fuelFlowValue, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat) {
     rpmIndicator.setValue(rpm);
@@ -548,7 +557,7 @@ void EngineMonitor::setValuesBulkUpdate(qreal rpm, qreal fuelFlowValue, qreal oi
     outsideAirTemperature.setValue(oat);
     insideAirTemperature.setValue(iat);
 
-    if (oilTemp < warmupTemp) {
+    if (oilTemp < warmupTemp ) {
         rpmIndicator.isWarmup = true;
     } else {
         rpmIndicator.isWarmup = false;

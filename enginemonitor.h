@@ -61,7 +61,7 @@ private:
 	void setupLogFile();
     void setupChtEgt();
     void setupWindVector();
-	void saveSceneToSvg(const QString fileName = "./out/output.svg");
+    //void saveSceneToSvg(const QString fileName = "./out/output.svg");
     void handleAlarm(int alarmColor, int alarmSeverity, QString alarmText, QString alarmGauge);
     void cancelAlarm(QString alarmGauge);
     void connectSignals();
