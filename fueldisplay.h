@@ -35,8 +35,16 @@ private:
     QRectF rangeRect;
     BarGraph fuelFlowGraph;
 
+    QTime t;
+
+    void applyFuelBurn();
+
 public slots:
     void onFuelAmountChange(QString changeDirection); // Direction is + or -
+    void saveFuelState()
+    {
+        settings.setValue("Fueling/LastShutdown", fuelAmount);
+    }
 };
 
 #endif // FUELDISPLAY_H

@@ -2,7 +2,7 @@
 
 FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     : QGraphicsObject(parent)
-    , settings("./settings.ini", QSettings::IniFormat)
+    , settings("./settings/settings.ini", QSettings::IniFormat)
     , fuelAmount(0.0)
     , fuelFlow(0.0)
     , timeToDestination(1.0)
@@ -11,8 +11,10 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     , mpgRect(0, -80, 90, 55)
     , rangeRect(0, -20, 90, 55)
 {
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
     fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
-    fuelUnits = settings.value("Units/fuel;", "gal").toString();
+    fuelUnits = settings.value("Units/fuel", "gal").toString();
+    t.start();
 }
 
 QRectF FuelDisplay::boundingRect() const
@@ -30,6 +32,8 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     Q_UNUSED(widget);
 
     double fuelAtDestination = fuelAmount - (fuelFlow * timeToDestination);
+
+    applyFuelBurn();
 
     // This is purely for testing.
     double airspeed = 100;
@@ -86,4 +90,9 @@ void FuelDisplay::onFuelAmountChange(QString changeDirection) {
     } else {
         fuelAmount--;
     }
+}
+
+void FuelDisplay::applyFuelBurn() {
+    fuelAmount = fuelAmount - (fuelFlow * (t.elapsed() * 0.000000277778));
+    t.restart();
 }
