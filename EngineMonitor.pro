@@ -38,7 +38,7 @@ Debug:UI_DIR = debug/.ui
 RC_FILE = ./res/icon.rc
 
 SOURCES += main.cpp\
-        enginemonitor.cpp \
+    enginemonitor.cpp \
     bargraph.cpp \
     rpmindicator.cpp \
     cylinderheadtemperature.cpp \

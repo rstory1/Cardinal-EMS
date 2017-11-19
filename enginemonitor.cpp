@@ -24,8 +24,8 @@
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , graphicsScene(this)
-  , settings(":/settings.ini", QSettings::IniFormat, parent)
-  , gaugeSettings(":/gaugeSettings.ini", QSettings::IniFormat, parent)
+  , settings("settings/settings.ini", QSettings::IniFormat, parent)
+  , gaugeSettings("settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
 
 	//Initializing the window behaviour and it's scene
@@ -144,7 +144,7 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-	logFile = new QFile(QString("EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    logFile = new QFile(QString("EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
@@ -164,9 +164,9 @@ void EngineMonitor::setupLogFile()
 	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
 	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
 	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
-    logFile->write(QString("All temperatures in degree %1; oil pressure in %2; fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
+    logFile->write(QString("All temperatures in degree %1\r\n oil pressure in %2\r\n fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
 	logFile->write("[data]\r\n");
-	logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;MARK\r\n");
+    logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;HOBBS;FLIGHT;MARK\r\n");
 }
 
 void EngineMonitor::writeLogFile()
@@ -193,6 +193,9 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString::number(rpmIndicator.getValue(), 'f', 0).append(';').toLatin1());
 	logFile->write(QString::number(manifoldPressure.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(fuelFlow.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString(hobbs.getHobbsTime().append(';')).toLatin1());
+    logFile->write(QString(hobbs.getFlightTime().append(';')).toLatin1());
+    logFile->write("\r\n");
 	logFile->flush();
 	++sample;
 }
@@ -411,7 +414,7 @@ void EngineMonitor::showStatusMessage(QString text, QColor color)
 void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
-    static double rpm = 1300.0;
+    static double rpm = 1100.0;
 	rpm += 5.0;
 //	if(rpm > 2800.0)
 //	{
@@ -419,6 +422,7 @@ void EngineMonitor::demoFunction()
 //		rpm = 0.0;
 //	}
     rpmIndicator.setValue(rpm);
+    hobbs.setEngineOn(true);
 
     static double basicEGT = 750.0;
     static bool egtUp = true;
@@ -560,6 +564,10 @@ void EngineMonitor::setValuesBulkUpdate(qreal rpm, qreal fuelFlowValue, qreal oi
         rpmIndicator.isWarmup = true;
     } else {
         rpmIndicator.isWarmup = false;
+    }
+
+    if (rpm > 0) {
+        hobbs.setEngineOn(true);
     }
 }
 

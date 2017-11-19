@@ -1,6 +1,6 @@
 #include "hourmeter.h"
 
-HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), settings(":/settings.ini", QSettings::IniFormat, parent)
+HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), settings("settings/settings.ini", QSettings::IniFormat, parent)
 {
     hobbs.hour = 0;
     hobbs.min = 0;
@@ -10,7 +10,12 @@ HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), setting
     flight.min = 0;
     flight.sec = 0;
 
-    hobbsString = settings.value("Time/Hobbs", "00:00:00").toString();
+    double savedHobbs = settings.value("Time/hobbs", "0.0").toDouble();
+    hobbs.hour = floor(savedHobbs);
+    hobbs.min = (savedHobbs - floor(savedHobbs)) * 60.0;
+    hobbs.sec = (((savedHobbs - floor(savedHobbs)) * 60.0) - hobbs.min) * 60;
+
+    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(onShutdown()));
 }
 
 QRectF HourMeter::boundingRect() const
@@ -52,44 +57,68 @@ void HourMeter::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     font.setPointSize(12);
     painter->setFont(font);
     painter->drawText(QRectF(-75, 0, 150, 15), Qt::AlignCenter | Qt::AlignVCenter, hobbsString);
-    painter->drawText(QRectF(-75, 40, 150, 15), Qt::AlignCenter | Qt::AlignVCenter, hobbsString);
+    painter->drawText(QRectF(-75, 40, 150, 15), Qt::AlignCenter | Qt::AlignVCenter, flightString);
 }
 
 void HourMeter::onTic(/*bool isFlying*/) {
     bool isFlying = false;
-    if (hobbs.sec < 59) {
-        hobbs.sec = hobbs.sec + 1;
-    } else {
-        hobbs.sec = 0;
 
-        if (hobbs.min < 59) {
-            hobbs.min = hobbs.min + 1;
-            if (hobbs.min == 6) {
-                settings.value("Time/hobbs") = hobbsString;
-            }
+    if (engineState) {
+        if (hobbs.sec < 59) {
+            hobbs.sec = hobbs.sec + 1;
+
         } else {
-            hobbs.min = 0;
-            hobbs.hour = hobbs.hour + 1;
-        }
-    }
+            hobbs.sec = 0;
 
-    if (isFlying) {
-        if (flight.sec < 59) {
-            flight.sec = flight.sec + 1;
-        } else {
-            flight.sec = 0;
+            if (hobbs.min < 59) {
+                hobbs.min = hobbs.min + 1;
 
-            if (flight.min < 59) {
-                flight.min = flight.min + 1;
+                settings.setValue("Time/hobbs", double(hobbs.hour) + (double(hobbs.min)/60));
             } else {
-                flight.min = 0;
-                flight.hour = flight.hour + 1;
+                hobbs.min = 0;
+                hobbs.hour = hobbs.hour + 1;
+
+                settings.setValue("Time/hobbs", double(hobbs.hour));
+            }
+
+
+        }
+
+        if (isFlying) {
+            if (flight.sec < 59) {
+                flight.sec = flight.sec + 1;
+            } else {
+                flight.sec = 0;
+
+                if (flight.min < 59) {
+                    flight.min = flight.min + 1;
+                } else {
+                    flight.min = 0;
+                    flight.hour = flight.hour + 1;
+                }
             }
         }
+
+        hobbsString = QString::number(hobbs.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(hobbs.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(hobbs.sec, 'f',0).rightJustified(2,'0')));
+        flightString = QString::number(flight.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(flight.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(flight.sec, 'f',0).rightJustified(2,'0')));
+        //qDebug() << hobbsString;
+
+        update();
     }
+}
 
-    hobbsString = QString::number(hobbs.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(hobbs.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(hobbs.sec, 'f',0).rightJustified(2,'0')));
-    //qDebug() << hobbsString;
+void HourMeter::onShutdown() {
+    settings.setValue("Time/hobbs", double(hobbs.hour) + (double(hobbs.min)/60) + (double(hobbs.sec)/3600));
+}
 
-    update();
+QString HourMeter::getFlightTime() {
+    return flightString;
+}
+
+QString HourMeter::getHobbsTime() {
+    return hobbsString;
+}
+
+void HourMeter::setEngineOn(bool state) {
+    engineState = state;
 }

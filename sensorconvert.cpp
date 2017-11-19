@@ -1,8 +1,8 @@
 #include "sensorconvert.h"
 
 SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
-  ,settings(":/settings.ini", QSettings::IniFormat, parent)
-  ,gaugeSettings(":/gaugeSettings.ini", QSettings::IniFormat, parent)
+  ,settings("./settings/settings.ini", QSettings::IniFormat, parent)
+  ,gaugeSettings("./settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
     //Let's set what type of thermocouple we are using
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "K").toString());
@@ -97,6 +97,16 @@ void SensorConvert::convertEgt(double volt1, double volt2, double volt3, double 
 
 }
 
+void SensorConvert::onRdacUpdate(qreal fuelFlowPulses, qreal voltage) {
+    convertFuelFlow(fuelFlowPulses);
+
+    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, voltage, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
+}
+
+void SensorConvert::setKFactor(qreal kFac) {
+    kFactor = kFac;
+}
+
 void SensorConvert::processData(QString data)
 {
     // Process the data string from the serial read. In the beginning, we're receiving one string with all the data.
@@ -125,12 +135,3 @@ void SensorConvert::processData(QString data)
     emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
 }
 
-void SensorConvert::onRdacUpdate(qreal fuelFlowPulses, qreal voltage) {
-    convertFuelFlow(fuelFlowPulses);
-
-    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, voltage, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
-}
-
-void SensorConvert::setKFactor(qreal kFac) {
-    kFactor = kFac;
-}

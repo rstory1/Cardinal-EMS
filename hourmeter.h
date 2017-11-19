@@ -11,6 +11,11 @@ public:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
+    QString getFlightTime();
+    QString getHobbsTime();
+
+    void setEngineOn(bool state);
+
 private:
     struct clock{
         int sec;
@@ -23,16 +28,20 @@ private:
     clock engine;
 
     QString hobbsString;
+    QString flightString;
 
     QSettings settings;
 
     QFont font;
+
+    bool engineState;
 
 signals:
     void hobbsChange(float hour, float min, float sec);
 
 public slots:
     void onTic(/*bool isFlying*/);
+    void onShutdown();
 };
 
 #endif // HOURMETER_H
