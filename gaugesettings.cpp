@@ -11,17 +11,17 @@ void GaugeSettings::getGaugeDef() {
     int i;
 
     for (i=0; i<NRange; i++) {
-        myDef.start = settings.value(name + "/range" + QString::number(i+1) + "start",0).toInt();
-        myDef.end = settings.value(name + "/range" + QString::number(i+1) + "end",0).toInt();
+        myDef.start = settings.value(name + "/range" + QString::number(i+1) + "start",0).toDouble();
+        myDef.end = settings.value(name + "/range" + QString::number(i+1) + "end",0).toDouble();
         myDef.color = QColor(settings.value(name + "/range" + QString::number(i+1) + "color","blue").toString());
-
+        qDebug() << name << myDef.start << myDef.end;
         definitions.push_back(myDef);
     }
 
     if (name == "RPM") {
         for (i=0; i<warmupNRange; i++) {
-            myDef.start = settings.value(name + "/warmuprange" + QString::number(i+1) + "start",0).toInt();
-            myDef.end = settings.value(name + "/warmuprange" + QString::number(i+1) + "end",0).toInt();
+            myDef.start = settings.value(name + "/warmuprange" + QString::number(i+1) + "start",0).toDouble();
+            myDef.end = settings.value(name + "/warmuprange" + QString::number(i+1) + "end",0).toDouble();
             myDef.color = QColor(settings.value(name + "/warmuprange" + QString::number(i+1) + "color","blue").toString());
 
             warmupDefinitions.push_back(myDef);

@@ -60,10 +60,10 @@ private:
     GaugeSettings gauge;
 
     int i;
-    double startRange;
-    double endRange;
-    double startVal;
-    double endVal;
+    float startRange;
+    float endRange;
+    float startVal;
+    float endVal;
     QColor color;
     int numOfRanges;
 

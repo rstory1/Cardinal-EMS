@@ -12,8 +12,8 @@ public:
     explicit GaugeSettings(QObject *parent = nullptr);
 
     struct gaugeDef {
-        int start;
-        int end;
+        float start;
+        float end;
         QColor color;
     };
 
@@ -24,13 +24,20 @@ public:
 
     void setGauge(QString gauge);
 
-    int NRange;
     int warmupNRange;
+
+    QString getName() {
+        return name;
+    }
+
+    int getNRange() {
+        return NRange;
+    }
 
 private:
     QSettings settings;
-    void addDef(std::vector<gaugeDef>& definitions, int start, int end, QColor color);
     QString name;
+    int NRange;
 
 signals:
 

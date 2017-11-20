@@ -30,6 +30,7 @@ BarGraph::BarGraph(QGraphicsObject *parent)
 	, barPrecision(0)
 	, readoutPrecision(0)
 {
+
 }
 
 QRectF BarGraph::boundingRect() const
@@ -60,8 +61,8 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 //	}
 
 	//Define pen, brush and rect for the bar
-	painter->setPen(Qt::green);
-	painter->setBrush(Qt::green);
+    painter->setPen(Qt::green);
+    painter->setBrush(Qt::green);
     if (horizontal) {
         painter->drawRect(QRectF(QPointF(-50.0, -10.0), QPointF(50.0, 10.0)));
     } else {
@@ -75,25 +76,43 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         painter->drawLine(-15, calculateLocalValue(minValue)+2, 15, calculateLocalValue(minValue)+2);
     }
 
-	if(!colorStops.isEmpty())
-	{
-		//If there are color stops, go through them
-		foreach(ColorStop colorStop, colorStops)
-		{
-			//Set pen and brish to color and draw the bar
-			painter->setPen(colorStop.color);
-			painter->setBrush(colorStop.color);
+    if (gauge.getName() != "") {
+        i=0;
+        numOfRanges = gauge.getNRange();
+
+        for (i=0; i<numOfRanges; i++) {
+            startRange = calculateLocalValue(gauge.definitions[i].start);
+            endRange = calculateLocalValue(gauge.definitions[i].end);
+            color = gauge.definitions[i].color;
+
+            //Set pen and brish to color and draw the bar
+            painter->setPen(color);
+            painter->setBrush(color);
             if (horizontal) {
-                painter->drawRect(QRectF(QPointF(calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue)),-10), QPointF(calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)),10)));
+                painter->drawRect(QRectF(QPointF(calculateLocalValue(endRange),-10), QPointF(calculateLocalValue(startRange),10)));
             } else {
-                painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue))), QPointF(10.0, calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)))));
+                painter->drawRect(QRectF(QPointF(-10.0, endRange), QPointF(10.0, startRange)));
             }
-
-
         }
     }
 
+//	if(!colorStops.isEmpty())
+//	{
+//		//If there are color stops, go through them
+//		foreach(ColorStop colorStop, colorStops)
+//		{
+//			//Set pen and brish to color and draw the bar
+//			painter->setPen(colorStop.color);
+//			painter->setBrush(colorStop.color);
+//            if (horizontal) {
+//                painter->drawRect(QRectF(QPointF(calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue)),-10), QPointF(calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)),10)));
+//            } else {
+//                painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue))), QPointF(10.0, calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)))));
+//            }
 
+
+//        }
+//    }
 
 	//Restore the painter with antialising
 	painter->restore();
@@ -104,8 +123,6 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-35, 50, 15), Qt::AlignCenter,titleText);
     painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-20, 50, 15), Qt::AlignCenter,unitText);
     painter->setPen(Qt::white);
-    //painter->drawText(QRectF(-50, -60, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(maxValue, 'f', barPrecision));
-    //painter->drawText(QRectF(-50, 40, 30, 20), Qt::AlignVCenter | Qt::AlignRight, QString::number(minValue, 'f', barPrecision));
 
     //  Determine if there should be an alarm
     for (int i=0;i<colorStops.count();i++) {
@@ -272,4 +289,9 @@ void BarGraph::onAlarmAck() {
     if (isPenAlarmColored) {
         isAcknowledged = true;
     }
+}
+
+void BarGraph::setGaugeType(QString type) {
+    gaugeType = type;
+    gauge.setGauge(gaugeType);
 }

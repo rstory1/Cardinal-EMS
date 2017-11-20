@@ -72,7 +72,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         }
     } else {
         i=0;
-        numOfRanges = gauge.NRange;
+        numOfRanges = gauge.getNRange();
 
         for (i=0; i<numOfRanges; i++) {
             startRange = calculateLocalValue(gauge.definitions[i].start);
