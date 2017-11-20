@@ -79,7 +79,6 @@ HEADERS  += enginemonitor.h \
     chtegtgauge.h \
     buttonbar.h \
     qcustomplot/qcustomplot.h \
-    wiringPi/wiringPi/wiringPi.h \
     udpsocket.h \
     flightcalculator.h \
     windvector.h \
