@@ -209,22 +209,12 @@ void EngineMonitor::setupAlarm()
 
 void EngineMonitor::setupRpmIndicator()
 {
-    double minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup;
+    double minValue, maxValue;
     minValue = gaugeSettings.value("RPM/min",0).toInt();
     maxValue = gaugeSettings.value("RPM/max",0).toInt();
-    whiteGreen = gaugeSettings.value("RPM/whiteGreen",0).toInt();
-    greenRed = gaugeSettings.value("RPM/greenRed",0).toInt();
-    yellowRed = gaugeSettings.value("RPM/upperRedLine",0).toInt();
-    greenYellow = gaugeSettings.value("RPM/normalHigh",0).toInt();
-    redYellow = gaugeSettings.value("RPM/lowerRedLine",0).toInt();
-    yellowGreen = gaugeSettings.value("RPM/normalLow",0).toInt();
-    yellowRedWarmup = gaugeSettings.value("RPM/warmupRedHigh",0).toInt();
-    greenYellowWarmup = gaugeSettings.value("RPM/warmupGreenHigh",0).toInt();
-    redYellowWarmup = gaugeSettings.value("RPM/warmupRedLow",0).toInt();
-    yellowGreenWarmup = gaugeSettings.value("RPM/warmupGreenLow",0).toInt();
     rpmIndicator.setPos(450, 140);
 	rpmIndicator.setStartSpan(230.0, 240.0);
-    rpmIndicator.setBorders(minValue, maxValue, whiteGreen, greenRed, yellowRed, greenYellow, redYellow, yellowGreen, yellowRedWarmup, greenYellowWarmup, redYellowWarmup, yellowGreenWarmup);
+    rpmIndicator.setBorders(minValue, maxValue);
 
     for(int i=0;(i<=maxValue);i=i+1000) {
         rpmIndicator.addBetweenValue(i);
@@ -415,12 +405,8 @@ void EngineMonitor::demoFunction()
 {
 	qsrand(QDateTime::currentDateTime().toTime_t());
     static double rpm = 1100.0;
-	rpm += 5.0;
-//	if(rpm > 2800.0)
-//	{
-//        saveSceneToSvg("./bin/maxRPM.svg");
-//		rpm = 0.0;
-//	}
+    rpm += 5.0;
+
     rpmIndicator.setValue(rpm);
     hobbs.setEngineOn(true);
 
@@ -473,10 +459,10 @@ void EngineMonitor::demoFunction()
                         basicCHT+offset3,
                         basicCHT-offset4);
 
-	static double oilTemp = 160.0;
-	if(oilTemp < 120.0)
+    static double oilTemp = 100.0;
+    if(oilTemp < 80.0)
 	{
-		oilTemp = 160.0;
+        oilTemp = 100.0;
 	}
 	oilTemp -= 0.1;
     if (oilTemp < warmupTemp) {
