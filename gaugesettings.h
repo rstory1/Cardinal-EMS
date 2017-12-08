@@ -34,10 +34,21 @@ public:
         return NRange;
     }
 
+    double getMin() {
+        return min;
+    }
+
+    double getMax() {
+        return max;
+    }
+
 private:
     QSettings settings;
     QString name;
     int NRange;
+
+    double min;
+    double max;
 
 signals:
 

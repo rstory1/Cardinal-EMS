@@ -67,12 +67,17 @@ private:
     QColor color;
     int numOfRanges;
 
+    bool isAcknowledged;
+
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
 
 public slots:
     void changeFlashState();
+    void onAlarmAck() {
+        isAcknowledged = true;
+    }
 
 };
 

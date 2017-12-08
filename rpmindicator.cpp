@@ -139,21 +139,21 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             startVal = gauge.warmupDefinitions[i].start;
             endVal = gauge.warmupDefinitions[i].end;
             color = gauge.warmupDefinitions[i].color;
+
         } else {
             startVal = gauge.definitions[i].start;
             endVal = gauge.definitions[i].end;
             color = gauge.definitions[i].color;
+
         }
 
-
         if (startVal <= currentValue && currentValue < endVal) {
-
             if (color == Qt::red) {
-                if (flashState == false) {
+                if (flashState == false && isAcknowledged == false) {
 
                     painter->setPen(Qt::red);
 
-                } else {
+                } else if (flashState == true || isAcknowledged == true) {
                     painter->setPen(Qt::red);
                     painter->setBrush(Qt::red);
 
@@ -165,13 +165,15 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 if (isAlarmedRed == false) {
                     emit sendAlarm("RPM", Qt::red, true);
                     isAlarmedRed = true;
+                    isAcknowledged = false;
                 }
+
             } else if (color == Qt::yellow) {
-                if (flashState == false) {
+                if (flashState == false && isAcknowledged == false) {
 
                     painter->setPen(Qt::yellow);
 
-                } else {
+                } else if (flashState == true || isAcknowledged == true) {
                     painter->setPen(Qt::yellow);
                     painter->setBrush(Qt::yellow);
 
@@ -183,14 +185,15 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 if (isAlarmedYellow == false) {
                     emit sendAlarm("RPM", Qt::yellow, true);
                     isAlarmedYellow = true;
+                    isAcknowledged = false;
                 }
             }
         } else if (currentValue > maxValue || currentValue < minValue) {
-            if (flashState == false) {
+            if (flashState == false && isAcknowledged == false) {
 
                 painter->setPen(Qt::red);
 
-            } else {
+            } else if (flashState == true || isAcknowledged == true) {
                 painter->setPen(Qt::red);
                 painter->setBrush(Qt::red);
 
@@ -202,6 +205,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             if (isAlarmedRed == false) {
                 emit sendAlarm("RPM", Qt::red, true);
                 isAlarmedRed = true;
+                isAcknowledged = false;
             }
         }
     }

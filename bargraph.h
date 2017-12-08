@@ -51,10 +51,14 @@ public:
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
     void setValue(double value);
-    double getValue() {return currentValue;};
+    double getValue() {return currentValue;}
     QString gaugeName;
     void setIndicatorSide(QString side);
-    void setGaugeType(QString type);
+    void setGaugeType(QString type) {
+        gaugeType = type;
+        gauge.setGauge(gaugeType);
+    }
+
 public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
@@ -81,8 +85,8 @@ private:
 
     int i;
     int numOfRanges;
-    float startRange;
-    float endRange;
+    float start;
+    float end;
     QColor color;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
