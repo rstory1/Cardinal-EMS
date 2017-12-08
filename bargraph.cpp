@@ -76,84 +76,106 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
         painter->drawLine(-15, calculateLocalValue(minValue)+2, 15, calculateLocalValue(minValue)+2);
     }
 
+    //Restore the painter with antialising
+    painter->restore();
+
+    isPenAlarmColored = false;
+
     if (gauge.getName() != "") {
         i=0;
         numOfRanges = gauge.getNRange();
 
         for (i=0; i<numOfRanges; i++) {
-            startRange = calculateLocalValue(gauge.definitions[i].start);
-            endRange = calculateLocalValue(gauge.definitions[i].end);
+            start = gauge.definitions[i].start;
+            end = gauge.definitions[i].end;
             color = gauge.definitions[i].color;
 
-            //Set pen and brish to color and draw the bar
+            //Set pen and brush to color and draw the bar
             painter->setPen(color);
             painter->setBrush(color);
+
+            //Save the painter and deactivate Antialising for rectangle drawing
+            painter->save();
+            painter->setRenderHint(QPainter::Antialiasing, false);
+            painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+
             if (horizontal) {
-                painter->drawRect(QRectF(QPointF(calculateLocalValue(endRange),-10), QPointF(calculateLocalValue(startRange),10)));
+                painter->drawRect(QRectF(QPointF(calculateLocalValue(end),-10), QPointF(calculateLocalValue(start),10)));
             } else {
-                painter->drawRect(QRectF(QPointF(-10.0, endRange), QPointF(10.0, startRange)));
+                painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(end)), QPointF(10.0, calculateLocalValue(start))));
+            }
+
+            //Restore the painter with antialising
+            painter->restore();
+
+            if (currentValue >= start && currentValue < end) {
+                if (color == Qt::red) {
+                    if (isAlarmedRed == false) {
+                        emit sendAlarm(titleText, color, true);
+                    }
+
+                    isAlarmedRed = true;
+                    isAlarmedYellow = false;
+                    isPenAlarmColored = true;
+
+                } else if (color == Qt::yellow) {
+                    if (isAlarmedYellow == false) {
+                        emit sendAlarm(titleText, color, true);
+                    }
+
+                    isAlarmedRed = false;
+                    isAlarmedYellow = true;
+                    isPenAlarmColored = true;
+
+                }
             }
         }
     }
 
-//	if(!colorStops.isEmpty())
-//	{
-//		//If there are color stops, go through them
-//		foreach(ColorStop colorStop, colorStops)
-//		{
-//			//Set pen and brish to color and draw the bar
-//			painter->setPen(colorStop.color);
-//			painter->setBrush(colorStop.color);
-//            if (horizontal) {
-//                painter->drawRect(QRectF(QPointF(calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue)),-10), QPointF(calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)),10)));
-//            } else {
-//                painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(qMin(qMax(colorStop.minValue, minValue), maxValue))), QPointF(10.0, calculateLocalValue(qMax(qMin(colorStop.maxValue, maxValue), minValue)))));
-//            }
+    if (currentValue < minValue) {
+        if (minValue == gauge.definitions[0].start) {
+            color = gauge.definitions[0].color;
 
+            if (color == Qt::yellow) {
+                isPenAlarmColored = true;
+                isAlarmedYellow = true;
+                isAlarmedRed = false;
+            } else if (color == Qt::red) {
+                isPenAlarmColored = true;
+                isAlarmedRed = true;
+                isAlarmedYellow = false;
+            }
+        }
+    } else if (currentValue > maxValue) {
+        if (numOfRanges > 0) {
+            if (maxValue == gauge.definitions[numOfRanges-1].end) {
+                color = gauge.definitions[numOfRanges-1].color;
 
-//        }
-//    }
+                if (color == Qt::yellow) {
+                    if(isAlarmedYellow == false) {
+                        emit sendAlarm(titleText, Qt::yellow, true);
+                    }
+                    isPenAlarmColored = true;
+                    isAlarmedYellow = true;
+                    isAlarmedRed = false;
 
-	//Restore the painter with antialising
-	painter->restore();
+                } else if (color == Qt::red) {
+                    if(isAlarmedRed == false) {
+                        emit sendAlarm(titleText, Qt::red, true);
+                    }
+                    isPenAlarmColored = true;
+                    isAlarmedRed = true;
+                    isAlarmedYellow = false;
+                }
+            }
+        }
+
+    }
 
     //Draw Texts around (title, min and max value)
     painter->setPen(Qt::white);
-    isPenAlarmColored = false;
     painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-35, 50, 15), Qt::AlignCenter,titleText);
     painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-20, 50, 15), Qt::AlignCenter,unitText);
-    painter->setPen(Qt::white);
-
-    //  Determine if there should be an alarm
-    for (int i=0;i<colorStops.count();i++) {
-        if ((currentValue >= colorStops[i].minValue && currentValue <= colorStops[i].maxValue) && (colorStops[i].color == Qt::red || colorStops[i].color == Qt::yellow)) {
-            painter->setPen(colorStops[i].color);
-            isPenAlarmColored = true;
-            if (colorStops[i].color == Qt::red && isAlarmedRed == false) {
-
-                if (isAlarmedYellow) {
-                    emit cancelAlarm(titleText);
-                    isAlarmedYellow = false;
-                    isAcknowledged = false;
-                }
-
-                emit sendAlarm(titleText, colorStops[i].color, true);
-                isAlarmedRed = true;
-
-            } else if (colorStops[i].color == Qt::yellow && isAlarmedYellow == false) {
-
-                if (isAlarmedRed) {
-                    emit cancelAlarm(titleText);
-                    isAlarmedRed = false;
-                    isAcknowledged = false;
-                }
-
-                emit sendAlarm(titleText, colorStops[i].color, true);
-                isAlarmedYellow = true;
-
-            }
-        }
-    }
 
     //Set readout details
     font.setBold(true);
@@ -291,7 +313,4 @@ void BarGraph::onAlarmAck() {
     }
 }
 
-void BarGraph::setGaugeType(QString type) {
-    gaugeType = type;
-    gauge.setGauge(gaugeType);
-}
+

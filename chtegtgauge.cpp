@@ -30,6 +30,14 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
 {
     currentChtValues << 0.0 << 0.0 << 0.0 << 0.0;
     currentEgtValues << 0.0 << 0.0 << 0.0 << 0.0;
+
+    chtGauge.setGauge("CHT");
+
+    minChtValue = chtGauge.getMin();
+    maxChtValue = chtGauge.getMax();
+    minChtLocal = calculateLocalChtValue(minChtValue);
+    maxChtLocal = calculateLocalChtValue(maxChtValue);
+    numOfRanges = chtGauge.getNRange();
 }
 
 QRectF ChtEgt::boundingRect() const
@@ -46,38 +54,51 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 	//Set Clipping Rect
 	painter->setClipRect(boundingRect());
 
-	//Draw the side legend
-	painter->setBrush(Qt::green);
-	painter->setPen(QPen(Qt::green, 0));
-    painter->drawRect(QRectF(QPointF(60.0, calculateLocalChtValue(minChtValue)), QPointF(90.0, calculateLocalChtValue(greenYellowChtValue))));
-	painter->setBrush(Qt::yellow);
-	painter->setPen(QPen(Qt::yellow, 0));
-    painter->drawRect(QRectF(QPointF(60.0, calculateLocalChtValue(greenYellowChtValue)), QPointF(90.0, calculateLocalChtValue(yellowRedChtValue))));
-	painter->setBrush(Qt::red);
-	painter->setPen(QPen(Qt::red, 0));
-    painter->drawRect(QRectF(QPointF(60.0, calculateLocalChtValue(yellowRedChtValue)), QPointF(90.0, calculateLocalChtValue(maxChtValue))));
-
-	//Set painter for texts
-	painter->setPen(QPen(Qt::white, 1));
+    //Set painter for texts
+    painter->setPen(QPen(Qt::white, 1));
     painter->setFont(QFont("Arial", 16));
 
-	//Draw the static texts
+    //Draw the static texts
     QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0);
     painter->drawText(QRectF(-240.0, calculateLocalChtValue(minChtValue)+7, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
     painter->drawText(QRectF(-240.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
-
 
     //Set painter for texts
     painter->setPen(QPen(Qt::white, 1));
     painter->setFont(QFont("Arial", 18, QFont::Bold));
 
-	//Draw the red line to define warning range
-	painter->setPen(Qt::red);
-    painter->drawLine(-190, calculateLocalChtValue(yellowRedChtValue), 60, calculateLocalChtValue(yellowRedChtValue));
+    //Save thje painter and deactivate Antialising for rectangle drawing
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing, false);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
 
-    //Draw the yellow line to define warning range
-    painter->setPen(Qt::yellow);
-    painter->drawLine(-190, calculateLocalChtValue(greenYellowChtValue), 60, calculateLocalChtValue(greenYellowChtValue));
+	//Draw the side legend
+	painter->setBrush(Qt::green);
+	painter->setPen(QPen(Qt::green, 0));
+    painter->drawRect(QRectF(QPointF(60.0, minChtLocal), QPointF(90.0, maxChtLocal)));
+
+    if (chtGauge.getName() != "") {
+        j=0;
+
+        for (j=0; j<numOfRanges; j++) {
+            startRange = calculateLocalChtValue(chtGauge.definitions[j].start);
+            endRange = calculateLocalChtValue(chtGauge.definitions[j].end);
+            color = chtGauge.definitions[j].color;
+
+            //Set pen and brush to color and draw the bar
+            painter->setPen(color);
+            painter->setBrush(color);
+            painter->drawRect(QRectF(QPointF(60.0, startRange), QPointF(90.0, endRange)));
+
+            // Draw line extensions for non green ranges
+            if (startRange == minChtLocal) {
+                painter->drawLine(-190, endRange, 60, endRange);
+            } else {
+                painter->drawLine(-190, startRange-1, 60, startRange-1);
+            }
+
+        }
+    }
 
     //Draw the white line to define base of bars
     painter->setPen(Qt::white);
@@ -99,56 +120,87 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         painter->drawLine(i*60-160, -110, i*60-160, -10);
     }
 
-	//Draw the bar graphes
-	for(int i = 0; i < 4; i++)
-	{
-        QRectF barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, calculateLocalChtValue(currentChtValues.value(i))));
-        if(currentChtValues.at(i) > yellowRedChtValue)
-		{
-			//If value is in warning area, bar is drawn red
-			painter->setBrush(Qt::red);
-            cylinderAlarm = 3;
-        }
-        else if(currentChtValues.at(i) > greenYellowChtValue)
-		{
-			//If value is in caution area, bar is drawn yellow
-			painter->setBrush(Qt::yellow);
-            cylinderAlarm = 2;
-		}
-		else
-		{
-			//In all other cases, bar is drawn green
-			painter->setBrush(Qt::green);
-            cylinderAlarm = 1;
-		}
+    painter->restore();
 
-        if((currentChtValues.at(i) > minChtValue) &&
-                (currentChtValues.at(i) < maxChtValue))
-		{
-			//If value is in visible range, draw the bar
-			painter->setPen(painter->brush().color());
-			painter->drawRect(barRect);
-		}
-        else if (currentChtValues.at(i) > maxChtValue)
+    isAlarmedRed = false;
+    isAlarmedYellow = false;
+
+    //Draw the bar graphs
+    for(int i=0; i < 4; i++) {
+        painter->setBrush(Qt::green);
+        painter->setPen(Qt::green);
+        cylinderAlarm = 1;
+
+        currentLocal = calculateLocalChtValue(currentChtValues.at(i));
+        QRectF barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, currentLocal));
+
+        //Save thje painter and deactivate Antialising for rectangle drawing
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+
+        for (j=0; j<numOfRanges; j++) {
+
+            startRange = calculateLocalChtValue(chtGauge.definitions[j].start);
+            endRange = calculateLocalChtValue(chtGauge.definitions[j].end);
+            color = chtGauge.definitions[j].color;            
+
+            if(currentLocal <= startRange && endRange < currentLocal)
+            {
+                //If value is in warning area, bar is drawn red
+                painter->setBrush(color);
+                painter->setPen(color);
+                if (color == Qt::red) {
+                    cylinderAlarm = 3;
+                    isAlarmedRed = true;
+                } else if (color == Qt::yellow) {
+                    cylinderAlarm = 2;
+
+                    if (isAlarmedRed == false) {
+                        isAlarmedYellow = true;
+                    }
+                }
+            }
+
+            if((currentChtValues.at(i) > minChtValue) &&
+                    (currentChtValues.at(i) < maxChtValue))
+            {
+                //If value is in visible range, draw the bar
+                painter->drawRect(barRect);
+            }
+
+        }
+
+        if (currentChtValues.at(i) > maxChtValue)
         {
             barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
-            painter->setPen(painter->brush().color());
+            painter->setPen(Qt::red);
+            painter->setBrush(Qt::red);
+            cylinderAlarm = 3;
+            isAlarmedRed = true;
             painter->drawRect(barRect);
+        } else if (currentChtValues.at(i) < minChtValue) {
+            if (chtGauge.definitions[0].start == minChtValue) {
+                QColor tempColor = chtGauge.definitions[0].color;
+                painter->setPen(tempColor);
+                painter->setBrush(tempColor);
+                if (tempColor == Qt::yellow) {
+                    cylinderAlarm = 2;
+                    isAlarmedYellow = true;
+                }
+            } else {
+                painter->setBrush(Qt::green);
+            }
         }
 
-		if(painter->brush().color() == Qt::green)
-		{
-			//If value is in normal range, draw text in white
-			painter->setPen(Qt::white);
-		}
+        painter->restore();
 
         //Define CHT text position and move to current column
         QRectF textRect(-40, -20, 50, 20);
         textRect.moveCenter(QPointF(i*60-160, -125));
 
-        //
         if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
-            if (flashState) {
+            if (flashState || isAcknowledged) {
                 painter->setPen(Qt::red);
                 painter->setBrush(Qt::red);
                 painter->drawRect(textRect);
@@ -161,7 +213,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             }
 
         } else if ((cylinderAlarm == 2)) {
-            if (flashState) {
+            if (flashState || isAcknowledged) {
                 painter->setPen(Qt::yellow);
                 painter->setBrush(Qt::yellow);
                 painter->drawRect(textRect);
@@ -188,8 +240,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         //  Draw the markers for the EGT gauge
         QRectF EgtRect = QRectF(QPointF(i*60-185, calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-135, calculateLocalEgtValue(currentEgtValues.value(i))+3));
 
-        if((currentEgtValues.at(i) > minEgtValue) &&
-                (currentEgtValues.at(i) < maxEgtValue))
+        if((currentEgtValues.at(i) > minEgtValue) && (currentEgtValues.at(i) < maxEgtValue))
         {
 
             QPolygonF marker1;
@@ -207,14 +258,10 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->setBrush(Qt::white);
             painter->drawRect(EgtRect);
             painter->setPen(Qt::white);
-            //painter->drawPolygon(marker1);
-            //painter->drawPolygon(marker2);
+            painter->drawPolygon(marker1);
+            painter->drawPolygon(marker2);
         }
-
-
-
-        //update();
-	}
+    }
 
     if ((isAlarmedRed == true)) {
         if (flashState || isAcknowledged) {
@@ -246,8 +293,13 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
         }
     } else {
+        painter->setPen(Qt::white);
         painter->setFont(QFont("Arial", 16));
         painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+        isAcknowledged = false;
+        emit cancelAlarm("CHT");
+        isAlarmedRed = false;
+        isAlarmedYellow = false;
     }
 
     update();
@@ -276,51 +328,6 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
     currentChtValues.replace(1, val2);
     currentChtValues.replace(2, val3);
     currentChtValues.replace(3, val4);
-
-    if ((((yellowRedChtValue > val1) && (val1 >= greenYellowChtValue))
-         || ((yellowRedChtValue > val2) && (val2 >= greenYellowChtValue))
-         || ((yellowRedChtValue > val3) && (val3 >= greenYellowChtValue))
-         || ((yellowRedChtValue > val4) && (val4 >= greenYellowChtValue)))
-            && (isAlarmedYellow == false && isAlarmedRed == false))
-    {
-        emit sendAlarm("CHT", Qt::yellow, true);
-        isAlarmedYellow = true;
-    }
-    else if ((val1 >= yellowRedChtValue || val2 >= yellowRedChtValue || val3 >= yellowRedChtValue || val4 >= yellowRedChtValue) && (isAlarmedRed == false))
-    {
-        if (isAlarmedYellow)
-        {
-            emit cancelAlarm("CHT");
-            isAlarmedYellow = false;
-            isAcknowledged = false;
-
-            emit sendAlarm("CHT", Qt::red, true);
-            isAlarmedRed = true;
-        }
-        else
-        {
-            emit sendAlarm("CHT", Qt::red, true);
-            isAlarmedRed = true;
-        }
-
-    }
-    else if ((isAlarmedRed) && (val1 < yellowRedChtValue && val2 < yellowRedChtValue && val3 < yellowRedChtValue && val4 < yellowRedChtValue))
-    {
-        emit cancelAlarm("CHT");
-
-        isAlarmedRed = false;
-
-        isAcknowledged = false;
-    }
-    else if ((isAlarmedYellow) && (val1 < greenYellowChtValue && val2 < greenYellowChtValue && val3 < greenYellowChtValue && val4 < greenYellowChtValue))
-    {
-        emit cancelAlarm("CHT");
-
-        isAlarmedYellow = false;
-
-        isAcknowledged = false;
-    }
-
 
 }
 
@@ -354,5 +361,5 @@ void ChtEgt::changeFlashState()
 }
 
 void ChtEgt::onAlarmAck() {
-    isAcknowledged = false;
+    isAcknowledged = true;
 }

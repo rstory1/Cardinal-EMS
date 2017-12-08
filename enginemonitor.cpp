@@ -259,7 +259,6 @@ void EngineMonitor::setupRpmIndicator()
 void EngineMonitor::setupChtEgt()
 {
     chtEgt.setPos(700, 450);
-    chtEgt.setBorders(40.0, 250.0, 230.0, 248.0, 300.0, 1200.0);
     graphicsScene.addItem(&chtEgt);
 }
 
@@ -269,10 +268,6 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     oilTemperature.setBorders(gaugeSettings.value("OilTemp/min",0).toInt(),gaugeSettings.value("OilTemp/max",0).toInt());
-    oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/minReading",0).toInt(), gaugeSettings.value("OilTemp/min",0).toInt()));
-    oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/min",0).toInt(), gaugeSettings.value("OilTemp/normalLow",0).toInt()));
-    oilTemperature.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/max",0).toInt()));
-    oilTemperature.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilTemp/normalHigh",0).toInt(), gaugeSettings.value("OilTemp/maxReading",0).toInt()));
     oilTemperature.setIndicatorSide("left");
     oilTemperature.setGaugeType("OilTemp");
     graphicsScene.addItem(&oilTemperature);
@@ -281,10 +276,6 @@ void EngineMonitor::setupBarGraphs()
 	oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
     oilPressure.setBorders(gaugeSettings.value("OilPress/min",0).toDouble(), gaugeSettings.value("OilPress/max",0).toDouble());
-    oilPressure.addColorStop(ColorStop(Qt::red, 0.0, gaugeSettings.value("OilPress/min",0).toInt()));
-    oilPressure.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilPress/min",0).toInt(), gaugeSettings.value("OilPress/normalLow",0).toInt()));
-    oilPressure.addColorStop(ColorStop(Qt::yellow, gaugeSettings.value("OilPress/normalHigh",0).toInt(), gaugeSettings.value("OilPress/max",0).toInt()));
-    oilPressure.addColorStop(ColorStop(Qt::red, gaugeSettings.value("OilPress/max",0).toInt(), gaugeSettings.value("OilPress/maxReading",0).toInt()));
     oilPressure.setGaugeType("OilPress");
 	graphicsScene.addItem(&oilPressure);
 
@@ -292,9 +283,6 @@ void EngineMonitor::setupBarGraphs()
 	voltMeter.setTitle("VOLTS");
 	voltMeter.setUnit("V");
     voltMeter.setBorders(gaugeSettings.value("Volt/min",0).toDouble(), gaugeSettings.value("Volt/max",0).toDouble());
-	voltMeter.addColorStop(ColorStop(Qt::red, 10.0, 11.9));
-	voltMeter.addColorStop(ColorStop(Qt::yellow, 11.9, 12.4));
-	voltMeter.addColorStop(ColorStop(Qt::red, 14.5, 16.0));
 	voltMeter.setPrecision(1, 1);
     voltMeter.setIndicatorSide("left");
     voltMeter.setGaugeType("Volt");
@@ -304,10 +292,8 @@ void EngineMonitor::setupBarGraphs()
 	ampereMeter.setTitle("AMPS");
 	ampereMeter.setUnit("A");
     ampereMeter.setBorders(gaugeSettings.value("Amp/min",0).toDouble(), gaugeSettings.value("Amp/max",0).toDouble());
-	ampereMeter.addColorStop(ColorStop(Qt::red, -50.0, 0.0));
-	ampereMeter.addColorStop(ColorStop(Qt::yellow, 30.0, 50.0));
 	ampereMeter.addBetweenValue(0.0);
-    voltMeter.setGaugeType("Amp");
+    ampereMeter.setGaugeType("Amp");
 	graphicsScene.addItem(&ampereMeter);
 
     fuelFlow.setPos(760, 200);
@@ -447,7 +433,7 @@ void EngineMonitor::demoFunction()
     }
     chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
-    static double basicCHT = 0.0;
+    static double basicCHT = 60.0;
 
     if(basicCHT > 250.0)
 	{
@@ -668,6 +654,7 @@ void EngineMonitor::connectSignals() {
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilTemperature, SLOT(onAlarmAck()));
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &rpmIndicator, SLOT(onAlarmAck()));
 
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));

@@ -22,6 +22,7 @@
 #define CHTEGTGAUGE_H
 
 #include <QtWidgets>
+#include <gaugesettings.h>
 
 //! CHT EGT Gauge Class
 /*!
@@ -39,8 +40,10 @@ public:
 	void addBetweenValue(double value);
     void setChtValues(double val1, double val2, double val3, double val4);
     void setEgtValues(double val1, double val2, double val3, double val4);
-    const QList<double> &getCurrentChtValues() {return currentChtValues;};
-    const QList<double> &getCurrentEgtValues() {return currentEgtValues;};
+    const QList<double> &getCurrentChtValues() {return currentChtValues;}
+    const QList<double> &getCurrentEgtValues() {return currentEgtValues;}
+    void setGaugeType(QString type);
+
 private:
     double calculateLocalChtValue(double value) const;
     double calculateLocalEgtValue(double value) const;
@@ -57,6 +60,17 @@ private:
     int cylinderAlarm;
     bool isAcknowledged = false;
 
+    QString chtGaugeType;
+    GaugeSettings chtGauge;
+    int numOfRanges;
+    double startRange;
+    double endRange;
+    QColor color;
+    double minChtLocal;
+    double maxChtLocal;
+    int j;
+
+    double currentLocal;
 
 signals:
     void sendAlarm(QString, QColor, bool);

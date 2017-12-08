@@ -39,5 +39,8 @@ void GaugeSettings::setGauge(QString gauge) {
         warmupNRange = settings.value(name + "/warmupNRange",0).toInt();
     }
 
+    min = settings.value(name + "/min",0).toDouble();
+    max = settings.value(name + "/max",0).toDouble();
+
     getGaugeDef();
 }
