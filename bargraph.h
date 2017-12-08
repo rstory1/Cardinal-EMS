@@ -22,6 +22,7 @@
 #define BARGRAPH_H
 
 #include <QtWidgets>
+#include <gaugesettings.h>
 
 //! Bar Graph Class
 /*!
@@ -50,9 +51,14 @@ public:
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
     void setValue(double value);
-    double getValue() {return currentValue;};
+    double getValue() {return currentValue;}
     QString gaugeName;
     void setIndicatorSide(QString side);
+    void setGaugeType(QString type) {
+        gaugeType = type;
+        gauge.setGauge(gaugeType);
+    }
+
 public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
@@ -74,7 +80,14 @@ private:
     bool horizontal=false;
     QString indicatorSide = "right";
     bool isAcknowledged = false;
+    GaugeSettings gauge;
+    QString gaugeType;
 
+    int i;
+    int numOfRanges;
+    float start;
+    float end;
+    QColor color;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{

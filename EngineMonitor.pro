@@ -60,6 +60,7 @@ SOURCES += main.cpp\
     windvector.cpp \
     hourmeter.cpp \
     spatial.cpp \
+    gaugesettings.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -78,12 +79,12 @@ HEADERS  += enginemonitor.h \
     chtegtgauge.h \
     buttonbar.h \
     qcustomplot/qcustomplot.h \
-    wiringPi/wiringPi/wiringPi.h \
     udpsocket.h \
     flightcalculator.h \
     windvector.h \
     hourmeter.h \
     spatial.h \
+    gaugesettings.h
 
 RESOURCES += \
     res/res.qrc

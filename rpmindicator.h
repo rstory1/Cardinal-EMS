@@ -24,6 +24,7 @@
 #include <QtWidgets>
 #include <QtCore>
 #include <alarmBox.h>
+#include <gaugesettings.h>
 
 //! RPM Indicator Class
 /*!
@@ -40,7 +41,7 @@ public:
     QRectF boundingRect() const;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setStartSpan(double start, double span);
-    void setBorders(double minimum, double maximum, double whiteGreen, double greenRed,double yellowRed, double greenYellow, double redYellow, double yellowGreen,double yellowRedWarmup, double greenYellowWarmup, double redYellowWarmup, double yellowGreenWarmup);
+    void setBorders(double minimum, double maximum);
 	void addBetweenValue(double value);
 	void setValue(double value);
     double getValue() {return currentValue;};
@@ -53,11 +54,20 @@ private:
     double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
     double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
 	double startAngle, spanAngle;
-	QList<double> beetweenValues;
-    QSettings gaugeSettings;
-    void paintWarmup(QPainter parentPainter);
-    void paintNormal(QPainter parentPainter);
+    QList<double> beetweenValues;
     bool flashState;
+
+    GaugeSettings gauge;
+
+    int i;
+    float startRange;
+    float endRange;
+    float startVal;
+    float endVal;
+    QColor color;
+    int numOfRanges;
+
+    bool isAcknowledged;
 
 signals:
     void sendAlarm(QString, QColor, bool);
@@ -65,6 +75,9 @@ signals:
 
 public slots:
     void changeFlashState();
+    void onAlarmAck() {
+        isAcknowledged = true;
+    }
 
 };
 
