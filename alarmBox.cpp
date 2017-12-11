@@ -67,7 +67,7 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     for (int i=0;i<=9;i++) {
         if (alarmText[i] != "")
         {
-            if (flashState == true && alarmFlash[i] == true || alarmFlash[i] == false) {
+            if ((flashState == true && alarmFlash[i] == true) || alarmFlash[i] == false) {
                 if (alarmColor[i] == Qt::yellow) {
                     painter->setPen(Qt::black);
                 } else {

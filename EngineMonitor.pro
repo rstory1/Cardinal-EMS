@@ -60,7 +60,8 @@ SOURCES += main.cpp\
     windvector.cpp \
     hourmeter.cpp \
     spatial.cpp \
-    gaugesettings.cpp
+    gaugesettings.cpp \
+    backlight.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -84,7 +85,8 @@ HEADERS  += enginemonitor.h \
     windvector.h \
     hourmeter.h \
     spatial.h \
-    gaugesettings.h
+    gaugesettings.h \
+    backlight.h
 
 RESOURCES += \
     res/res.qrc
