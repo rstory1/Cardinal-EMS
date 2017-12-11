@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets serialport printsupport
+QT       += core gui widgets serialport printsupport network
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -60,7 +60,9 @@ SOURCES += main.cpp\
     windvector.cpp \
     hourmeter.cpp \
     spatial.cpp \
-    gaugesettings.cpp
+    gaugesettings.cpp \
+    dataserver.cpp \
+    datathread.cpp
 
 HEADERS  += enginemonitor.h \
     bargraph.h \
@@ -84,7 +86,9 @@ HEADERS  += enginemonitor.h \
     windvector.h \
     hourmeter.h \
     spatial.h \
-    gaugesettings.h
+    gaugesettings.h \
+    dataserver.h \
+    datathread.h
 
 RESOURCES += \
     res/res.qrc

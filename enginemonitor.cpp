@@ -108,6 +108,8 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     setupLogFile();
 
+    setupServer();
+
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
 	QTimer *demoTimer = new QTimer(this);
@@ -508,6 +510,8 @@ void EngineMonitor::demoFunction()
 	outsideAirTemperature.setValue(airTemp);
 	insideAirTemperature.setValue(airTemp);
 
+    emit sendData(rpm, flow);
+
 }
 
 //void EngineMonitor::saveSceneToSvg(const QString fileName)
@@ -658,10 +662,47 @@ void EngineMonitor::connectSignals() {
 
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
+
+    //  Connect the dataserver with the Engine Monitor
+    connect(&server, SIGNAL(requestData()), this, SLOT(onDataReqeust()));
+    connect(this, SIGNAL(sendData(double,double)), &server, SLOT(onReceiveData(double,double)));
 }
 
 void EngineMonitor::setupHourMeter() {
     hobbs.setPos(250, 360);
     graphicsScene.addItem(&hobbs);
     hobbs.setVisible(true);
+}
+
+void EngineMonitor::setupServer() {
+    if (!server.listen()) {
+        QMessageBox::critical(this, tr("Threaded Fortune Server"),
+                              tr("Unable to start the server: %1.")
+                              .arg(server.errorString()));
+        close();
+        return;
+    }
+
+    QString ipAddress;
+    QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
+    // use the first non-localhost IPv4 address
+    for (int i = 0; i < ipAddressesList.size(); ++i) {
+        if (ipAddressesList.at(i) != QHostAddress::LocalHost &&
+            ipAddressesList.at(i).toIPv4Address()) {
+            ipAddress = ipAddressesList.at(i).toString();
+            break;
+        }
+    }
+    // if we did not find one, use IPv4 localhost
+    if (ipAddress.isEmpty())
+        ipAddress = QHostAddress(QHostAddress::LocalHost).toString();
+    qDebug() << tr("The server is running on\n\nIP: %1\nport: %2\n\n"
+                            "Run the Fortune Client example now.")
+                         .arg(ipAddress).arg(server.serverPort());
+}
+
+void EngineMonitor::onDataReqeust() {
+
+
+    emit sendData(rpmIndicator.getValue(), fuelFlow.getValue());
 }

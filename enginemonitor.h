@@ -22,6 +22,8 @@
 #define ENGINEMONITOR_H
 
 #include <QtGui>
+#include <QtNetwork>
+#include <stdlib.h>
 
 #include "rpmindicator.h"
 #include "bargraph.h"
@@ -36,6 +38,7 @@
 #include <udpsocket.h>
 #include <windvector.h>
 #include <hourmeter.h>
+#include <dataserver.h>
 
 //! Engine Monitor Class
 /*!
@@ -48,6 +51,7 @@ class EngineMonitor : public QGraphicsView
 public:
 	EngineMonitor(QWidget *parent = 0);
 	~EngineMonitor();
+
 private:
     void setupAlarm();
 	void setupRpmIndicator();
@@ -66,6 +70,7 @@ private:
     void cancelAlarm(QString alarmGauge);
     void connectSignals();
     void setupHourMeter();
+    void setupServer();
 
 	QGraphicsScene graphicsScene;
     RpmIndicator rpmIndicator;
@@ -98,6 +103,8 @@ private:
     QTimer clockTimer;
     HourMeter hobbs;
 
+    DataServer server;
+
 private slots:
 	void demoFunction();
     void writeLogFile();
@@ -111,6 +118,10 @@ public slots:
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
     void onUpdateWindInfo(float spd, float dir, float mHdg);
+    void onDataReqeust();
+
+signals:
+    void sendData(double rpm, double fuelFlow);
 
 };
 
