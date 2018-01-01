@@ -14,7 +14,7 @@ void GaugeSettings::getGaugeDef() {
         myDef.start = settings.value(name + "/range" + QString::number(i+1) + "start",0).toDouble();
         myDef.end = settings.value(name + "/range" + QString::number(i+1) + "end",0).toDouble();
         myDef.color = QColor(settings.value(name + "/range" + QString::number(i+1) + "color","blue").toString());
-        qDebug() << name << myDef.start << myDef.end;
+        //qDebug() << name << myDef.start << myDef.end;
         definitions.push_back(myDef);
     }
 
@@ -37,6 +37,9 @@ void GaugeSettings::setGauge(QString gauge) {
 
     if (name == "RPM") {
         warmupNRange = settings.value(name + "/warmupNRange",0).toInt();
+    } else if (name == "CHT") {
+        egtMin = settings.value("EGT/min",0).toDouble();
+        egtMax = settings.value("EGT/max",0).toDouble();
     }
 
     min = settings.value(name + "/min",0).toDouble();

@@ -38,6 +38,11 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
     minChtLocal = calculateLocalChtValue(minChtValue);
     maxChtLocal = calculateLocalChtValue(maxChtValue);
     numOfRanges = chtGauge.getNRange();
+
+    egtGauge.setGauge("EGT");
+
+    minEgtValue = egtGauge.getMin();
+    maxEgtValue = egtGauge.getMax();
 }
 
 QRectF ChtEgt::boundingRect() const
@@ -238,7 +243,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));
 
         //  Draw the markers for the EGT gauge
-        QRectF EgtRect = QRectF(QPointF(i*60-185, calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-135, calculateLocalEgtValue(currentEgtValues.value(i))+3));
+        QRectF EgtRect = QRectF(QPointF(i*60-175, calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-145, calculateLocalEgtValue(currentEgtValues.value(i))+3));
 
         if((currentEgtValues.at(i) > minEgtValue) && (currentEgtValues.at(i) < maxEgtValue))
         {
@@ -258,8 +263,8 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->setBrush(Qt::white);
             painter->drawRect(EgtRect);
             painter->setPen(Qt::white);
-            painter->drawPolygon(marker1);
-            painter->drawPolygon(marker2);
+//            painter->drawPolygon(marker1);
+//            painter->drawPolygon(marker2);
         }
     }
 

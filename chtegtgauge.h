@@ -72,6 +72,7 @@ private:
 
     double currentLocal;
 
+    GaugeSettings egtGauge;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);

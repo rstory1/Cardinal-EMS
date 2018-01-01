@@ -50,6 +50,9 @@ private:
     double min;
     double max;
 
+    double egtMin = 0;
+    double egtMax = 0;
+
 signals:
 
 public slots:
