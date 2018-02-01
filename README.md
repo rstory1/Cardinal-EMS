@@ -3,4 +3,6 @@ Aircraft engine management system using Qt. Forked from the EngineMonitor projec
 
 This program is open source and is meant to provide a color engine monitor for experimental aircraft.
 
-![test](Screenshots/EMSScreenshot.png)
+![Application Screenshot](Screenshots/EMSScreenshot.png)
+
+![Assembly Picture](Screenshots/AssemblyPic.png)
