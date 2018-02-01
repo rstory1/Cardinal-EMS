@@ -203,7 +203,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             }
 
             if (isAlarmedRed == false) {
-                emit sendAlarm("RPM", Qt::red, true);
+                //emit sendAlarm("RPM", Qt::red, true);
                 isAlarmedRed = true;
                 isAcknowledged = false;
             }
@@ -215,7 +215,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         painter->setPen(Qt::white);
 
         if (isAlarmedRed == true || isAlarmedYellow == true) {
-            emit cancelAlarm("RPM");
+            //emit cancelAlarm("RPM");
             isAlarmedRed = false;
             isAlarmedYellow = false;
         }

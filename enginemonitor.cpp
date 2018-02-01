@@ -109,12 +109,12 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setupLogFile();
 
 	//Demo timer, for testing purposes only
-#ifdef QT_DEBUG
+//#ifdef QT_DEBUG
 	QTimer *demoTimer = new QTimer(this);
 	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
 	demoTimer->setSingleShot(false);
 	demoTimer->start(200);
-#endif
+//#endif
 
     //socket = new QUdpSocket(this);
 

@@ -60,12 +60,14 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 	painter->setClipRect(boundingRect());
 
     //Set painter for texts
-    painter->setPen(QPen(Qt::white, 1));
+    //painter->setPen(QPen(Qt::white, 1));
     painter->setFont(QFont("Arial", 16));
 
     //Draw the static texts
     QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0);
+    painter->setPen(QPen(QColor(0,255,255), 1));
     painter->drawText(QRectF(-240.0, calculateLocalChtValue(minChtValue)+7, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
+    painter->setPen(QPen(Qt::white, 1));
     painter->drawText(QRectF(-240.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
 
     //Set painter for texts
@@ -236,7 +238,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         }
 
         //Define EGT text position and move to current column
-        painter->setPen(Qt::white);
+        painter->setPen(QColor(0,255,255));
         QRectF textRectEgt(-45, 65, 65, 20);
         textRectEgt.moveCenter(QPointF(i*60-160, 5));
 
@@ -260,7 +262,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
 
             painter->setPen(Qt::black);
-            painter->setBrush(Qt::white);
+            painter->setBrush(QColor(0,255,255));
             painter->drawRect(EgtRect);
             painter->setPen(Qt::white);
 //            painter->drawPolygon(marker1);

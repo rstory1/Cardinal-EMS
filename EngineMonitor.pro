@@ -89,4 +89,10 @@ HEADERS  += enginemonitor.h \
 RESOURCES += \
     res/res.qrc
 
-#LIBS += -L~/Avionics/ems/wiringPi -lwiringPi
+#target.path = /Cardinal-EMS
+#INSTALLS += target
+
+#setting.path = /Cardinal-EMS/settings
+#setting.files = /home/rstory/Avionics/Cardinal-EMS/settings/gaugeSettings.ini /home/rstory/Avionics/Cardinal-EMS/settings/settings.ini
+#INSTALLS += setting
+

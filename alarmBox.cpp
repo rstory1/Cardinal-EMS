@@ -111,11 +111,11 @@ void AlarmBox::onRemoveAlarm(QString text)
 
                 alarmText[removedItem] = "";
 
-                for (int a = removedItem + 1;a<=alarmCount;a++) {
-                    alarmText[a-1] = alarmText[a];
-                    alarmColor[a-1] =  alarmColor[a];
-                    alarmFlash[a-1] = alarmFlash[a];
-                }
+//                for (int a = removedItem + 1;a<=alarmCount;a++) {
+//                    alarmText[a-1] = alarmText[a];
+//                    alarmColor[a-1] =  alarmColor[a];
+//                    alarmFlash[a-1] = alarmFlash[a];
+//                }
 
                 alarmCount = alarmCount - 1;
             }
@@ -132,11 +132,11 @@ void AlarmBox::onRemoveAlarm(QString text)
 */
 void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 {
-    alarmText[alarmCount] = text;
-    alarmColor[alarmCount] = color;
-    alarmFlash[alarmCount] = flashing;
+//    alarmText[alarmCount] = text;
+//    alarmColor[alarmCount] = color;
+//    alarmFlash[alarmCount] = flashing;
 
-    alarmCount++;
+//    alarmCount++;
 
     if (flashing) {
         emit flashingAlarm();
