@@ -55,7 +55,7 @@ private:
     double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
 	double startAngle, spanAngle;
     QList<double> beetweenValues;
-    bool flashState;
+    bool flashState = false;
 
     GaugeSettings gauge;
 

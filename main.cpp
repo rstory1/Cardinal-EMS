@@ -19,6 +19,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include <QtWidgets>
+#include <QApplication>
 #include "enginemonitor.h"
 #include "rdacconnect.h"
 #include "nmeaconnect.h"
@@ -29,6 +30,7 @@
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
+    qInfo() << "Inside messageToFileHandler";
 	QFile debugfile("EngineMon.log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
@@ -50,7 +52,8 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
 		case QtFatalMsg:
 			debugString.append("Fatal: ");
 			abort();
-		}
+        }
+        qInfo() << msg;
 		debugfile.write(debugString.append(msg).replace('\n', ", ").append('\n').toLatin1());
 		debugfile.close();
 	}
@@ -78,13 +81,15 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName("Cardinal Avionics");
     QApplication::setApplicationName("Cardinal-EMS");
 
+    qInfo() << "Before app log starts";
+
 #ifdef QT_NO_DEBUG
-	QFile debugfile("EngineMon.log");
+    QFile debugfile("EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
-	{
+    {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
-		debugfile.close();
-		qInstallMessageHandler(messageToFileHandler);
+        debugfile.close();
+        qInstallMessageHandler(messageToFileHandler);
 	}
 	else
 	{
@@ -113,10 +118,10 @@ int main(int argc, char *argv[])
 
 	//Create the engine monitor and show after splashscreen delay
 	EngineMonitor engineMonitor;
-#ifndef QT_DEBUG
-	SplashScreenDelay::sleep(5);
-	engineMonitor.showFullScreen();
-#else
+//#ifndef QT_DEBUG
+//	SplashScreenDelay::sleep(5);
+//	engineMonitor.showFullScreen();
+//#else
 	engineMonitor.show();
     //engineMonitor.showFullScreen();
     engineMonitor.move(0, 0);
@@ -125,21 +130,11 @@ int main(int argc, char *argv[])
     engineMonitor.setMaximumHeight(480);
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-#endif
+//#endif
 	splash.finish(&engineMonitor);
 
     //Create the RDAC connector
     RDACconnect rdac;
-//	a.connect(&rdacConnect, SIGNAL(updateDataMessage1(double, double)), &engineMonitor, SLOT(setDataMessage1(double, double)));
-//	a.connect(&rdacConnect, SIGNAL(updateDataMessage2(double,double,double,double,double,double,double)), &engineMonitor, SLOT(setDataMessage2(double,double,double,double,double,double,double)));
-//	a.connect(&rdacConnect, SIGNAL(updateDataMessage3(double)), &engineMonitor, SLOT(setDataMessage3(double)));
-//	a.connect(&rdacConnect, SIGNAL(updateDataMessage4egt(quint16,quint16,quint16,quint16)), &engineMonitor, SLOT(setDataMessage4egt(quint16,quint16,quint16,quint16)));
-//	a.connect(&rdacConnect, SIGNAL(updateDataMessage4cht(quisetEgtValuent16,quint16,quint16,quint16)), &engineMonitor, SLOT(setDataMessage4cht(quint16,quint16,quint16,quint16)));
-//	a.connect(&rdacConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
-//	a.connect(&rdacConnect, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
-//#ifndef QT_DEBUG
-//	rdacConnect.start();
-//#endif
     rdac.openSerialPort();
 
 	NMEAconnect nmeaConnect;

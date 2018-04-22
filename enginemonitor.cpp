@@ -2,7 +2,7 @@
 //                                                                      //
 // EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2012 Tobias Rad                                        //
-//                                                                      //
+//                2017 Ryan Story                                       //
 // This program is free software: you can redistribute it and/or modify //
 // it under the terms of the GNU General Public License as published by //
 // the Free Software Foundation, either version 3 of the License, or    //
@@ -109,12 +109,12 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setupLogFile();
 
 	//Demo timer, for testing purposes only
-//#ifdef QT_DEBUG
+#ifdef QT_DEBUG
 	QTimer *demoTimer = new QTimer(this);
 	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
 	demoTimer->setSingleShot(false);
 	demoTimer->start(200);
-//#endif
+#endif
 
     //socket = new QUdpSocket(this);
 
@@ -122,7 +122,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     //connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
 
-    qDebug()<<"Creating";
+    //qDebug()<<"Creating";
     //qDebug()<<socket->BoundState;
 
     // Initialize the timer to flash values on alarm
@@ -133,8 +133,9 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //clockTimer = new QTimer(this);
     clockTimer.start(1000);
 
+    qDebug()<<"Enter connectSignals()";
     connectSignals();
-
+    qDebug() << "Returned from connectSignals()";
 }
 
 EngineMonitor::~EngineMonitor()
@@ -273,55 +274,55 @@ void EngineMonitor::setupBarGraphs()
     graphicsScene.addItem(&oilTemperature);
 
     oilPressure.setPos(690, 60);
-	oilPressure.setTitle("OIL P");
+    oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
     oilPressure.setBorders(gaugeSettings.value("OilPress/min",0).toDouble(), gaugeSettings.value("OilPress/max",0).toDouble());
     oilPressure.setGaugeType("OilPress");
-	graphicsScene.addItem(&oilPressure);
+    graphicsScene.addItem(&oilPressure);
 
     voltMeter.setPos(760, 60);
-	voltMeter.setTitle("VOLTS");
-	voltMeter.setUnit("V");
+    voltMeter.setTitle("VOLTS");
+    voltMeter.setUnit("V");
     voltMeter.setBorders(gaugeSettings.value("Volt/min",0).toDouble(), gaugeSettings.value("Volt/max",0).toDouble());
-	voltMeter.setPrecision(1, 1);
+    voltMeter.setPrecision(1, 1);
     voltMeter.setIndicatorSide("left");
     voltMeter.setGaugeType("Volt");
-	graphicsScene.addItem(&voltMeter);
+    graphicsScene.addItem(&voltMeter);
 
     ampereMeter.setPos(690, 200);
-	ampereMeter.setTitle("AMPS");
-	ampereMeter.setUnit("A");
+    ampereMeter.setTitle("AMPS");
+    ampereMeter.setUnit("A");
     ampereMeter.setBorders(gaugeSettings.value("Amp/min",0).toDouble(), gaugeSettings.value("Amp/max",0).toDouble());
-	ampereMeter.addBetweenValue(0.0);
+    ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
-	graphicsScene.addItem(&ampereMeter);
+    graphicsScene.addItem(&ampereMeter);
 
     fuelFlow.setPos(760, 200);
-	fuelFlow.setTitle("FF");
+    fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
     fuelFlow.setBorders(gaugeSettings.value("Fuel/min",0).toDouble(), gaugeSettings.value("Fuel/max",0).toDouble());
     fuelFlow.setPrecision(1);
     fuelFlow.setIndicatorSide("left");
     fuelFlow.setGaugeType("Fuel");
-	graphicsScene.addItem(&fuelFlow);
+    graphicsScene.addItem(&fuelFlow);
 
     insideAirTemperature.setPos(800, 200);
-	insideAirTemperature.setTitle("IAT");
+    insideAirTemperature.setTitle("IAT");
     insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     insideAirTemperature.setBorders(-10.0, 40);
-	insideAirTemperature.setPrecision(1);
-	graphicsScene.addItem(&insideAirTemperature);
+    insideAirTemperature.setPrecision(1);
+    graphicsScene.addItem(&insideAirTemperature);
     insideAirTemperature.setVisible(false);
-	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
-	connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
+    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
+    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
 
     outsideAirTemperature.setPos(850, 350);
-	outsideAirTemperature.setTitle("OAT");
+    outsideAirTemperature.setTitle("OAT");
     outsideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-	outsideAirTemperature.setPrecision(1);
-	graphicsScene.addItem(&outsideAirTemperature);
-	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
-	connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
+    outsideAirTemperature.setPrecision(1);
+    graphicsScene.addItem(&outsideAirTemperature);
+    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
+    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }
 
 void EngineMonitor::setupStatusItem()
@@ -606,6 +607,7 @@ void EngineMonitor::setupWindVector() {
 
 void EngineMonitor::connectSignals() {
 
+    qDebug()<<"Connecting flashing alarm signals";
     // Connect signals for alarm flashing
     connect(&flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
     connect(&flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
@@ -615,10 +617,12 @@ void EngineMonitor::connectSignals() {
     connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
     connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
 
+    qDebug()<<"Connecting RPM signals";
     //  Connect signal for alarm from rpm indicator
     connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
+    qDebug()<<"Connecting CHT/EGT Signals";
     //  Connect signal for alarm from CHT/EGT
     connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&chtEgt, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
@@ -656,6 +660,7 @@ void EngineMonitor::connectSignals() {
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &rpmIndicator, SLOT(onAlarmAck()));
 
+    qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
 }

@@ -2,7 +2,7 @@
 //                                                                      //
 // EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2012 Tobias Rad                                        //
-//                                                                      //
+//                2017 Ryan Story                                       //
 // This program is free software: you can redistribute it and/or modify //
 // it under the terms of the GNU General Public License as published by //
 // the Free Software Foundation, either version 3 of the License, or    //
@@ -88,7 +88,7 @@ void RDACconnect::readData()
         switch(checkPatternValidity(&data, messageType))
         {
         case rdacResultMessageComplete:
-            emit statusMessage("Everything OK\nLast RPM update: " + lastMessageReception.value(3).toString("hh:mm:ss.zzz"), Qt::white);
+            emit statusMessage("Everything OK - Last update: " + lastMessageReception.value(3).toString("hh:mm:ss.zzz"), Qt::white);
             switch(messageType)
             {
                 case 0x01:
@@ -217,6 +217,10 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 void RDACconnect::handleMessage1(QByteArray *data)
 {
 	lastMessageReception.insert(1, QDateTime::currentDateTimeUtc());
+//    QFile file("/home/rstory/datapacket.log");
+//    file.open(QIODevice::WriteOnly);
+//    file.write(data->toHex());
+//    file.close();
 	RDACmessage1 message;
     memcpy(&message, data->mid(4, 62).constData(), 62);
 
@@ -228,7 +232,7 @@ void RDACconnect::handleMessage1(QByteArray *data)
         message.pulseRatio2 = 0;
     }
 
-    qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
+    //qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
 
     volts = round(message.volts/5.73758)*0.1;
 

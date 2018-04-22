@@ -2,6 +2,7 @@
 //                                                                      //
 // EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2012 Tobias Rad                                        //
+//               2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
 // it under the terms of the GNU General Public License as published by //
