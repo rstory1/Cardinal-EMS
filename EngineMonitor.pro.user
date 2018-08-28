@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.4.1, 2018-04-21T22:05:15. -->
+<!-- Written by QtCreator 4.6.2, 2018-06-24T20:53:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -62,7 +62,7 @@
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Desktop Qt 5.9.1 GCC 64bit</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Desktop Qt 5.9.1 GCC 64bit</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">qt.591.gcc_64_kit</value>
-   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">1</value>
+   <value type="int" key="ProjectExplorer.Target.ActiveBuildConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
@@ -336,7 +336,7 @@
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">EngineMonitor.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory.default">/home/rstory/Avionics/Cardinal-EMS-release</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory.default">/home/rstory/Avionics/Cardinal-EMS-debug</value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
@@ -558,9 +558,9 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
-       <value type="QString">/home/rstory/Avionics/Cardinal-EMS/settings/gaugeSettings.ini</value>
-       <value type="QString">/home/rstory/Avionics/build-EngineMonitor-BBB-Release/EngineMonitor</value>
        <value type="QString">/home/rstory/Avionics/Cardinal-EMS/settings/settings.ini</value>
+       <value type="QString">/home/rstory/Avionics/build-EngineMonitor-BBB-Release/EngineMonitor</value>
+       <value type="QString">/home/rstory/Avionics/Cardinal-EMS/settings/gaugeSettings.ini</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
        <value type="QString">192.168.0.17</value>
@@ -578,9 +578,9 @@
        <value type="QString">/opt/poky/2.3.2/sysroots/cortexa8hf-neon-poky-linux-gnueabi</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
-       <value type="QDateTime">2018-01-05T20:27:30</value>
-       <value type="QDateTime">2018-01-05T20:14:33</value>
        <value type="QDateTime">2018-01-05T20:22:17</value>
+       <value type="QDateTime">2018-01-05T20:14:33</value>
+       <value type="QDateTime">2018-01-05T20:27:30</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>

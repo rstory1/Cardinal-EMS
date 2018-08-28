@@ -110,10 +110,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
-	QTimer *demoTimer = new QTimer(this);
-	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-	demoTimer->setSingleShot(false);
-	demoTimer->start(200);
+//	QTimer *demoTimer = new QTimer(this);
+//	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+//	demoTimer->setSingleShot(false);
+//	demoTimer->start(200);
 #endif
 
     //socket = new QUdpSocket(this);
@@ -145,7 +145,7 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    logFile = new QFile(QString("EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    logFile = new QFile(QString("engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);

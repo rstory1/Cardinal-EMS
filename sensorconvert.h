@@ -64,7 +64,7 @@ signals:
 
 public slots:
     void processData(QString data);
-    void onRdacUpdate(qreal fuelFlowPulses, qreal volts);
+    void onRdacUpdate(qreal oilPressVolts, qreal fuelFlowPulses, qreal volts);
 };
 
 #endif // SENSORCONVERT_H

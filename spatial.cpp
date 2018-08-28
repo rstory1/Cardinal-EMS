@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// CardinalEMS,   a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //

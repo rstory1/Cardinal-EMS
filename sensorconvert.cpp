@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// CardinalEMS,   a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
@@ -117,8 +117,9 @@ void SensorConvert::convertEgt(double volt1, double volt2, double volt3, double 
 
 }
 
-void SensorConvert::onRdacUpdate(qreal fuelFlowPulses, qreal voltage) {
+void SensorConvert::onRdacUpdate(qreal oilPressVolts, qreal fuelFlowPulses, qreal voltage) {
     convertFuelFlow(fuelFlowPulses);
+    convertOilPress(oilPressVolts);
 
     emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, voltage, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
 }

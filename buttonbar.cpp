@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// CardinalEMS,   a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
@@ -33,6 +33,9 @@ ButtonBar::ButtonBar(QGraphicsObject *parent) : QGraphicsObject(parent)
 
     gradient4.setColorAt(1, Qt::black);
     gradient4.setColorAt(0, Qt::darkGray);
+
+    gradient5.setColorAt(1, Qt::black);
+    gradient5.setColorAt(0, Qt::darkGray);
 }
 
 QRectF ButtonBar::boundingRect() const
@@ -93,19 +96,22 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
             break;
 
     case 3: painter->fillRect(buttonRect3, gradient3);
+            painter->fillRect(buttonRect4, gradient4);
 
             painter->drawRect(buttonRect1);
             painter->drawRect(buttonRect2);
             painter->drawRect(buttonRect3);
+            painter->drawRect(buttonRect4);
 
             painter->drawText(buttonRect1, Qt::AlignCenter,"<-Menu");
             painter->drawText(buttonRect2, Qt::AlignCenter,"Export");
             painter->drawText(buttonRect3, Qt::AlignCenter,"Update");
+            painter->drawText(buttonRect4, Qt::AlignCenter,"Quit App");
 
             if (isAlarmFlashing) {
-                painter->fillRect(buttonRect4, gradient4);
-                painter->drawRect(buttonRect4);
-                painter->drawText(buttonRect4, Qt::AlignCenter,"Ack");
+                painter->fillRect(buttonRect5, gradient5);
+                painter->drawRect(buttonRect5);
+                painter->drawText(buttonRect5, Qt::AlignCenter,"Ack");
             }
 
             break;
@@ -157,6 +163,9 @@ void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             // emit a signal to show a software update dialog
             QFile::copy("app.exe", "update.exe");
         } else if ((clickedPos.x() > buttonRect4.x() && clickedPos.x() < buttonRect4.x() + buttonRect4.width()) && (clickedPos.y() > buttonRect4.y())) {
+            quitPressed();
+
+        } else if ((clickedPos.x() > buttonRect5.x() && clickedPos.x() < buttonRect5.x() + buttonRect5.width()) && (clickedPos.y() > buttonRect5.y())) {
             ackPressed();
         }
 

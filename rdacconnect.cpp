@@ -20,6 +20,28 @@
 
 #include "rdacconnect.h"
 
+RDACXFmessage::RDACXFmessage() : flow1(0),
+     pulseRatio1(0),
+     flow2(0),
+     pulseRatio2(0),
+//     thermocouple(quint16(12)),
+     oilTemp(0),
+     oilPress(0),
+     aux1(0),
+     aux2(0),
+     fuelPress(0),
+     coolant(0),
+     fuelLevel1(0),
+     fuelLevel2(0),
+     rpm1(0),
+     rpm2(0),
+     map(0),
+     current(0),
+     internalTemp(0),
+     volts(0)
+{
+}
+
 RDACmessage1::RDACmessage1() : flow1(0)
   , pulseRatio1(0)
   , flow2(0)
@@ -187,6 +209,7 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 	}
 	if(data->size() < requiredSize)
 	{
+        qDebug() << "Message incomplete";
 		return rdacResultMessageIncomplete;
 	}
 
@@ -215,13 +238,16 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 }
 
 void RDACconnect::handleMessage1(QByteArray *data)
+{}
+
+void RDACconnect::handleMessageRDACXF(QByteArray *data)
 {
 	lastMessageReception.insert(1, QDateTime::currentDateTimeUtc());
 //    QFile file("/home/rstory/datapacket.log");
 //    file.open(QIODevice::WriteOnly);
 //    file.write(data->toHex());
 //    file.close();
-	RDACmessage1 message;
+    RDACXFmessage message;
     memcpy(&message, data->mid(4, 62).constData(), 62);
 
     if (message.pulseRatio1 == 65535) {
@@ -232,16 +258,26 @@ void RDACconnect::handleMessage1(QByteArray *data)
         message.pulseRatio2 = 0;
     }
 
-    //qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
+    qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
 
     volts = round(message.volts/5.73758)*0.1;
 
     lastMessage1 = QDateTime::currentDateTimeUtc();
 
-    qreal oilPressVolt = message.oilPress / (4096/5);
+    qreal oilP = message.oilPress / (4096/5);
+    qreal oilT = message.oilTemp / (4096/5);
+    qreal ax1 = message.aux1 / (4096/5);
+    qreal ax2 = message.aux2 / (4096/5);
+    qreal fuelP = message.fuelPress / (4096/5);
+    qreal coolantT = message.coolant / (4096/5);
+    qreal fuelL1 = message.fuelLevel1 / (4096/5);
+    qreal fuelL2 = message.fuelLevel1 / (4096/5);
+    qreal curr = message.current / (2048/2.5);
 
-    qreal fuelflow = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
-    emit rdacUpdateMessage(fuelflow, volts);
+    qreal fuelFlow1 = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+    qreal fuelFlow2 = (message.flow2 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+
+    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], oilT, oilP, ax1, ax2, fuelP, coolantT, fuelL1, fuelL2, message.rpm1, message.rpm2, message.map, curr, message.internalTemp, volts);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)
@@ -322,8 +358,7 @@ void RDACconnect::openSerialPort()
     // Enumerate the serial port
     // Find one that sounds like Arduino, or the highest one on the list
     // Open it if it isn't busy
-
-    serial->setPortName(portToUse.portName());
+    serial->setPortName(QString("ttyACM0"));
     serial->setBaudRate(QSerialPort::Baud38400);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
