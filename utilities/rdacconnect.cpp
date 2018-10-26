@@ -359,9 +359,8 @@ void RDACconnect::openSerialPort()
     }
 
     // Enumerate the serial port
-    // Find one that sounds like Arduino, or the highest one on the list
     // Open it if it isn't busy
-    serial->setPortName(QString("ttyACM0"));
+    serial->setPortName(QString("ttyO4"));
     serial->setBaudRate(QSerialPort::Baud38400);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);

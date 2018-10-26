@@ -31,7 +31,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 	//Initializing the window behaviour and it's scene
 	setWindowFlags(Qt::FramelessWindowHint);
     graphicsScene.setBackgroundBrush(Qt::black);
-	setScene(&graphicsScene);
+    setScene(&settings_scene);
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	//Setting up the items to be displayed

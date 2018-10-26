@@ -117,42 +117,42 @@ void SensorConvert::convertEgt(double volt1, double volt2, double volt3, double 
 
 }
 
-void SensorConvert::onRdacUpdate(qreal oilPressVolts, qreal fuelFlowPulses, qreal voltage) {
-    convertFuelFlow(fuelFlowPulses);
-    convertOilPress(oilPressVolts);
+void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts) {
+    convertFuelFlow(fuelFlow1);
+    convertOilPress(oilP);
 
-    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, voltage, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
+    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
     kFactor = kFac;
 }
 
-void SensorConvert::processData(QString data)
-{
-    // Process the data string from the serial read. In the beginning, we're receiving one string with all the data.
-    // 0 - RPM
-    // 1 - Fuel Flow
-    // 2 - Oil Temp
-    // 3 - Oil Pressure
-    // 4 - Amperage
-    // 5 - Volts
-    // 6-9 - EGT
-    // 10-13 - CHT
-    // 14 - OAT
-    // 15 - IAT
+//void SensorConvert::processData(QString data)
+//{
+//    // Process the data string from the serial read. In the beginning, we're receiving one string with all the data.
+//    // 0 - RPM
+//    // 1 - Fuel Flow
+//    // 2 - Oil Temp
+//    // 3 - Oil Pressure
+//    // 4 - Amperage
+//    // 5 - Volts
+//    // 6-9 - EGT
+//    // 10-13 - CHT
+//    // 14 - OAT
+//    // 15 - IAT
 
-    convertRpm(data.section(',',0,0).toDouble());
-    convertFuelFlow(data.section(',',1,1).toDouble());
-    convertOilTemp(data.section(',',2,2).toDouble());
-    convertOilPress(data.section(',',3,3).toDouble());
-    //convertAmperage(data.section(',',4,4).toDouble());
-    //convertVolts(data.section(',',5,5).toDouble());
-    convertEgt(data.section(',',6,6).toDouble(),data.section(',',7,7).toDouble(),data.section(',',8,8).toDouble(),data.section(',',9,9).toDouble());
-    convertCht(data.section(',',10,10).toDouble(),data.section(',',11,11).toDouble(),data.section(',',12,12).toDouble(),data.section(',',13,13).toDouble());
-    convertOat(data.section(',',14,14).toDouble());
-    convertIat(data.section(',',15,15).toDouble());
+//    convertRpm(data.section(',',0,0).toDouble());
+//    convertFuelFlow(data.section(',',1,1).toDouble());
+//    convertOilTemp(data.section(',',2,2).toDouble());
+//    convertOilPress(data.section(',',3,3).toDouble());
+//    //convertAmperage(data.section(',',4,4).toDouble());
+//    //convertVolts(data.section(',',5,5).toDouble());
+//    convertEgt(data.section(',',6,6).toDouble(),data.section(',',7,7).toDouble(),data.section(',',8,8).toDouble(),data.section(',',9,9).toDouble());
+//    convertCht(data.section(',',10,10).toDouble(),data.section(',',11,11).toDouble(),data.section(',',12,12).toDouble(),data.section(',',13,13).toDouble());
+//    convertOat(data.section(',',14,14).toDouble());
+//    convertIat(data.section(',',15,15).toDouble());
 
-    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
-}
+//    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
+//}
 
