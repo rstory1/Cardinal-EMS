@@ -41,9 +41,9 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //setupManifoldPressure();
     setupAlarm();
     setupChtEgt();
-    setupFuelManagement();
+    //setupFuelManagement();
     setupStatusItem();
-    setupWindVector();
+    //setupWindVector();
     setupHourMeter();
     setupuserSettings();
 
