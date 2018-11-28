@@ -22,6 +22,7 @@ QT       += core gui widgets serialport printsupport
 
 INCLUDEPATH += \
     include \
+    include/instruments
 
 TARGET = EngineMonitor
 TEMPLATE = app

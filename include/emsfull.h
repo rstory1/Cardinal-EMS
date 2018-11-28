@@ -20,7 +20,9 @@ class emsFull : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    emsFull(QGraphicsObject* parent = 0);
+    explicit emsFull(QGraphicsObject* parent = 0);
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
     RpmIndicator rpmIndicator;
