@@ -64,7 +64,8 @@ SOURCES += main.cpp\
     instruments/hourmeter.cpp \
     utilities/spatial.cpp \
     utilities/gaugesettings.cpp \
-    utilities/usersettings.cpp
+    utilities/usersettings.cpp \
+    instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
     include/bargraph.h \
@@ -89,7 +90,8 @@ HEADERS  += include/enginemonitor.h \
     include/hourmeter.h \
     include/spatial.h \
     include/gaugesettings.h \
-    include/usersettings.h
+    include/usersettings.h \
+    include/diagnosticwidget.h
 
 RESOURCES += \
     res/res.qrc

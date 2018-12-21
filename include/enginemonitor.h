@@ -38,6 +38,8 @@
 #include <hourmeter.h>
 #include <usersettings.h>
 
+#include <QMessageBox>
+
 //! Engine Monitor Class
 /*!
  * This class is the main class and handles the overall function of the app. The grpahics scene is setup here and multiple signal/slots are connected here as well.

@@ -322,9 +322,9 @@ void EngineMonitor::setupBarGraphs()
 
 void EngineMonitor::setupStatusItem()
 {
-    statusItem.setPos(400, 65);
+    statusItem.setPos(5, 300);
 	graphicsScene.addItem(&statusItem);
-    statusItem.setVisible(true);
+    statusItem.setVisible(false);
 }
 
 void EngineMonitor::setupTimeToDestinationItem()
@@ -384,6 +384,7 @@ void EngineMonitor::userMessageHandler(QString title, QString content, bool endA
 
 void EngineMonitor::showStatusMessage(QString text, QColor color)
 {
+    //qDebug() << Q_FUNC_INFO;
 	statusItem.setPlainText(text);
 	statusItem.setDefaultTextColor(color);
 }
@@ -592,7 +593,7 @@ void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
 void EngineMonitor::setupWindVector() {
     windVector.setPos(50, 385);
     graphicsScene.addItem(&windVector);
-    windVector.setVisible(true);
+    windVector.setVisible(false);
 }
 
 void EngineMonitor::connectSignals() {

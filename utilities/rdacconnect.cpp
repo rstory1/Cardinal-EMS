@@ -114,7 +114,7 @@ void RDACconnect::readData()
             switch(messageType)
             {
                 case 0x01:
-                    handleMessage1(&data);
+                    handleMessageRDACXF(&data);
                     break;
                 case 0x02:
                     handleMessage2(&data);
@@ -174,7 +174,7 @@ bool RDACconnect::searchStart(QByteArray *data)
 			{
                 if((data->at(2) == 0x01))
                 {
-                    //numTries += 1;
+                    numTries += 1;
 					return true;
 				}
 			}
@@ -218,8 +218,8 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 	{
         if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(0, requiredSize)))
 		{
-            //numSuccess += 1;
-            //qDebug() << "Sucesses:" << numSuccess << "; Tries:" << numTries << "; " << numSuccess/numTries << "%";
+            numSuccess += 1;
+            qDebug() << "Sucesses:" << numSuccess << "; Tries:" << numTries << "; " << numSuccess/numTries << "%";
 			return rdacResultMessageComplete;
 		}
 		else
@@ -332,6 +332,7 @@ void RDACconnect::handleMessage4(QByteArray *data)
 
 void RDACconnect::openSerialPort()
 {
+    emit statusMessage("Attempting to open port", Qt::green);
     QSerialPortInfo portToUse;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
@@ -349,19 +350,19 @@ void RDACconnect::openSerialPort()
         qDebug() << s;
     }
 
-    if(portToUse.isNull() || !portToUse.isValid())
-    {
-        qDebug() << "port is not valid:" << portToUse.portName();
-        QMessageBox msgBox;
-        msgBox.setText("Port is invalid");
-        msgBox.exec();
-        return;
-    }
+//    if(portToUse.isNull() || !portToUse.isValid())
+//    {
+//        qDebug() << "port is not valid:" << portToUse.portName();
+//        QMessageBox msgBox;
+//        msgBox.setText("Port is invalid");
+//        msgBox.exec();
+//        return;
+//    }
 
     // Enumerate the serial port
     // Find one that sounds like Arduino, or the highest one on the list
     // Open it if it isn't busy
-    serial->setPortName(QString("ttyACM0"));
+    serial->setPortName(QString("/dev/ttyO4"));
     serial->setBaudRate(QSerialPort::Baud38400);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);

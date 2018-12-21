@@ -127,7 +127,6 @@ int main(int argc, char *argv[])
 
     //Create the RDAC connector
     RDACconnect rdac;
-    rdac.openSerialPort();
 
 	NMEAconnect nmeaConnect;
 	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
@@ -140,17 +139,18 @@ int main(int argc, char *argv[])
     //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
 //SLOT(userMessageHandler(QString,QString,bool)));
     a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
-    a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal,qreal)));
+    a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
     //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
 //SLOT(setFuelData(double,double)));
-    //a.connect(&sensorConvert, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, 
-//SLOT(showStatusMessage(QString,QColor)));
+    a.connect(&rdac, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
 
     //QString portName = QLatin1String("ttyACM0");              // update this to use your 
 //port of choice
     //PortListener listener(portName);        // signals get hooked up internally
     //a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, 
 //SLOT(processData(QString)));
+
+    rdac.openSerialPort();
 
     flightCalculator flightCalc;
     QTimer *flightTimer = new QTimer();
