@@ -18,85 +18,71 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#ifndef BARGRAPH_H
-#define BARGRAPH_H
+#ifndef CHTEGTGAUGE_H
+#define CHTEGTGAUGE_H
 
 #include <QtWidgets>
 #include <gaugesettings.h>
 
-//! Bar Graph Class
+//! CHT EGT Gauge Class
 /*!
- * This class creates a bar graph gauge to be used to display a single sensor reading.
+ * This class creates a combined CHT/EGT gauge.
 */
 
-struct ColorStop
+class ChtEgt : public QGraphicsObject
 {
-	ColorStop() : color(QColor()), minValue(0.0), maxValue(0.0) {};
-	ColorStop(QColor col, double minVal, double maxVal) : color(col), minValue(minVal), maxValue(maxVal) {};
-	QColor color;
-	double minValue, maxValue;
-};
-
-class BarGraph : public QGraphicsObject
-{
-	Q_OBJECT
+    Q_OBJECT
 public:
-	explicit BarGraph(QGraphicsObject* parent = 0);
+    explicit ChtEgt(QGraphicsObject * parent = 0);
 	QRectF boundingRect() const;
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-	void setTitle(QString title);
-	void setUnit(QString unit);
-	void setBorders(double minimum, double maximum);
-	void setPrecision(quint8 readout = 0, quint8 bar = 0);
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    void setBorders(double minimum, double maximum, double yellowBorder, double redBorder, double minEgt, double maxEgt);
 	void addBetweenValue(double value);
-	void addColorStop(ColorStop stop);
-    void setValue(double value);
-    double getValue() {return currentValue;}
-    QString gaugeName;
-    void setIndicatorSide(QString side);
-    void setGaugeType(QString type) {
-        gaugeType = type;
-        gauge.setGauge(gaugeType);
-    }
+    void setChtValues(double val1, double val2, double val3, double val4);
+    void setEgtValues(double val1, double val2, double val3, double val4);
+    const QList<double> &getCurrentChtValues() {return currentChtValues;}
+    const QList<double> &getCurrentEgtValues() {return currentEgtValues;}
+    void setGaugeType(QString type);
 
-public slots:
-	void makeVisible() {setVisible(true);};
-    void makeInvisible() {setVisible(false);};
-    void changeFlashState();
-    void onAlarmAck();
 private:
-	double calculateLocalValue(double value) const;
-	QString titleText, unitText;
-	double minValue, maxValue, currentValue;
-	QList<double> beetweenValues;
-	quint8 barPrecision, readoutPrecision;
-	QList<ColorStop> colorStops;
+    double calculateLocalChtValue(double value) const;
+    double calculateLocalEgtValue(double value) const;
+    double minChtValue, maxChtValue;
+    double greenYellowChtValue, yellowRedChtValue;
+    QList<double> currentChtValues;
+    double minEgtValue, maxEgtValue;
+    double greenYellowEgtValue, yellowRedEgtValue;
+    QList<double> currentEgtValues;
+	QList<double> betweenValues;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;
     bool flashState = false;
-    bool isPenAlarmColored = false;
-    QPen pen;
-    QFont font;
-    bool horizontal=false;
-    QString indicatorSide = "right";
+    int cylinderAlarm;
     bool isAcknowledged = false;
-    GaugeSettings gauge;
-    QString gaugeType;
 
-    int i;
+    QString chtGaugeType;
+    GaugeSettings chtGauge;
     int numOfRanges;
-    float start;
-    float end;
+    double startRange;
+    double endRange;
     QColor color;
-protected:
-	void mousePressEvent(QGraphicsSceneMouseEvent *)
-	{
-		emit hasBeenClicked();
-	}
+    double minChtLocal;
+    double maxChtLocal;
+    int j;
+
+    double currentLocal;
+
+    GaugeSettings egtGauge;
+
+    int numOfCht = 2; //This needs to be made to be able to be configured by the user
+    int numOfEgt = 0; //This needs to be made to be able to be configured by the user
 signals:
-    void hasBeenClicked();
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
+
+public slots:
+    void changeFlashState();
+    void onAlarmAck();
 };
 
-#endif // BARGRAPH_H
+#endif // CHTEGTGAUGE_H

@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// CardinalEMS,   a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
@@ -24,8 +24,8 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     : QGraphicsObject(parent)
     , settings("./settings/settings.ini", QSettings::IniFormat)
     , fuelAmount(0.0)
-    , fuelFlow(0.0)
-    , timeToDestination(1.0)
+    , fuelFlow(-1.0)
+    , timeToDestination(-1.0)
     , remainingFuelRect(-95, -20, 90, 55)
     , remainingFuelAtDestinationRect(-95, -80, 90, 55)
     , mpgRect(0, -80, 90, 55)

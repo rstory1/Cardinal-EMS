@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// CardinalEMS,   a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
@@ -118,13 +118,12 @@ void HourMeter::onTic(/*bool isFlying*/) {
                 }
             }
         }
-
-        hobbsString = QString::number(hobbs.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(hobbs.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(hobbs.sec, 'f',0).rightJustified(2,'0')));
-        flightString = QString::number(flight.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(flight.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(flight.sec, 'f',0).rightJustified(2,'0')));
-        //qDebug() << hobbsString;
-
-        update();
     }
+
+    hobbsString = QString::number(hobbs.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(hobbs.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(hobbs.sec, 'f',0).rightJustified(2,'0')));
+    flightString = QString::number(flight.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(flight.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(flight.sec, 'f',0).rightJustified(2,'0')));
+
+    update();
 }
 
 void HourMeter::onShutdown() {

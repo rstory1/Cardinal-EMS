@@ -41,10 +41,11 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //setupManifoldPressure();
     setupAlarm();
     setupChtEgt();
-    setupFuelManagement();
+    //setupFuelManagement();
     setupStatusItem();
-    setupWindVector();
+    //setupWindVector();
     setupHourMeter();
+    setupuserSettings();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
@@ -110,10 +111,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
-	QTimer *demoTimer = new QTimer(this);
-	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-	demoTimer->setSingleShot(false);
-	demoTimer->start(200);
+    QTimer *demoTimer = new QTimer(this);
+    connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+    demoTimer->setSingleShot(false);
+    demoTimer->start(200);
 #endif
 
     //socket = new QUdpSocket(this);
@@ -145,7 +146,7 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    logFile = new QFile(QString("EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    logFile = new QFile(QString("/apps/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
@@ -268,7 +269,6 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.setPos(620, 60);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    oilTemperature.setBorders(gaugeSettings.value("OilTemp/min",0).toInt(),gaugeSettings.value("OilTemp/max",0).toInt());
     oilTemperature.setIndicatorSide("left");
     oilTemperature.setGaugeType("OilTemp");
     graphicsScene.addItem(&oilTemperature);
@@ -276,14 +276,12 @@ void EngineMonitor::setupBarGraphs()
     oilPressure.setPos(690, 60);
     oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
-    oilPressure.setBorders(gaugeSettings.value("OilPress/min",0).toDouble(), gaugeSettings.value("OilPress/max",0).toDouble());
     oilPressure.setGaugeType("OilPress");
     graphicsScene.addItem(&oilPressure);
 
     voltMeter.setPos(760, 60);
     voltMeter.setTitle("VOLTS");
     voltMeter.setUnit("V");
-    voltMeter.setBorders(gaugeSettings.value("Volt/min",0).toDouble(), gaugeSettings.value("Volt/max",0).toDouble());
     voltMeter.setPrecision(1, 1);
     voltMeter.setIndicatorSide("left");
     voltMeter.setGaugeType("Volt");
@@ -292,7 +290,6 @@ void EngineMonitor::setupBarGraphs()
     ampereMeter.setPos(690, 200);
     ampereMeter.setTitle("AMPS");
     ampereMeter.setUnit("A");
-    ampereMeter.setBorders(gaugeSettings.value("Amp/min",0).toDouble(), gaugeSettings.value("Amp/max",0).toDouble());
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
     graphicsScene.addItem(&ampereMeter);
@@ -300,16 +297,15 @@ void EngineMonitor::setupBarGraphs()
     fuelFlow.setPos(760, 200);
     fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
-    fuelFlow.setBorders(gaugeSettings.value("Fuel/min",0).toDouble(), gaugeSettings.value("Fuel/max",0).toDouble());
     fuelFlow.setPrecision(1);
     fuelFlow.setIndicatorSide("left");
     fuelFlow.setGaugeType("Fuel");
     graphicsScene.addItem(&fuelFlow);
+    fuelFlow.setVisible(false);
 
     insideAirTemperature.setPos(800, 200);
     insideAirTemperature.setTitle("IAT");
     insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    insideAirTemperature.setBorders(-10.0, 40);
     insideAirTemperature.setPrecision(1);
     graphicsScene.addItem(&insideAirTemperature);
     insideAirTemperature.setVisible(false);
@@ -327,7 +323,7 @@ void EngineMonitor::setupBarGraphs()
 
 void EngineMonitor::setupStatusItem()
 {
-    statusItem.setPos(400, 65);
+    statusItem.setPos(5, 300);
 	graphicsScene.addItem(&statusItem);
     statusItem.setVisible(true);
 }
@@ -389,6 +385,7 @@ void EngineMonitor::userMessageHandler(QString title, QString content, bool endA
 
 void EngineMonitor::showStatusMessage(QString text, QColor color)
 {
+    //qDebug() << Q_FUNC_INFO;
 	statusItem.setPlainText(text);
 	statusItem.setDefaultTextColor(color);
 }
@@ -400,7 +397,6 @@ void EngineMonitor::demoFunction()
     rpm += 5.0;
 
     rpmIndicator.setValue(rpm);
-    hobbs.setEngineOn(true);
 
     static double basicEGT = 750.0;
     static bool egtUp = true;
@@ -456,12 +452,8 @@ void EngineMonitor::demoFunction()
 	{
         oilTemp = 100.0;
 	}
-	oilTemp -= 0.1;
-    if (oilTemp < warmupTemp) {
-        rpmIndicator.isWarmup = true;
-    } else {
-        rpmIndicator.isWarmup = false;
-    }
+    oilTemp += 0.25;
+
 	oilTemperature.setValue(oilTemp);
 
 	static double oilPress = 0.0;
@@ -602,7 +594,7 @@ void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
 void EngineMonitor::setupWindVector() {
     windVector.setPos(50, 385);
     graphicsScene.addItem(&windVector);
-    windVector.setVisible(true);
+    windVector.setVisible(false);
 }
 
 void EngineMonitor::connectSignals() {
@@ -663,10 +655,39 @@ void EngineMonitor::connectSignals() {
     qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
+
+    connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
 }
 
 void EngineMonitor::setupHourMeter() {
     hobbs.setPos(250, 360);
     graphicsScene.addItem(&hobbs);
     hobbs.setVisible(true);
+}
+
+void EngineMonitor::setupuserSettings()
+{
+    uSettings.setPos(400,240);
+    graphicsScene.addItem(&uSettings);
+    uSettings.setVisible(false);
+}
+
+void EngineMonitor::setEngineConds() {
+    if (oilPressure.getValue() > 10.0) {
+        hobbs.setEngineOn(true);
+    } else {
+        hobbs.setEngineOn(false);
+    }
+
+    if (oilTemperature.getValue() < warmupTemp) {
+        timeOilTBelowWarmup += 1;
+        if (timeOilTAboveWarmup < 5 * 60) {
+            timeOilTAboveWarmup = 0;
+            rpmIndicator.isWarmup = true;
+        }
+    } else {
+        timeOilTAboveWarmup += 1;
+        timeOilTBelowWarmup = 0;
+        rpmIndicator.isWarmup = false;
+    }
 }

@@ -25,6 +25,7 @@
 #include <QtGui/QColor>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QMessageBox>
 
 //! RDAC Connect Class
 /*!
@@ -32,6 +33,37 @@
 */
 
 #pragma pack(1)
+struct RDACXFmessage
+{
+public:
+    RDACXFmessage();
+    char dle;
+    char stx;
+    char messageId;
+    char messageVer;
+    quint16 flow1;
+    quint16 pulseRatio1;
+    quint16 flow2;
+    quint16 pulseRatio2;
+    quint16 thermocouple[12];
+    quint16 oilTemp;
+    quint16 oilPress;
+    quint16 aux1;
+    quint16 aux2;
+    quint16 fuelPress;
+    quint16 coolant;
+    quint16 fuelLevel1;
+    quint16 fuelLevel2;
+    quint16 rpm1;
+    quint16 rpm2;
+    quint16 map;
+    quint16 current;
+    quint16 internalTemp;
+    quint16 volts;
+    char checkLow;
+    char checkHigh;
+};
+
 struct RDACmessage1
 {
 public:
@@ -104,9 +136,9 @@ public:
 private:
 	bool searchStart(QByteArray *data);
 	rdacResults checkPatternValidity(QByteArray *data, quint8 &messageType);
-	QMap<quint8, QDateTime> lastMessageReception;
+    QDateTime lastMessageReception;
 	QDateTime lastMessage1;
-	void handleMessage1(QByteArray *data);
+    void handleMessageRDACXF(QByteArray *data);
 	void handleMessage2(QByteArray *data);
 	void handleMessage3(QByteArray *data);
 	void handleMessage4(QByteArray *data);
@@ -134,7 +166,7 @@ signals:
 	void updateDataMessage4cht(quint16 cht1, quint16 cht2, quint16 cht3, quint16 cht4);
 	void userMessage(QString title, QString content, bool endApplication);
 	void statusMessage(QString text, QColor color);
-    void rdacUpdateMessage(qreal fuelFlow, qreal volts);
+    void rdacUpdateMessage(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts);
 };
 
 #endif // RDACCONNECT_H

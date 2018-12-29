@@ -32,10 +32,13 @@
 #include "fueldisplay.h"
 #include "chtegtgauge.h"
 #include <buttonbar.h>
-#include <qcustomplot/qcustomplot.h>
+#include <qcustomplot.h>
 #include <udpsocket.h>
 #include <windvector.h>
 #include <hourmeter.h>
+#include <usersettings.h>
+
+#include <QMessageBox>
 
 //! Engine Monitor Class
 /*!
@@ -66,6 +69,7 @@ private:
     void cancelAlarm(QString alarmGauge);
     void connectSignals();
     void setupHourMeter();
+    void setupuserSettings();
 
 	QGraphicsScene graphicsScene;
     RpmIndicator rpmIndicator;
@@ -97,11 +101,15 @@ private:
     WindVector windVector;
     QTimer clockTimer;
     HourMeter hobbs;
+    userSettings uSettings;
+    int timeOilTAboveWarmup=0;
+    int timeOilTBelowWarmup=0;
 
 private slots:
 	void demoFunction();
     void writeLogFile();
     void realtimeDataSlot();
+    void setEngineConds();
 
 public slots:
 	void setTimeToDestination(double time);

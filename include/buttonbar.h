@@ -26,7 +26,7 @@ private:
     QRectF buttonRect5 = QRectF(400,-50.0,100,50);
     QRectF buttonRect6 = QRectF(500,-50.0,100,50);
 
-    int numOfButtons = 4; /*!< Number of buttons to be drawn */
+    int numOfButtons = 5; /*!< Number of buttons to be drawn */
     int buttonLocation = 1; /*!< Possible Values: 1-Bottom; 2-Top; 3-Left Side; 4-Right Side */
     int buttonDisplay = 1; /*!< Possible Values: 1-Menu; 2-Fuel; 3-Settings */
 
@@ -34,10 +34,14 @@ private:
     QLinearGradient gradient2 = QLinearGradient(buttonRect2.topLeft(), QPointF(buttonRect2.left(),0.7*buttonRect2.top()));
     QLinearGradient gradient3 = QLinearGradient(buttonRect3.topLeft(), QPointF(buttonRect3.left(),0.7*buttonRect3.top()));
     QLinearGradient gradient4 = QLinearGradient(buttonRect4.topLeft(), QPointF(buttonRect4.left(),0.7*buttonRect4.top()));
+    QLinearGradient gradient5 = QLinearGradient(buttonRect5.topLeft(), QPointF(buttonRect5.left(),0.7*buttonRect5.top()));
 
     bool isAlarmFlashing = false;
 
     void ackPressed();
+    void quitPressed() {
+        QApplication::quit();
+    }
 
 signals:
     void sendAlarmAck();

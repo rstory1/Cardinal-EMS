@@ -31,7 +31,7 @@
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     qInfo() << "Inside messageToFileHandler";
-	QFile debugfile("EngineMon.log");
+    QFile debugfile("/apps/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     qInfo() << "Before app log starts";
 
 #ifdef QT_NO_DEBUG
-    QFile debugfile("EngineMon.log");
+    QFile debugfile("/apps/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
@@ -97,10 +97,6 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	//Create splashscreen and show it
-	QPixmap pixmap(":/splashscreen.png");
-	QSplashScreen splash(pixmap);
-	splash.show();
 	a.processEvents();
 
 //    QFontDatabase::addApplicationFont(":/MS33558.ttf");
@@ -108,34 +104,29 @@ int main(int argc, char *argv[])
 //        foreach (const QString &family, database.families()) {
 //            qDebug() << family;
 //        }
+    qDebug() << QApplication::font();
 
-//    QFont font;
+    QFont font;
 //    font.setFamily("MS 33558");
+    font.setFamily("Bitstream Vera Sans");
 //    font.setBold(true);
 //    font.setPointSize(12);
-//    a.setFont(font);
+    a.setFont(font);
+    qDebug() << QApplication::font();
 
 
 	//Create the engine monitor and show after splashscreen delay
-	EngineMonitor engineMonitor;
-//#ifndef QT_DEBUG
-//	SplashScreenDelay::sleep(5);
-//	engineMonitor.showFullScreen();
-//#else
-	engineMonitor.show();
-    //engineMonitor.showFullScreen();
+    EngineMonitor engineMonitor;
+    engineMonitor.show();
     engineMonitor.move(0, 0);
     engineMonitor.resize(800, 480);
     engineMonitor.setMaximumWidth(800);
     engineMonitor.setMaximumHeight(480);
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//#endif
-	splash.finish(&engineMonitor);
 
     //Create the RDAC connector
     RDACconnect rdac;
-    rdac.openSerialPort();
 
 	NMEAconnect nmeaConnect;
 	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
@@ -148,17 +139,18 @@ int main(int argc, char *argv[])
     //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
 //SLOT(userMessageHandler(QString,QString,bool)));
     a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
-    a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal,qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal,qreal)));
+    a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
     //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
 //SLOT(setFuelData(double,double)));
-    //a.connect(&sensorConvert, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, 
-//SLOT(showStatusMessage(QString,QColor)));
+    a.connect(&rdac, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
 
     //QString portName = QLatin1String("ttyACM0");              // update this to use your 
 //port of choice
     //PortListener listener(portName);        // signals get hooked up internally
     //a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, 
 //SLOT(processData(QString)));
+
+    rdac.openSerialPort();
 
     flightCalculator flightCalc;
     QTimer *flightTimer = new QTimer();
@@ -167,20 +159,20 @@ int main(int argc, char *argv[])
 
     a.connect(&flightCalc, SIGNAL(updateWindVector(float,float,float)), &engineMonitor, SLOT(onUpdateWindInfo(float,float,float)));
 
-    uint mhz = 119;
-    QString mHex = QString("%1").arg(mhz, 0, 16);
-    qDebug() << mHex;
-    QString mHextext = QString::fromLocal8Bit(QByteArray::fromHex(mHex.toLatin1())).toUpper();
-    qDebug() << mHextext;
+//    uint mhz = 119;
+//    QString mHex = QString("%1").arg(mhz, 0, 16);
+//    qDebug() << mHex;
+//    QString mHextext = QString::fromLocal8Bit(QByteArray::fromHex(mHex.toLatin1())).toUpper();
+//    qDebug() << mHextext;
 
-    uint khz = 325;
-    QString kHex = "3" + QString("%1").arg(khz/25, 0, 16);
-    qDebug() << kHex;
-    QString kHextext = QString::fromLocal8Bit(QByteArray::fromHex(kHex.toLatin1())).toUpper();
-    qDebug() << kHextext;
+//    uint khz = 325;
+//    QString kHex = "3" + QString("%1").arg(khz/25, 0, 16);
+//    qDebug() << kHex;
+//    QString kHextext = QString::fromLocal8Bit(QByteArray::fromHex(kHex.toLatin1())).toUpper();
+//    qDebug() << kHextext;
 
-    QString msg = "$PGRMC15" + mHextext + kHextext + "N0KCID0" + "1310";
-    qDebug() << msg;
+//    QString msg = "$PGRMC15" + mHextext + kHextext + "N0KCID0" + "1310";
+//    qDebug() << msg;
 
     //QString hexMsg =
 

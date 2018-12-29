@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// CardinalEMS,   a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
@@ -80,9 +80,9 @@ void AlarmBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setPen(Qt::white);
     painter->drawText(QRectF(-40, -100, 80, 20), Qt::AlignCenter, "ALARMS");
 
-    QFont font = QFont("Arial", 18);
-    font.setBold(true);
-    painter->setFont(font);
+//    QFont font = QFont("Arial", 18);
+//    font.setBold(true);
+//    painter->setFont(font);
 
     for (int i=0;i<=9;i++) {
         if (alarmText[i] != "")

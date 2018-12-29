@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //                                                                      //
-// EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
+// Cardinal EMS, Experimental Aircraft EMS                              //
 // Copyright (C) 2017 Ryan Story                                        //
 //                                                                      //
 // This program is free software: you can redistribute it and/or modify //
@@ -18,34 +18,35 @@
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
 
-#include "udpsocket.h"
+#ifndef USERSETTINGS_H
+#define USERSETTINGS_H
 
-UdpSocket::UdpSocket(QObject *parent) : QObject(parent)
+#include <QObject>
+#include <QWidget>
+#include <QtWidgets>
+
+class userSettings : public QGraphicsObject
 {
-    //socket = new QUdpSocket(this);
+    Q_OBJECT
+public:
+    explicit userSettings(QGraphicsObject* parent = 0);
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-    //socket->bind(49901);
+private:
+    QRectF backgroundRect;
+    QRectF oilPbox;
+    QRectF oilTbox;
+    QRectF oilTcheckbox;
+    QRectF manPbox;
+    QRectF egtBox;
+    QRectF chtBox;
+    QRectF ffBox;
 
-    //connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
+signals:
 
-    //qDebug()<<"Creating";
-}
+public slots:
+    void showSettings(bool tfShow);
+};
 
-void UdpSocket::WriteData()
-{
-    QByteArray msg;
-
-    msg.append("Hello!!!");
-
-    //socket->writeDatagram(msg,QHostAddress::LocalHost,5678);
-}
-
-
-void UdpSocket::processPendingDatagrams() {
-    QByteArray datagram;
-    //datagram.resize(socket->pendingDatagramSize());
-    //socket->readDatagram(datagram.data(), datagram.size());
-
-    //qDebug()<<"Processing";
-    //qDebug()<<"Message: " << tr("Received datagram: \"%1\"").arg(datagram.data());
-}
+#endif // USERSETTINGS_H
