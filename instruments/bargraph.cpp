@@ -251,8 +251,6 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 		painter->drawPolygon(marker);
 	}
 
-
-    update();
 }
 
 void BarGraph::setTitle(QString title)
@@ -287,9 +285,12 @@ double BarGraph::calculateLocalValue(double value) const
     return -(value-minValue)/(maxValue-minValue)*75.0+50.0;
 }
 
-void BarGraph::setValue(double value)
+void BarGraph::setValue(qreal value)
 {
     currentValue = value;
+    qDebug() << "Current " + titleText + ": " + QString::number(value);
+
+    update();
 }
 
 void BarGraph::addColorStop(ColorStop stop)
@@ -304,6 +305,8 @@ void BarGraph::changeFlashState()
     } else {
         flashState = false;
     }
+
+    update();
 }
 
 void BarGraph::setIndicatorSide(QString side)

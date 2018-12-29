@@ -44,6 +44,7 @@ private:
 
     qreal tempVoltage;
     qreal tempCurrent;
+    qreal current;
 
     qreal tempCHT[4];
 
@@ -53,7 +54,7 @@ private:
     void convertThermocouple(int resistance);
 
     void convertEgt(double volt1, double volt2, double volt3, double volt4);
-    void convertCht(double volt1, double volt2, double volt3, double volt4);
+    void convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4);
 
     void convertIat(double sensorValue);
 
@@ -61,14 +62,16 @@ private:
 
     void convertFuelFlow(double pulses);
 
-    void convertOilTemp(double resistance);
-    void convertOilPress(double voltage);
+    void convertOilTemp(qreal adc);
+    void convertOilPress(qreal adc);
 
     void convertRpm(double pulses);
 
-    double convertTemperature(double temp);
+    qreal convertTemperature(qreal temp);
 
     void setKFactor(qreal kFac);
+
+    void convertCurrent(qreal adc);
 
 signals:
     void userMessage(QString,QString,bool);

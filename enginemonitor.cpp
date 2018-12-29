@@ -146,7 +146,7 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    logFile = new QFile(QString("engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    logFile = new QFile(QString("/apps/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
@@ -301,6 +301,7 @@ void EngineMonitor::setupBarGraphs()
     fuelFlow.setIndicatorSide("left");
     fuelFlow.setGaugeType("Fuel");
     graphicsScene.addItem(&fuelFlow);
+    fuelFlow.setVisible(false);
 
     insideAirTemperature.setPos(800, 200);
     insideAirTemperature.setTitle("IAT");
@@ -324,7 +325,7 @@ void EngineMonitor::setupStatusItem()
 {
     statusItem.setPos(5, 300);
 	graphicsScene.addItem(&statusItem);
-    statusItem.setVisible(false);
+    statusItem.setVisible(true);
 }
 
 void EngineMonitor::setupTimeToDestinationItem()

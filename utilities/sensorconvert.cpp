@@ -102,20 +102,20 @@ void SensorConvert::setTemperatureScale(QString scale)
     temperatureScale = scale;
 }
 
-void SensorConvert::convertCht(double adc1, double adc2, double adc3, double adc4)
+void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 {
-    tempCHT[1] = adc1;
+    tempCHT[0] = adc1;
     tempCHT[1] = adc2;
-    tempCHT[1] = adc3;
-    tempCHT[1] = adc4;
+    tempCHT[2] = adc3;
+    tempCHT[3] = adc4;
 
     //  Need to add switch in here for different CHT sensor types. The code below is for the Rotax NTC style
-    if (thermocoupleTypeCht=='NTC')
-    {
+//    if (thermocoupleTypeCht=='NTC')
+//    {
         for (int a = 0; a < 4; a++)
         {
             //  Convert ADC Voltage value to resistance
-            resistance = puResistorValue/(4095/tempCHT[a]-1);
+            resistance = puResistorValue/(4095.0/tempCHT[a]-1);
 
             // Convert resistance to temperauter. This equation was created from fitting a line to the VDO calibration curve.
             cht[a] = 429.7*pow(resistance, -0.1368)-143.9;
@@ -126,7 +126,7 @@ void SensorConvert::convertCht(double adc1, double adc2, double adc3, double adc
                 cht[a] = convertTemperature(cht[a]);
             }
         }
-    }
+//    }
 
 }
 
@@ -140,11 +140,16 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOilPress(oilP);
     convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
+    convertCurrent(curr);
 
-    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilP, curr, volts, tc1, tc2, egt3, egt4, cht[0], cht[1], cht[2], cht[3], oat, intTemp);
+    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, egt3, egt4, cht[0], cht[1], cht[2], cht[3], oat, intTemp);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
     kFactor = kFac;
 }
 
+void SensorConvert::convertCurrent(qreal adc)
+{
+    current = 0.0244 * adc - 50.024;
+}
