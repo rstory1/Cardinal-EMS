@@ -68,7 +68,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0);
     if (numOfEgt>0) {
         painter->setPen(QPen(QColor(0,255,255), 1));
-        painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(minChtValue)+7, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
+        painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(minChtValue)+4, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
     }
     painter->setPen( QPen(Qt::white, 1));
     painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
@@ -183,7 +183,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
         if (currentChtValues.at(i) > maxChtValue)
         {
-            barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
+            barRect = QRectF(QPointF(i*60-(60*(numOfCht-1)), -10), QPointF(i*60-((60*(numOfCht-1))-40), calculateLocalChtValue(maxChtValue)));
             painter->setPen(Qt::red);
             painter->setBrush(Qt::red);
             cylinderAlarm = 3;
@@ -244,38 +244,20 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             //Define EGT text position and move to current column
             painter->setPen(QColor(0,255,255));
             QRectF textRectEgt(-45, 65, 65, 20);
-            textRectEgt.moveCenter(QPointF(i*60-160, 5));
+            textRectEgt.moveCenter(QPointF(i*60-((60*(numOfCht-1))-20), 5));
 
             painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));
 
             //  Draw the markers for the EGT gauge
-            QRectF EgtRect = QRectF(QPointF(i*60-175, calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-145, calculateLocalEgtValue(currentEgtValues.value(i))+3));
-
             if((currentEgtValues.at(i) > minEgtValue) && (currentEgtValues.at(i) < maxEgtValue))
             {
-
-                QPolygonF marker1;
-                marker1.append(QPointF(i*60-190, calculateLocalEgtValue(currentEgtValues.value(i))+10));
-                marker1.append(QPointF(i*60-180, calculateLocalEgtValue(currentEgtValues.value(i))));
-                marker1.append(QPointF(i*60-190, calculateLocalEgtValue(currentEgtValues.value(i))-10));
-
-                QPolygonF marker2;
-                marker2.append(QPointF(i*60-130, calculateLocalEgtValue(currentEgtValues.value(i))+10));
-                marker2.append(QPointF(i*60-140, calculateLocalEgtValue(currentEgtValues.value(i))));
-                marker2.append(QPointF(i*60-130, calculateLocalEgtValue(currentEgtValues.value(i))-10));
-
-
+                QRectF EgtRect = QRectF(QPointF(i*60-((60*(numOfCht-1))-5), calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-((60*(numOfCht-1))-35), calculateLocalEgtValue(currentEgtValues.value(i))+3));
                 painter->setPen(Qt::black);
                 painter->setBrush(QColor(0,255,255));
                 painter->drawRect(EgtRect);
                 painter->setPen(Qt::white);
-    //            painter->drawPolygon(marker1);
-    //            painter->drawPolygon(marker2);
             }
         }
-
-
-
     }
 
     if ((isAlarmedRed == true)) {

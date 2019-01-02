@@ -1,4 +1,4 @@
-#include "usersettings.h"
+#include "userSettings.h"
 
 userSettings::userSettings(QGraphicsObject *parent) : QGraphicsObject(parent)
 {

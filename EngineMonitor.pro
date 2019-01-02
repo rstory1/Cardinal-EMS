@@ -22,6 +22,7 @@ QT       += core gui widgets serialport printsupport
 
 INCLUDEPATH += \
     include \
+    include/instruments
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -64,33 +65,39 @@ SOURCES += main.cpp\
     instruments/hourmeter.cpp \
     utilities/spatial.cpp \
     utilities/gaugesettings.cpp \
-    utilities/usersettings.cpp \
+    utilities/userSettings.cpp \
+    scenes/settings_scene.cpp \
+    scenes/emsscene.cpp \
+    include/emsfull.cpp
     instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
-    include/bargraph.h \
-    include/rpmindicator.h \
-    include/cylinderheadtemperature.h \
-    include/exhaustgastemperature.h \
-    include/fuelmanagement.h \
+    include/instruments/bargraph.h \
+    include/instruments/rpmindicator.h \
+    include/instruments/cylinderheadtemperature.h \
+    include/instruments/exhaustgastemperature.h \
+    include/instruments/fuelmanagement.h \
     include/rdacconnect.h \
     include/nmeaconnect.h \
-    include/manifoldpressure.h \
+    include/instruments/manifoldpressure.h \
     include/sensorconvert.h \
-    include/circulargauge.h \
+    include/instruments/circulargauge.h \
     include/alarmBox.h \
-    include/textBoxGauge.h \
-    include/fueldisplay.h \
-    include/chtegtgauge.h \
+    include/instruments/textBoxGauge.h \
+    include/instruments/fueldisplay.h \
+    include/instruments/chtegtgauge.h \
     include/buttonbar.h \
     include/qcustomplot.h \
     include/udpsocket.h \
     include/flightcalculator.h \
-    include/windvector.h \
-    include/hourmeter.h \
+    include/instruments/windvector.h \
+    include/instruments/hourmeter.h \
     include/spatial.h \
     include/gaugesettings.h \
-    include/usersettings.h \
+    include/userSettings.h \
+    include/scenes/settings_scene.h \
+    include/scenes/emsscene.h \
+    include/emsfull.h
     include/diagnosticwidget.h
 
 RESOURCES += \
