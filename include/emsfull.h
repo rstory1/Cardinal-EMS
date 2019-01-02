@@ -2,7 +2,7 @@
 #define EMSFULL_H
 
 #include <QObject>
-#include <QGraphicsObject>
+#include <QGraphicsScene>
 #include <QWidget>
 #include <QtWidgets>
 
@@ -15,12 +15,13 @@
 #include <instruments/chtegtgauge.h>
 #include <instruments/windvector.h>
 #include <instruments/hourmeter.h>
+#include <gaugesettings.h>
 
-class emsFull : public QGraphicsObject
+class emsFull : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit emsFull(QGraphicsObject* parent = 0);
+    explicit emsFull(QObject* parent = 0);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -39,6 +40,20 @@ private:
     ChtEgt chtEgt;
     WindVector windVector;
     HourMeter hobbs;
+
+    QSettings gaugeSettings;
+    QSettings settings;
+
+    void setupRpmIndicator();
+    void setupBarGraphs();
+    void setupExhaustGasTemperature();
+    void setupCylinderHeadTemperature();
+    void setupFuelManagement();
+    void setupManifoldPressure();
+    void setupChtEgt();
+    void setupWindVector();
+    void setupHourMeter();
+    void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
 
 };
 

@@ -43,9 +43,11 @@ private:
         QApplication::quit();
     }
 
+
 signals:
     void sendAlarmAck();
     void sendFuelChange(QString changeDirection); //  + or -
+    void switchScene(int scene);
 
 public slots:
     void onAlarmFlash(); /*!< This slot is entered when a flashing alarm is created */

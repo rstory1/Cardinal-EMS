@@ -6,3 +6,19 @@ settingsScene::settingsScene(QObject* parent) :
     addItem(&userSet);
 
 }
+
+QRectF settingsScene::boundingRect() const
+{
+    return QRectF(-400,-240,800,480);
+}
+
+void settingsScene::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+    //Set Clipping Rect
+    painter->setClipRect(boundingRect());
+
+    if(isActive()) {
+        update();
+    }
+
+}

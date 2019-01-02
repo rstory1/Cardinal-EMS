@@ -37,6 +37,8 @@
 #include <instruments/windvector.h>
 #include <instruments/hourmeter.h>
 #include <scenes/settings_scene.h>
+#include <scenes/emsscene.h>
+#include <emsfull.h>
 
 //! Engine Monitor Class
 /*!
@@ -104,6 +106,10 @@ private:
     int timeOilTBelowWarmup=0;
 
     settingsScene settings_scene;
+    emsScene ems_scene;
+    emsFull ems_full;
+
+    QString currentScene = "";
 
 private slots:
 	void demoFunction();
@@ -119,6 +125,7 @@ public slots:
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
     void onUpdateWindInfo(float spd, float dir, float mHdg);
+    void onSwitchScene(int scene);
 
 };
 

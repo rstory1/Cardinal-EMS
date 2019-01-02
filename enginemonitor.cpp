@@ -23,15 +23,14 @@
 #include "enginemonitor.h"
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
-  , graphicsScene(this)
   , settings("settings/settings.ini", QSettings::IniFormat, parent)
   , gaugeSettings("settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
 
 	//Initializing the window behaviour and it's scene
-	setWindowFlags(Qt::FramelessWindowHint);
-    graphicsScene.setBackgroundBrush(Qt::black);
-    setScene(&settings_scene);
+    setWindowFlags(Qt::FramelessWindowHint);
+    setScene(&ems_full);
+    currentScene = "emsFull";
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	//Setting up the items to be displayed
@@ -50,10 +49,9 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
 
-    graphicsScene.setSceneRect(0,0,800,480);
-    buttonBar.setPos(0,graphicsScene.height());
-    graphicsScene.addItem(&buttonBar);
-    graphicsScene.update();
+    this->scene()->setSceneRect(0,0,800,480);
+    buttonBar.setPos(0,this->scene()->height());
+    this->scene()->addItem(&buttonBar);
 
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
@@ -70,7 +68,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     test->setWidget(customPlot);
     test->setPos(0, 200);
 
-    //graphicsScene.addItem(test);
+    //this->scene()->addItem(test);
 
     customPlot->setFixedHeight(150);
     customPlot->setFixedWidth(300);
@@ -655,6 +653,8 @@ void EngineMonitor::connectSignals() {
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
 
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
+
+    connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
 }
 
 void EngineMonitor::setupHourMeter() {
@@ -688,4 +688,20 @@ void EngineMonitor::setEngineConds() {
         timeOilTBelowWarmup = 0;
         rpmIndicator.isWarmup = false;
     }
+}
+
+void EngineMonitor::onSwitchScene(int scene) {
+    switch (scene) {
+        case 1: // Settings
+            this->setScene(&settings_scene);
+            break;
+    }
+
+    this->scene()->setSceneRect(0,0,800,480);
+    buttonBar.setPos(0,this->scene()->height());
+    this->scene()->addItem(&buttonBar);
+
+    qDebug() << "Is EMS Scene Active?: " + QString::number(ems_full.isActive());
+    qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());
+
 }

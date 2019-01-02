@@ -3,5 +3,5 @@
 emsScene::emsScene(QObject* parent) :
     QGraphicsScene(parent)
 {
-
+    //addItem(&fullEMS);
 }
