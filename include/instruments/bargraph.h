@@ -50,7 +50,7 @@ public:
 	void setPrecision(quint8 readout = 0, quint8 bar = 0);
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
-    void setValue(double value);
+    void setValue(qreal value);
     double getValue() {return currentValue;}
     QString gaugeName;
     void setIndicatorSide(QString side);

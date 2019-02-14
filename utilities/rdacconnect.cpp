@@ -82,7 +82,7 @@ RDACmessage4::RDACmessage4()
 }
 
 RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
-  , settings("./settings.ini", QSettings::IniFormat, parent)
+  , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
     serial = new QSerialPort(this);
 
@@ -97,7 +97,7 @@ void RDACconnect::readData()
 {
 	bool startPatternFound = false;
 
-    data.append(serial->read(1));
+    data.append(serial->readAll());
 
 //            emit userMessage("RDAC COM error", "Error reading data, closing application", true);
 //            exec();
@@ -110,11 +110,14 @@ void RDACconnect::readData()
         switch(checkPatternValidity(&data, messageType))
         {
         case rdacResultMessageComplete:
-            emit statusMessage("Everything OK - Last update: " + lastMessageReception.value(3).toString("hh:mm:ss.zzz"), Qt::white);
+            //  Move the data to a buffer so we can process it while letting the next message get checked.
+
+            emit statusMessage("Everything OK - Last update: " + lastMessageReception.toString("hh:mm:ss.zzz"), Qt::white);
+
             switch(messageType)
             {
                 case 0x01:
-                    handleMessage1(&data);
+                    handleMessageRDACXF(&data);
                     break;
                 case 0x02:
                     handleMessage2(&data);
@@ -146,7 +149,7 @@ void RDACconnect::readData()
 quint8 RDACconnect::calculateChecksum1(QByteArray data)
 {
     quint8 checksum = 0x55;
-    qDebug() << checksum;
+    //qDebug() << checksum;
     for(int i = 2; i < data.size()-2; ++i)
 	{
         checksum += quint8(data.at(i));
@@ -174,7 +177,7 @@ bool RDACconnect::searchStart(QByteArray *data)
 			{
                 if((data->at(2) == 0x01))
                 {
-                    //numTries += 1;
+                    numTries += 1;
 					return true;
 				}
 			}
@@ -237,18 +240,17 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 	}
 }
 
-void RDACconnect::handleMessage1(QByteArray *data)
-{}
-
 void RDACconnect::handleMessageRDACXF(QByteArray *data)
 {
-	lastMessageReception.insert(1, QDateTime::currentDateTimeUtc());
+    lastMessageReception = QDateTime::currentDateTimeUtc();
 //    QFile file("/home/rstory/datapacket.log");
 //    file.open(QIODevice::WriteOnly);
 //    file.write(data->toHex());
 //    file.close();
     RDACXFmessage message;
-    memcpy(&message, data->mid(4, 62).constData(), 62);
+    memcpy(&message, data->constData(), 66);
+
+    data->remove(0,66);
 
     if (message.pulseRatio1 == 65535) {
         message.pulseRatio1 = 0;
@@ -258,7 +260,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
         message.pulseRatio2 = 0;
     }
 
-    qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
+    //qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
 
     volts = round(message.volts/5.73758)*0.1;
 
@@ -266,8 +268,8 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
 
     qreal oilP = message.oilPress / (4096/5);
     qreal oilT = message.oilTemp / (4096/5);
-    qreal ax1 = message.aux1 / (4096/5);
-    qreal ax2 = message.aux2 / (4096/5);
+    qreal ax1 = message.aux1 ;
+    qreal ax2 = message.aux2 ;
     qreal fuelP = message.fuelPress / (4096/5);
     qreal coolantT = message.coolant / (4096/5);
     qreal fuelL1 = message.fuelLevel1 / (4096/5);
@@ -277,12 +279,15 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
     qreal fuelFlow1 = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
     qreal fuelFlow2 = (message.flow2 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
 
-    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], oilT, oilP, ax1, ax2, fuelP, coolantT, fuelL1, fuelL2, message.rpm1, message.rpm2, message.map, curr, message.internalTemp, volts);
+    qDebug() << "RDAC Message Update Sent" + lastMessage1.toString("hh:mm:ss.zzz");
+
+
+    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, oilP, ax1, ax2, fuelP, coolantT, fuelL1, fuelL2, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)
 {
-	lastMessageReception.insert(2, QDateTime::currentDateTimeUtc());
+    lastMessageReception = QDateTime::currentDateTimeUtc();
 	RDACmessage2 message;
 	memcpy(&message, data->mid(3, 18).constData(), 18);
 	data->remove(0, 23);
@@ -302,7 +307,7 @@ void RDACconnect::handleMessage2(QByteArray *data)
 
 void RDACconnect::handleMessage3(QByteArray *data)
 {
-	lastMessageReception.insert(3, QDateTime::currentDateTimeUtc());
+    lastMessageReception = QDateTime::currentDateTimeUtc();
 	RDACmessage3 message;
 	memcpy(&message, data->mid(3, 2).constData(), 2);
 	data->remove(0, 7);
@@ -320,7 +325,7 @@ void RDACconnect::handleMessage3(QByteArray *data)
 
 void RDACconnect::handleMessage4(QByteArray *data)
 {
-	lastMessageReception.insert(4, QDateTime::currentDateTimeUtc());
+    lastMessageReception = QDateTime::currentDateTimeUtc();
 	RDACmessage4 message;
 	memcpy(&message, data->mid(3, 24).constData(), 24);
 
@@ -332,6 +337,7 @@ void RDACconnect::handleMessage4(QByteArray *data)
 
 void RDACconnect::openSerialPort()
 {
+    emit statusMessage("Attempting to open port", Qt::green);
     QSerialPortInfo portToUse;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
@@ -349,16 +355,18 @@ void RDACconnect::openSerialPort()
         qDebug() << s;
     }
 
-    if(portToUse.isNull() || !portToUse.isValid())
-    {
-        qDebug() << "port is not valid:" << portToUse.portName();
-        return;
-    }
+//    if(portToUse.isNull() || !portToUse.isValid())
+//    {
+//        qDebug() << "port is not valid:" << portToUse.portName();
+//        QMessageBox msgBox;
+//        msgBox.setText("Port is invalid");
+//        msgBox.exec();
+//        return;
+//    }
 
     // Enumerate the serial port
-    // Find one that sounds like Arduino, or the highest one on the list
     // Open it if it isn't busy
-    serial->setPortName(QString("ttyACM0"));
+    serial->setPortName(QString("/dev/ttyO4"));
     serial->setBaudRate(QSerialPort::Baud38400);
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
@@ -370,6 +378,9 @@ void RDACconnect::openSerialPort()
         qCritical() << "Serial Port error:" << serial->errorString();
 
         qDebug() << tr("Open error");
+        QMessageBox msgBox;
+        msgBox.setText("Could not open port");
+        msgBox.exec();
     }
 }
 

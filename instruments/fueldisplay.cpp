@@ -22,10 +22,10 @@
 
 FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     : QGraphicsObject(parent)
-    , settings("./settings/settings.ini", QSettings::IniFormat)
+    , settings("/ems/settings/settings.ini", QSettings::IniFormat)
     , fuelAmount(0.0)
-    , fuelFlow(0.0)
-    , timeToDestination(1.0)
+    , fuelFlow(-1.0)
+    , timeToDestination(-1.0)
     , remainingFuelRect(-95, -20, 90, 55)
     , remainingFuelAtDestinationRect(-95, -80, 90, 55)
     , mpgRect(0, -80, 90, 55)

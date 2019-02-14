@@ -25,6 +25,7 @@
 #include <QtGui/QColor>
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QMessageBox>
 
 //! RDAC Connect Class
 /*!
@@ -36,6 +37,10 @@ struct RDACXFmessage
 {
 public:
     RDACXFmessage();
+    char dle;
+    char stx;
+    char messageId;
+    char messageVer;
     quint16 flow1;
     quint16 pulseRatio1;
     quint16 flow2;
@@ -55,6 +60,8 @@ public:
     quint16 current;
     quint16 internalTemp;
     quint16 volts;
+    char checkLow;
+    char checkHigh;
 };
 
 struct RDACmessage1
@@ -129,10 +136,9 @@ public:
 private:
 	bool searchStart(QByteArray *data);
 	rdacResults checkPatternValidity(QByteArray *data, quint8 &messageType);
-	QMap<quint8, QDateTime> lastMessageReception;
+    QDateTime lastMessageReception;
 	QDateTime lastMessage1;
     void handleMessageRDACXF(QByteArray *data);
-	void handleMessage1(QByteArray *data);
 	void handleMessage2(QByteArray *data);
 	void handleMessage3(QByteArray *data);
 	void handleMessage4(QByteArray *data);

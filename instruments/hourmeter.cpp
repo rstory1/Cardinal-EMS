@@ -20,7 +20,7 @@
 
 #include "hourmeter.h"
 
-HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), settings("settings/settings.ini", QSettings::IniFormat, parent)
+HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
     hobbs.hour = 0;
     hobbs.min = 0;

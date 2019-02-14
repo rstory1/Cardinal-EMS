@@ -66,10 +66,12 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
     //Draw the static texts
     QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0);
-    painter->setPen(QPen(QColor(0,255,255), 1));
-    painter->drawText(QRectF(-240.0, calculateLocalChtValue(minChtValue)+7, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
-    painter->setPen(QPen(Qt::white, 1));
-    painter->drawText(QRectF(-240.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
+    if (numOfEgt>0) {
+        painter->setPen(QPen(QColor(0,255,255), 1));
+        painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(minChtValue)+4, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
+    }
+    painter->setPen( QPen(Qt::white, 1));
+    painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
 
     //Set painter for texts
     painter->setPen(QPen(Qt::white, 1));
@@ -100,9 +102,9 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
             // Draw line extensions for non green ranges
             if (startRange == minChtLocal) {
-                painter->drawLine(-190, endRange, 60, endRange);
+                painter->drawLine(-(60*(numOfCht-1))-10, endRange, 60, endRange);
             } else {
-                painter->drawLine(-190, startRange-1, 60, startRange-1);
+                painter->drawLine(-(60*(numOfCht-1))-10, startRange-1, 60, startRange-1);
             }
 
         }
@@ -110,22 +112,22 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
     //Draw the white line to define base of bars
     painter->setPen(Qt::white);
-    painter->drawLine(-210, calculateLocalChtValue(minChtValue)+2, 50, calculateLocalChtValue(minChtValue)+2);
+    painter->drawLine(-(60*(numOfCht-1))-30, calculateLocalChtValue(minChtValue)+2, 50, calculateLocalChtValue(minChtValue)+2);
 
     //Draw the white line to define top of bars
     painter->setPen(Qt::white);
-    painter->drawLine(-190, calculateLocalChtValue(maxChtValue)-2, 90, calculateLocalChtValue(maxChtValue)-2);
+    painter->drawLine(-(60*(numOfCht-1))-10, calculateLocalChtValue(maxChtValue)-2, 90, calculateLocalChtValue(maxChtValue)-2);
 
     //Draw the white line to show EGT scale
     painter->setPen(Qt::white);
-    painter->drawLine(-210, calculateLocalChtValue(maxChtValue)-2, -200, calculateLocalChtValue(maxChtValue)-2);
-    painter->drawLine(-210, calculateLocalChtValue(minChtValue)+2, -210, calculateLocalChtValue(maxChtValue)-2);
+    painter->drawLine(-(60*(numOfCht-1))-30, calculateLocalChtValue(maxChtValue)-2, -(60*(numOfCht-1))-20, calculateLocalChtValue(maxChtValue)-2);
+    painter->drawLine(-(60*(numOfCht-1))-30, calculateLocalChtValue(minChtValue)+2, -(60*(numOfCht-1))-30, calculateLocalChtValue(maxChtValue)-2);
 
     //Draw center lines
     painter->setPen(QPen(Qt::white, 1, Qt::SolidLine));
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < numOfCht; i++)
     {
-        painter->drawLine(i*60-160, -110, i*60-160, -10);
+        painter->drawLine(i*60-((60*(numOfCht-1))-20), -110, i*60-((60*(numOfCht-1))-20), -10);
     }
 
     painter->restore();
@@ -134,13 +136,13 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     isAlarmedYellow = false;
 
     //Draw the bar graphs
-    for(int i=0; i < 4; i++) {
+    for(int i=0; i < numOfCht; i++) {
         painter->setBrush(Qt::green);
         painter->setPen(Qt::green);
         cylinderAlarm = 1;
 
         currentLocal = calculateLocalChtValue(currentChtValues.at(i));
-        QRectF barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, currentLocal));
+        QRectF barRect = QRectF(QPointF(i*60-(60*(numOfCht-1)), -10), QPointF(i*60-((60*(numOfCht-1))-40), currentLocal));
 
         //Save thje painter and deactivate Antialising for rectangle drawing
         painter->save();
@@ -181,7 +183,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
         if (currentChtValues.at(i) > maxChtValue)
         {
-            barRect = QRectF(QPointF(i*60-180, -10), QPointF(i*60-140, calculateLocalChtValue(maxChtValue)));
+            barRect = QRectF(QPointF(i*60-(60*(numOfCht-1)), -10), QPointF(i*60-((60*(numOfCht-1))-40), calculateLocalChtValue(maxChtValue)));
             painter->setPen(Qt::red);
             painter->setBrush(Qt::red);
             cylinderAlarm = 3;
@@ -205,7 +207,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 
         //Define CHT text position and move to current column
         QRectF textRect(-40, -20, 50, 20);
-        textRect.moveCenter(QPointF(i*60-160, -125));
+        textRect.moveCenter(QPointF(i*60-((60*(numOfCht-1))-20), -125));
 
         if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
             if (flashState || isAcknowledged) {
@@ -238,36 +240,23 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->drawText(textRect, Qt::AlignCenter, QString::number(currentChtValues.at(i), 'f', 0));
         }
 
-        //Define EGT text position and move to current column
-        painter->setPen(QColor(0,255,255));
-        QRectF textRectEgt(-45, 65, 65, 20);
-        textRectEgt.moveCenter(QPointF(i*60-160, 5));
+        if (numOfEgt > 0 && i < numOfEgt) {
+            //Define EGT text position and move to current column
+            painter->setPen(QColor(0,255,255));
+            QRectF textRectEgt(-45, 65, 65, 20);
+            textRectEgt.moveCenter(QPointF(i*60-((60*(numOfCht-1))-20), 5));
 
-        painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));
+            painter->drawText(textRectEgt, Qt::AlignCenter, QString::number(currentEgtValues.at(i), 'f', 0));
 
-        //  Draw the markers for the EGT gauge
-        QRectF EgtRect = QRectF(QPointF(i*60-175, calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-145, calculateLocalEgtValue(currentEgtValues.value(i))+3));
-
-        if((currentEgtValues.at(i) > minEgtValue) && (currentEgtValues.at(i) < maxEgtValue))
-        {
-
-            QPolygonF marker1;
-            marker1.append(QPointF(i*60-190, calculateLocalEgtValue(currentEgtValues.value(i))+10));
-            marker1.append(QPointF(i*60-180, calculateLocalEgtValue(currentEgtValues.value(i))));
-            marker1.append(QPointF(i*60-190, calculateLocalEgtValue(currentEgtValues.value(i))-10));
-
-            QPolygonF marker2;
-            marker2.append(QPointF(i*60-130, calculateLocalEgtValue(currentEgtValues.value(i))+10));
-            marker2.append(QPointF(i*60-140, calculateLocalEgtValue(currentEgtValues.value(i))));
-            marker2.append(QPointF(i*60-130, calculateLocalEgtValue(currentEgtValues.value(i))-10));
-
-
-            painter->setPen(Qt::black);
-            painter->setBrush(QColor(0,255,255));
-            painter->drawRect(EgtRect);
-            painter->setPen(Qt::white);
-//            painter->drawPolygon(marker1);
-//            painter->drawPolygon(marker2);
+            //  Draw the markers for the EGT gauge
+            if((currentEgtValues.at(i) > minEgtValue) && (currentEgtValues.at(i) < maxEgtValue))
+            {
+                QRectF EgtRect = QRectF(QPointF(i*60-((60*(numOfCht-1))-5), calculateLocalEgtValue(currentEgtValues.value(i))-3), QPointF(i*60-((60*(numOfCht-1))-35), calculateLocalEgtValue(currentEgtValues.value(i))+3));
+                painter->setPen(Qt::black);
+                painter->setBrush(QColor(0,255,255));
+                painter->drawRect(EgtRect);
+                painter->setPen(Qt::white);
+            }
         }
     }
 

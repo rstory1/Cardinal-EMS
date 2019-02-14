@@ -23,19 +23,24 @@
 
 #include <QtGui>
 
-#include "rpmindicator.h"
-#include "bargraph.h"
-#include "fuelmanagement.h"
-#include "manifoldpressure.h"
+#include "instruments/rpmindicator.h"
+#include "instruments/bargraph.h"
+#include "instruments/fuelmanagement.h"
+#include "instruments/manifoldpressure.h"
 #include "alarmBox.h"
-#include "textBoxGauge.h"
-#include "fueldisplay.h"
-#include "chtegtgauge.h"
+#include "instruments/textBoxGauge.h"
+#include "instruments/fueldisplay.h"
+#include "instruments/chtegtgauge.h"
 #include <buttonbar.h>
-#include <qcustomplot/qcustomplot.h>
+#include <qcustomplot.h>
 #include <udpsocket.h>
-#include <windvector.h>
-#include <hourmeter.h>
+#include <instruments/windvector.h>
+#include <instruments/hourmeter.h>
+#include <scenes/settings_scene.h>
+#include <scenes/emsscene.h>
+#include <emsfull.h>
+
+#include <QMessageBox>
 
 //! Engine Monitor Class
 /*!
@@ -66,6 +71,7 @@ private:
     void cancelAlarm(QString alarmGauge);
     void connectSignals();
     void setupHourMeter();
+    void setupuserSettings();
 
 	QGraphicsScene graphicsScene;
     RpmIndicator rpmIndicator;
@@ -97,11 +103,21 @@ private:
     WindVector windVector;
     QTimer clockTimer;
     HourMeter hobbs;
+    userSettings uSettings;
+    int timeOilTAboveWarmup=0;
+    int timeOilTBelowWarmup=0;
+
+    settingsScene settings_scene;
+    emsScene ems_scene;
+    emsFull ems_full;
+
+    QString currentScene = "";
 
 private slots:
 	void demoFunction();
     void writeLogFile();
     void realtimeDataSlot();
+    void setEngineConds();
 
 public slots:
 	void setTimeToDestination(double time);
@@ -111,7 +127,11 @@ public slots:
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
     void onUpdateWindInfo(float spd, float dir, float mHdg);
+    void onSwitchScene(int scene);
+    void onZeroCurrent();
 
+signals:
+    void zeroCurrent();
 };
 
 #endif // ENGINEMONITOR_H

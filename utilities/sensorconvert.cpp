@@ -21,39 +21,30 @@
 #include "sensorconvert.h"
 
 SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
-  ,settings("./settings/settings.ini", QSettings::IniFormat, parent)
-  ,gaugeSettings("./settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  ,settings("//ems/settings/settings.ini", QSettings::IniFormat, parent)
+  ,gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
     //Let's set what type of thermocouple we are using
-    setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "K").toString());
+    setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "NTC").toString());
     setThermocoupleTypeEgt(settings.value("Sensors/egtThermocoupleType", "K").toString());
     setTemperatureScale(settings.value("Units/temp", "F").toString());
     setKFactor(gaugeSettings.value("Fuel/kfactor", "F").toString().toDouble());
 
 }
 
-void SensorConvert::convertOilTemp(double resistance)
+void SensorConvert::convertOilTemp(double adc)
 {
-    double temp;
+    //  Convert ADC Voltage value to resistance
+    resistance = puResistorValue/(4095/adc-1);
 
-    // Function created from data used by Aviasport Oil Temp instrument
-    //  This equation produces a temperature in Celsius
-    //  Rotax 912ULS
-    if (resistance <= 322.8 && resistance >= 18.6) {
-        temp = 497.2 * pow(resistance, -0.397);
-    }
-    else {
-        temp = -999;
-    }
+    // Convert resistance to temperauter. This equation was created from fitting a line to the VDO calibration curve.
+    temp = 429.7*pow(resistance, -0.1368)-143.9;
 
     // If our desired scale is not celsius, then we need to convert it
     if (temperatureScale != "C")
     {
-        temp = convertTemperature(temp);
+        oilTemp = convertTemperature(temp);
     }
-
-    oilTemp = temp;
-
 }
 
 void SensorConvert::convertFuelFlow(qreal pulses)
@@ -70,10 +61,12 @@ void SensorConvert::convertRpm(double pulses)
     rpm =  pulses;
 }
 
-void SensorConvert::convertOilPress(double voltage)
+void SensorConvert::convertOilPress(double adc)
 {
     // 456-180 (Keller)
-    oilPress =  0.625*voltage + 0.75;
+    tempVoltage = adc / (4095/5);
+    tempCurrent = tempVoltage / pdResistorValue;
+    oilPress =  0.625*tempCurrent + 0.75;
 }
 
 void SensorConvert::convertOat(double sensorValue)
@@ -86,9 +79,11 @@ void SensorConvert::convertIat(double sensorValue)
     iat = sensorValue;
 }
 
-double SensorConvert::convertTemperature(double temp)
+double SensorConvert::convertTemperature(qreal temp)
 {
-    // COde needs to be added to convert to different units
+    // Code needs to be added to convert to different units
+    temp = temp * 1.8 + 32;
+
     return temp;
 }
 
@@ -107,8 +102,31 @@ void SensorConvert::setTemperatureScale(QString scale)
     temperatureScale = scale;
 }
 
-void SensorConvert::convertCht(double volt1, double volt2, double volt3, double volt4)
+void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 {
+    tempCHT[0] = adc1;
+    tempCHT[1] = adc2;
+    tempCHT[2] = adc3;
+    tempCHT[3] = adc4;
+
+    //  Need to add switch in here for different CHT sensor types. The code below is for the Rotax NTC style
+//    if (thermocoupleTypeCht=='NTC')
+//    {
+        for (int a = 0; a < 4; a++)
+        {
+            //  Convert ADC Voltage value to resistance
+            resistance = puResistorValue/(4095.0/tempCHT[a]-1);
+
+            // Convert resistance to temperauter. This equation was created from fitting a line to the VDO calibration curve.
+            cht[a] = 429.7*pow(resistance, -0.1368)-143.9;
+
+            // If our desired scale is not celsius, then we need to convert it
+            if (temperatureScale != "C")
+            {
+                cht[a] = convertTemperature(cht[a]);
+            }
+        }
+//    }
 
 }
 
@@ -117,42 +135,27 @@ void SensorConvert::convertEgt(double volt1, double volt2, double volt3, double 
 
 }
 
-void SensorConvert::onRdacUpdate(qreal oilPressVolts, qreal fuelFlowPulses, qreal voltage) {
-    convertFuelFlow(fuelFlowPulses);
-    convertOilPress(oilPressVolts);
+void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts) {
+    convertFuelFlow(fuelFlow1);
+    convertOilPress(oilP);
+    convertCht(ax1, ax2, tc3, tc4);
+    convertOilTemp(oilT);
+    convertCurrent(curr);
 
-    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, voltage, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
+    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, egt3, egt4, cht[0], cht[1], cht[2], cht[3], oat, intTemp);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
     kFactor = kFac;
 }
 
-void SensorConvert::processData(QString data)
+void SensorConvert::convertCurrent(qreal adc)
 {
-    // Process the data string from the serial read. In the beginning, we're receiving one string with all the data.
-    // 0 - RPM
-    // 1 - Fuel Flow
-    // 2 - Oil Temp
-    // 3 - Oil Pressure
-    // 4 - Amperage
-    // 5 - Volts
-    // 6-9 - EGT
-    // 10-13 - CHT
-    // 14 - OAT
-    // 15 - IAT
+    currentAdc = adc;
+    current = 0.0244 * currentAdc - 50.024;
+}
 
-    convertRpm(data.section(',',0,0).toDouble());
-    convertFuelFlow(data.section(',',1,1).toDouble());
-    convertOilTemp(data.section(',',2,2).toDouble());
-    convertOilPress(data.section(',',3,3).toDouble());
-    //convertAmperage(data.section(',',4,4).toDouble());
-    //convertVolts(data.section(',',5,5).toDouble());
-    convertEgt(data.section(',',6,6).toDouble(),data.section(',',7,7).toDouble(),data.section(',',8,8).toDouble(),data.section(',',9,9).toDouble());
-    convertCht(data.section(',',10,10).toDouble(),data.section(',',11,11).toDouble(),data.section(',',12,12).toDouble(),data.section(',',13,13).toDouble());
-    convertOat(data.section(',',14,14).toDouble());
-    convertIat(data.section(',',15,15).toDouble());
-
-    emit updateMonitor(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat);
+void SensorConvert::onZeroCurrent() {
+    gaugeSettings.setValue("Amps/zeroVal", currentAdc);
 }
 

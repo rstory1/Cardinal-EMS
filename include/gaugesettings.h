@@ -42,6 +42,10 @@ public:
         return max;
     }
 
+    bool getVis() {
+        return gaugeIsVisible;
+    }
+
 private:
     QSettings settings;
     QString name;
@@ -52,6 +56,10 @@ private:
 
     double egtMin = 0;
     double egtMax = 0;
+
+    bool gaugeIsVisible=true;
+
+    void setGaugeVis(bool isVisilbe);
 
 signals:
 

@@ -18,7 +18,11 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets serialport printsupport
+QT       += core gui widgets serialport
+
+INCLUDEPATH += \
+    include \
+    include/instruments
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -39,52 +43,62 @@ RC_FILE = ./res/icon.rc
 
 SOURCES += main.cpp\
     enginemonitor.cpp \
-    bargraph.cpp \
-    rpmindicator.cpp \
-    cylinderheadtemperature.cpp \
-    exhaustgastemperature.cpp \
-    fuelmanagement.cpp \
-    rdacconnect.cpp \
-    nmeaconnect.cpp \
-    manifoldpressure.cpp \
-    sensorconvert.cpp \
-    circulargauge.cpp \
-    alarmBox.cpp \
-    textBoxGauge.cpp \
-    fueldisplay.cpp \
-    chtegtgauge.cpp \
-    buttonbar.cpp \
-    qcustomplot/qcustomplot.cpp \
-    udpsocket.cpp \
-    flightcalculator.cpp \
-    windvector.cpp \
-    hourmeter.cpp \
-    spatial.cpp \
-    gaugesettings.cpp
+    instruments/bargraph.cpp \
+    instruments/rpmindicator.cpp \
+    instruments/cylinderheadtemperature.cpp \
+    instruments/exhaustgastemperature.cpp \
+    instruments/fuelmanagement.cpp \
+    utilities/rdacconnect.cpp \
+    utilities/nmeaconnect.cpp \
+    instruments/manifoldpressure.cpp \
+    utilities/sensorconvert.cpp \
+    instruments/circulargauge.cpp \
+    instruments/alarmBox.cpp \
+    instruments/textBoxGauge.cpp \
+    instruments/fueldisplay.cpp \
+    instruments/chtegtgauge.cpp \
+    utilities/buttonbar.cpp \
+    utilities/udpsocket.cpp \
+    utilities/flightcalculator.cpp \
+    instruments/windvector.cpp \
+    instruments/hourmeter.cpp \
+    utilities/spatial.cpp \
+    utilities/gaugesettings.cpp \
+    utilities/userSettings.cpp \
+    scenes/settings_scene.cpp \
+    scenes/emsscene.cpp \
+    include/emsfull.cpp \
+    utilities/instrumentsettings.cpp
+    instruments/diagnosticwidget.cpp
 
-HEADERS  += enginemonitor.h \
-    bargraph.h \
-    rpmindicator.h \
-    cylinderheadtemperature.h \
-    exhaustgastemperature.h \
-    fuelmanagement.h \
-    rdacconnect.h \
-    nmeaconnect.h \
-    manifoldpressure.h \
-    sensorconvert.h \
-    circulargauge.h \
-    alarmBox.h \
-    textBoxGauge.h \
-    fueldisplay.h \
-    chtegtgauge.h \
-    buttonbar.h \
-    qcustomplot/qcustomplot.h \
-    udpsocket.h \
-    flightcalculator.h \
-    windvector.h \
-    hourmeter.h \
-    spatial.h \
-    gaugesettings.h
+HEADERS  += include/enginemonitor.h \
+    include/instruments/bargraph.h \
+    include/instruments/rpmindicator.h \
+    include/instruments/cylinderheadtemperature.h \
+    include/instruments/exhaustgastemperature.h \
+    include/instruments/fuelmanagement.h \
+    include/rdacconnect.h \
+    include/nmeaconnect.h \
+    include/instruments/manifoldpressure.h \
+    include/sensorconvert.h \
+    include/instruments/circulargauge.h \
+    include/alarmBox.h \
+    include/instruments/textBoxGauge.h \
+    include/instruments/fueldisplay.h \
+    include/instruments/chtegtgauge.h \
+    include/buttonbar.h \
+    include/udpsocket.h \
+    include/flightcalculator.h \
+    include/instruments/windvector.h \
+    include/instruments/hourmeter.h \
+    include/spatial.h \
+    include/gaugesettings.h \
+    include/userSettings.h \
+    include/scenes/settings_scene.h \
+    include/scenes/emsscene.h \
+    include/emsfull.h \
+    include/instrumentsettings.h
+    include/diagnosticwidget.h
 
 RESOURCES += \
     res/res.qrc

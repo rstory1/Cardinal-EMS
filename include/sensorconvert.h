@@ -12,6 +12,7 @@
 
 #include <QtCore>
 #include <math.h>
+#include <QMessageBox>
 
 //! Sensor Convert Class
 /*!
@@ -33,7 +34,21 @@ private:
 
     qreal kFactor;
 
-    qreal rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat;
+    qreal cht[4];
+    qreal rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, oat, iat;
+
+    qreal resistance;
+    qreal temp;
+    qreal puResistorValue = 1500;
+    qreal pdResistorValue = 100;
+
+    qreal tempVoltage;
+    qreal tempCurrent;
+    qreal current;
+
+    qreal tempCHT[4];
+
+    qreal currentAdc;
 
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
@@ -41,7 +56,7 @@ private:
     void convertThermocouple(int resistance);
 
     void convertEgt(double volt1, double volt2, double volt3, double volt4);
-    void convertCht(double volt1, double volt2, double volt3, double volt4);
+    void convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4);
 
     void convertIat(double sensorValue);
 
@@ -49,22 +64,24 @@ private:
 
     void convertFuelFlow(double pulses);
 
-    void convertOilTemp(double resistance);
-    void convertOilPress(double voltage);
+    void convertOilTemp(qreal adc);
+    void convertOilPress(qreal adc);
 
     void convertRpm(double pulses);
 
-    double convertTemperature(double temp);
+    qreal convertTemperature(qreal temp);
 
     void setKFactor(qreal kFac);
+
+    void convertCurrent(qreal adc);
 
 signals:
     void userMessage(QString,QString,bool);
     void updateMonitor(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat);
 
 public slots:
-    void processData(QString data);
-    void onRdacUpdate(qreal oilPressVolts, qreal fuelFlowPulses, qreal volts);
+    void onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts);
+    void onZeroCurrent();
 };
 
 #endif // SENSORCONVERT_H

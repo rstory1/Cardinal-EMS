@@ -21,7 +21,7 @@
 #include "gaugesettings.h"
 
 GaugeSettings::GaugeSettings(QObject *parent) : QObject(parent)
-  , settings("settings/gaugeSettings.ini", QSettings::IniFormat)
+  , settings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
 {
 
 }
@@ -65,5 +65,15 @@ void GaugeSettings::setGauge(QString gauge) {
     min = settings.value(name + "/min",0).toDouble();
     max = settings.value(name + "/max",0).toDouble();
 
+    gaugeIsVisible = settings.value("Display/show" + name, false).toBool();
+
     getGaugeDef();
+}
+
+void GaugeSettings::setGaugeVis(bool isVisible) {
+    if (isVisible) {
+        gaugeIsVisible=true;
+    } else {
+        gaugeIsVisible=false;
+    }
 }

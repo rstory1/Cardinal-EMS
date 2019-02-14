@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////////////////////
 //                                                                      //
 // EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2012 Tobias Rad                                        //
@@ -23,15 +23,14 @@
 #include "enginemonitor.h"
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
-  , graphicsScene(this)
-  , settings("settings/settings.ini", QSettings::IniFormat, parent)
-  , gaugeSettings("settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
+  , gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
 
 	//Initializing the window behaviour and it's scene
-	setWindowFlags(Qt::FramelessWindowHint);
-    graphicsScene.setBackgroundBrush(Qt::black);
-	setScene(&graphicsScene);
+    setWindowFlags(Qt::FramelessWindowHint);
+    setScene(&ems_full);
+    currentScene = "emsFull";
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	//Setting up the items to be displayed
@@ -41,18 +40,18 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //setupManifoldPressure();
     setupAlarm();
     setupChtEgt();
-    setupFuelManagement();
+    //setupFuelManagement();
     setupStatusItem();
-    setupWindVector();
+    //setupWindVector();
     setupHourMeter();
+    setupuserSettings();
 
     this->mapToScene(this->rect());
     this->setFrameShape(QGraphicsView::NoFrame);
 
-    graphicsScene.setSceneRect(0,0,800,480);
-    buttonBar.setPos(0,graphicsScene.height());
-    graphicsScene.addItem(&buttonBar);
-    graphicsScene.update();
+    this->scene()->setSceneRect(0,0,800,480);
+    buttonBar.setPos(0,this->scene()->height());
+    this->scene()->addItem(&buttonBar);
 
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
@@ -60,49 +59,49 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     // Get the temp for when the engine is warmed up
     warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
 
-    // Plot stuff
-    customPlot = new QCustomPlot();
-    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
+//    // Plot stuff
+//    customPlot = new QCustomPlot();
+//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
 
-    QGraphicsProxyWidget *test;
-    test = new QGraphicsProxyWidget();
-    test->setWidget(customPlot);
-    test->setPos(0, 200);
+//    QGraphicsProxyWidget *test;
+//    test = new QGraphicsProxyWidget();
+//    test->setWidget(customPlot);
+//    test->setPos(0, 200);
 
-    //graphicsScene.addItem(test);
+//    //this->scene()->addItem(test);
 
-    customPlot->setFixedHeight(150);
-    customPlot->setFixedWidth(300);
-    customPlot->addGraph(); // blue line
-    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-    customPlot->addGraph(); // red line
-    customPlot->graph(1)->setPen(QPen(Qt::green));
-    customPlot->addGraph(); // red line
-    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
-    customPlot->addGraph(); // red line
-    customPlot->graph(3)->setPen(QPen(Qt::yellow));
+//    customPlot->setFixedHeight(150);
+//    customPlot->setFixedWidth(300);
+//    customPlot->addGraph(); // blue line
+//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(1)->setPen(QPen(Qt::green));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
 
-    QVector<double> ticks;
-    QVector<QString> labels;
-    ticks << 1 << 2 << 3 << 4 << 5;
-    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
-    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    //timeTicker->setTimeFormat("%m:%s");
-    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-    textTicker->addTicks(ticks, labels);
-    customPlot->xAxis->setTicker(textTicker);
-    customPlot->axisRect()->setupFullAxesBox();
-    customPlot->yAxis->setRange(0, 300);
-    customPlot->setBackground(Qt::black);
-    customPlot->yAxis->setTickLabelColor(Qt::white);
-    customPlot->xAxis->setTickLabelColor(Qt::white);
-    customPlot->xAxis->setTicks(false);
-    customPlot->xAxis->grid()->setVisible(false);
+//    QVector<double> ticks;
+//    QVector<QString> labels;
+//    ticks << 1 << 2 << 3 << 4 << 5;
+//    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
+//    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+//    //timeTicker->setTimeFormat("%m:%s");
+//    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+//    textTicker->addTicks(ticks, labels);
+//    customPlot->xAxis->setTicker(textTicker);
+//    customPlot->axisRect()->setupFullAxesBox();
+//    customPlot->yAxis->setRange(0, 300);
+//    customPlot->setBackground(Qt::black);
+//    customPlot->yAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTicks(false);
+//    customPlot->xAxis->grid()->setVisible(false);
 
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
+//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
 
     // End plot stuff
 
@@ -110,10 +109,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 	//Demo timer, for testing purposes only
 #ifdef QT_DEBUG
-//	QTimer *demoTimer = new QTimer(this);
-//	connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-//	demoTimer->setSingleShot(false);
-//	demoTimer->start(200);
+    QTimer *demoTimer = new QTimer(this);
+    connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
+    demoTimer->setSingleShot(false);
+    demoTimer->start(200);
 #endif
 
     //socket = new QUdpSocket(this);
@@ -145,7 +144,10 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    logFile = new QFile(QString("engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    QDir dir("/ems/engineLogs");
+    if (!dir.exists())
+        dir.mkpath(".");
+    logFile = new QFile(QString("/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
@@ -155,6 +157,7 @@ void EngineMonitor::setupLogFile()
 	}
 	else
 	{
+
 		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
 	}
 
@@ -268,7 +271,6 @@ void EngineMonitor::setupBarGraphs()
     oilTemperature.setPos(620, 60);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    oilTemperature.setBorders(gaugeSettings.value("OilTemp/min",0).toInt(),gaugeSettings.value("OilTemp/max",0).toInt());
     oilTemperature.setIndicatorSide("left");
     oilTemperature.setGaugeType("OilTemp");
     graphicsScene.addItem(&oilTemperature);
@@ -276,14 +278,12 @@ void EngineMonitor::setupBarGraphs()
     oilPressure.setPos(690, 60);
     oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
-    oilPressure.setBorders(gaugeSettings.value("OilPress/min",0).toDouble(), gaugeSettings.value("OilPress/max",0).toDouble());
     oilPressure.setGaugeType("OilPress");
     graphicsScene.addItem(&oilPressure);
 
     voltMeter.setPos(760, 60);
     voltMeter.setTitle("VOLTS");
     voltMeter.setUnit("V");
-    voltMeter.setBorders(gaugeSettings.value("Volt/min",0).toDouble(), gaugeSettings.value("Volt/max",0).toDouble());
     voltMeter.setPrecision(1, 1);
     voltMeter.setIndicatorSide("left");
     voltMeter.setGaugeType("Volt");
@@ -292,7 +292,6 @@ void EngineMonitor::setupBarGraphs()
     ampereMeter.setPos(690, 200);
     ampereMeter.setTitle("AMPS");
     ampereMeter.setUnit("A");
-    ampereMeter.setBorders(gaugeSettings.value("Amp/min",0).toDouble(), gaugeSettings.value("Amp/max",0).toDouble());
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
     graphicsScene.addItem(&ampereMeter);
@@ -300,16 +299,15 @@ void EngineMonitor::setupBarGraphs()
     fuelFlow.setPos(760, 200);
     fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
-    fuelFlow.setBorders(gaugeSettings.value("Fuel/min",0).toDouble(), gaugeSettings.value("Fuel/max",0).toDouble());
     fuelFlow.setPrecision(1);
     fuelFlow.setIndicatorSide("left");
     fuelFlow.setGaugeType("Fuel");
     graphicsScene.addItem(&fuelFlow);
+    fuelFlow.setVisible(false);
 
     insideAirTemperature.setPos(800, 200);
     insideAirTemperature.setTitle("IAT");
     insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    insideAirTemperature.setBorders(-10.0, 40);
     insideAirTemperature.setPrecision(1);
     graphicsScene.addItem(&insideAirTemperature);
     insideAirTemperature.setVisible(false);
@@ -327,7 +325,7 @@ void EngineMonitor::setupBarGraphs()
 
 void EngineMonitor::setupStatusItem()
 {
-    statusItem.setPos(400, 65);
+    statusItem.setPos(5, 300);
 	graphicsScene.addItem(&statusItem);
     statusItem.setVisible(true);
 }
@@ -389,6 +387,7 @@ void EngineMonitor::userMessageHandler(QString title, QString content, bool endA
 
 void EngineMonitor::showStatusMessage(QString text, QColor color)
 {
+    //qDebug() << Q_FUNC_INFO;
 	statusItem.setPlainText(text);
 	statusItem.setDefaultTextColor(color);
 }
@@ -400,7 +399,6 @@ void EngineMonitor::demoFunction()
     rpm += 5.0;
 
     rpmIndicator.setValue(rpm);
-    hobbs.setEngineOn(true);
 
     static double basicEGT = 750.0;
     static bool egtUp = true;
@@ -456,12 +454,8 @@ void EngineMonitor::demoFunction()
 	{
         oilTemp = 100.0;
 	}
-	oilTemp -= 0.1;
-    if (oilTemp < warmupTemp) {
-        rpmIndicator.isWarmup = true;
-    } else {
-        rpmIndicator.isWarmup = false;
-    }
+    oilTemp += 0.25;
+
 	oilTemperature.setValue(oilTemp);
 
 	static double oilPress = 0.0;
@@ -557,20 +551,20 @@ void EngineMonitor::realtimeDataSlot()
   static double lastPointKey = 0;
   if (key-lastPointKey > 0.500 /*.002*/) // at most add point every 2 ms
   {
-    // add data to lines:
-    customPlot->graph(0)->addData(key, chtEgt.getCurrentChtValues().at(0));
-    customPlot->graph(1)->addData(key, chtEgt.getCurrentChtValues().at(1));
-    customPlot->graph(2)->addData(key, chtEgt.getCurrentChtValues().at(2));
-    customPlot->graph(3)->addData(key, chtEgt.getCurrentChtValues().at(3));
-    //customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-    // rescale value (vertical) axis to fit the current data:
-//    customPlot->graph(0)->rescaleValueAxis();
-//    customPlot->graph(1)->rescaleValueAxis(true);
-    lastPointKey = key;
+//    // add data to lines:
+//    customPlot->graph(0)->addData(key, chtEgt.getCurrentChtValues().at(0));
+//    customPlot->graph(1)->addData(key, chtEgt.getCurrentChtValues().at(1));
+//    customPlot->graph(2)->addData(key, chtEgt.getCurrentChtValues().at(2));
+//    customPlot->graph(3)->addData(key, chtEgt.getCurrentChtValues().at(3));
+//    //customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+//    // rescale value (vertical) axis to fit the current data:
+////    customPlot->graph(0)->rescaleValueAxis();
+////    customPlot->graph(1)->rescaleValueAxis(true);
+//    lastPointKey = key;
 
-    // make key axis range scroll with the data (at a constant range size of 8):
-    customPlot->xAxis->setRange(key, 120, Qt::AlignRight);
-    customPlot->replot();
+//    // make key axis range scroll with the data (at a constant range size of 8):
+//    customPlot->xAxis->setRange(key, 120, Qt::AlignRight);
+//    customPlot->replot();
   }
 
 }
@@ -602,7 +596,7 @@ void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
 void EngineMonitor::setupWindVector() {
     windVector.setPos(50, 385);
     graphicsScene.addItem(&windVector);
-    windVector.setVisible(true);
+    windVector.setVisible(false);
 }
 
 void EngineMonitor::connectSignals() {
@@ -663,10 +657,67 @@ void EngineMonitor::connectSignals() {
     qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
+
+    connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
+
+    connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
+
+    connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
 }
 
 void EngineMonitor::setupHourMeter() {
     hobbs.setPos(250, 360);
     graphicsScene.addItem(&hobbs);
     hobbs.setVisible(true);
+}
+
+void EngineMonitor::setupuserSettings()
+{
+    uSettings.setPos(400,240);
+    graphicsScene.addItem(&uSettings);
+    uSettings.setVisible(false);
+}
+
+void EngineMonitor::setEngineConds() {
+    if (oilPressure.getValue() > 10.0) {
+        hobbs.setEngineOn(true);
+    } else {
+        hobbs.setEngineOn(false);
+    }
+
+    if (oilTemperature.getValue() < warmupTemp) {
+        timeOilTBelowWarmup += 1;
+        if (timeOilTAboveWarmup < 5 * 60) {
+            timeOilTAboveWarmup = 0;
+            rpmIndicator.isWarmup = true;
+        }
+    } else {
+        timeOilTAboveWarmup += 1;
+        timeOilTBelowWarmup = 0;
+        rpmIndicator.isWarmup = false;
+    }
+}
+
+void EngineMonitor::onSwitchScene(int scene) {
+    switch (scene) {
+        case 1: // EMS
+            this->setScene(&ems_full);
+            break;
+
+        case 2: // Settings
+            this->setScene(&settings_scene);
+            break;
+    }
+
+    this->scene()->setSceneRect(0,0,800,480);
+    buttonBar.setPos(0,this->scene()->height());
+    this->scene()->addItem(&buttonBar);
+
+    qDebug() << "Is EMS Scene Active?: " + QString::number(ems_full.isActive());
+    qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());
+
+}
+
+void EngineMonitor::onZeroCurrent() {
+    emit zeroCurrent();
 }
