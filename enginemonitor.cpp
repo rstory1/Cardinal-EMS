@@ -144,7 +144,10 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    logFile = new QFile(QString("/usr/bin/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    QDir dir("/ems/engineLogs");
+    if (!dir.exists())
+        dir.mkpath(".");
+    logFile = new QFile(QString("/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
