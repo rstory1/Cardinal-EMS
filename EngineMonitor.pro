@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets serialport printsupport
+QT       += core gui widgets serialport
 
 INCLUDEPATH += \
     include \
@@ -58,7 +58,6 @@ SOURCES += main.cpp\
     instruments/fueldisplay.cpp \
     instruments/chtegtgauge.cpp \
     utilities/buttonbar.cpp \
-    qcustomplot/qcustomplot.cpp \
     utilities/udpsocket.cpp \
     utilities/flightcalculator.cpp \
     instruments/windvector.cpp \
@@ -68,7 +67,8 @@ SOURCES += main.cpp\
     utilities/userSettings.cpp \
     scenes/settings_scene.cpp \
     scenes/emsscene.cpp \
-    include/emsfull.cpp
+    include/emsfull.cpp \
+    utilities/instrumentsettings.cpp
     instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
@@ -87,7 +87,6 @@ HEADERS  += include/enginemonitor.h \
     include/instruments/fueldisplay.h \
     include/instruments/chtegtgauge.h \
     include/buttonbar.h \
-    include/qcustomplot.h \
     include/udpsocket.h \
     include/flightcalculator.h \
     include/instruments/windvector.h \
@@ -97,7 +96,8 @@ HEADERS  += include/enginemonitor.h \
     include/userSettings.h \
     include/scenes/settings_scene.h \
     include/scenes/emsscene.h \
-    include/emsfull.h
+    include/emsfull.h \
+    include/instrumentsettings.h
     include/diagnosticwidget.h
 
 RESOURCES += \

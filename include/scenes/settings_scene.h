@@ -16,6 +16,12 @@ public:
 
 private:
     userSettings userSet;
+
+private slots:
+    void onZeroCurrent() { emit zeroCurrent();}
+
+signals:
+    void zeroCurrent();
 };
 
 #endif // SETTINGS_SCENE_H

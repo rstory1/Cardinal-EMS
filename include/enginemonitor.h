@@ -128,7 +128,10 @@ public slots:
     void processPendingDatagrams();
     void onUpdateWindInfo(float spd, float dir, float mHdg);
     void onSwitchScene(int scene);
+    void onZeroCurrent();
 
+signals:
+    void zeroCurrent();
 };
 
 #endif // ENGINEMONITOR_H

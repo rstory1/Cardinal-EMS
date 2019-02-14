@@ -32,18 +32,19 @@ public:
     explicit userSettings(QGraphicsObject* parent = 0);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
     QRectF backgroundRect;
     QRectF oilPbox;
     QRectF oilTbox;
-    QRectF oilTcheckbox;
     QRectF manPbox;
-    QRectF egtBox;
-    QRectF chtBox;
+    QRectF egtChtBox;
+    QRectF currentBox;
     QRectF ffBox;
 
 signals:
+    void zeroCurrent();
 
 public slots:
     void showSettings(bool tfShow);

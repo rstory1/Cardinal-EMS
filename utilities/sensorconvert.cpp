@@ -21,8 +21,8 @@
 #include "sensorconvert.h"
 
 SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
-  ,settings("./settings/settings.ini", QSettings::IniFormat, parent)
-  ,gaugeSettings("./settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  ,settings("//ems/settings/settings.ini", QSettings::IniFormat, parent)
+  ,gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
     //Let's set what type of thermocouple we are using
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "NTC").toString());
@@ -151,5 +151,11 @@ void SensorConvert::setKFactor(qreal kFac) {
 
 void SensorConvert::convertCurrent(qreal adc)
 {
-    current = 0.0244 * adc - 50.024;
+    currentAdc = adc;
+    current = 0.0244 * currentAdc - 50.024;
 }
+
+void SensorConvert::onZeroCurrent() {
+    gaugeSettings.setValue("Amps/zeroVal", currentAdc);
+}
+

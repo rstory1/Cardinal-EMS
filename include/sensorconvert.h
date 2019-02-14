@@ -48,6 +48,8 @@ private:
 
     qreal tempCHT[4];
 
+    qreal currentAdc;
+
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
     void setTemperatureScale(QString scale); // K, C, R, or F
@@ -79,6 +81,7 @@ signals:
 
 public slots:
     void onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts);
+    void onZeroCurrent();
 };
 
 #endif // SENSORCONVERT_H

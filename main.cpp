@@ -31,7 +31,7 @@
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     qInfo() << "Inside messageToFileHandler";
-    QFile debugfile("/apps/ems/appLogs/EngineMon.log");
+    QFile debugfile("/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     qInfo() << "Before app log starts";
 
 #ifdef QT_NO_DEBUG
-    QFile debugfile("/apps/ems/appLogs/EngineMon.log");
+    QFile debugfile("/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
@@ -143,6 +143,7 @@ int main(int argc, char *argv[])
     //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
 //SLOT(setFuelData(double,double)));
     a.connect(&rdac, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
+    a.connect(&engineMonitor, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
 
     //QString portName = QLatin1String("ttyACM0");              // update this to use your 
 //port of choice

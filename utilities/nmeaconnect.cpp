@@ -21,7 +21,7 @@
 #include "nmeaconnect.h"
 
 NMEAconnect::NMEAconnect(QObject *parent) : QThread(parent)
-  , settings("./settings.ini", QSettings::IniFormat, parent)
+  , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
 }
 

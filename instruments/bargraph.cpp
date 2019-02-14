@@ -288,7 +288,7 @@ double BarGraph::calculateLocalValue(double value) const
 void BarGraph::setValue(qreal value)
 {
     currentValue = value;
-    qDebug() << "Current " + titleText + ": " + QString::number(value);
+    //qDebug() << "Current " + titleText + ": " + QString::number(value);
 
     update();
 }

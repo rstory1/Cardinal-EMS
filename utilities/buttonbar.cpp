@@ -129,7 +129,7 @@ void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
         } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
             buttonDisplay = 3;
-            emit switchScene(1); // Change scene to settings scene
+            emit switchScene(2); // Change scene to settings scene
 
         } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
             ackPressed();
@@ -156,6 +156,7 @@ void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
     case 3: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
             buttonDisplay = 1;
+            emit switchScene(1); // Change scene to ems scene
 
         } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
             // emit a signal to show log file export dialog

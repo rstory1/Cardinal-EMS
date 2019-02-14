@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////////
+﻿//////////////////////////////////////////////////////////////////////////
 //                                                                      //
 // EngineMonitor, a graphical gauge to monitor an aircraft's engine     //
 // Copyright (C) 2012 Tobias Rad                                        //
@@ -23,8 +23,8 @@
 #include "enginemonitor.h"
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
-  , settings("settings/settings.ini", QSettings::IniFormat, parent)
-  , gaugeSettings("settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
+  , gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
 
 	//Initializing the window behaviour and it's scene
@@ -59,49 +59,49 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     // Get the temp for when the engine is warmed up
     warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
 
-    // Plot stuff
-    customPlot = new QCustomPlot();
-    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
+//    // Plot stuff
+//    customPlot = new QCustomPlot();
+//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
 
-    QGraphicsProxyWidget *test;
-    test = new QGraphicsProxyWidget();
-    test->setWidget(customPlot);
-    test->setPos(0, 200);
+//    QGraphicsProxyWidget *test;
+//    test = new QGraphicsProxyWidget();
+//    test->setWidget(customPlot);
+//    test->setPos(0, 200);
 
-    //this->scene()->addItem(test);
+//    //this->scene()->addItem(test);
 
-    customPlot->setFixedHeight(150);
-    customPlot->setFixedWidth(300);
-    customPlot->addGraph(); // blue line
-    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-    customPlot->addGraph(); // red line
-    customPlot->graph(1)->setPen(QPen(Qt::green));
-    customPlot->addGraph(); // red line
-    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
-    customPlot->addGraph(); // red line
-    customPlot->graph(3)->setPen(QPen(Qt::yellow));
+//    customPlot->setFixedHeight(150);
+//    customPlot->setFixedWidth(300);
+//    customPlot->addGraph(); // blue line
+//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(1)->setPen(QPen(Qt::green));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
+//    customPlot->addGraph(); // red line
+//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
 
-    QVector<double> ticks;
-    QVector<QString> labels;
-    ticks << 1 << 2 << 3 << 4 << 5;
-    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
-    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-    //timeTicker->setTimeFormat("%m:%s");
-    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-    textTicker->addTicks(ticks, labels);
-    customPlot->xAxis->setTicker(textTicker);
-    customPlot->axisRect()->setupFullAxesBox();
-    customPlot->yAxis->setRange(0, 300);
-    customPlot->setBackground(Qt::black);
-    customPlot->yAxis->setTickLabelColor(Qt::white);
-    customPlot->xAxis->setTickLabelColor(Qt::white);
-    customPlot->xAxis->setTicks(false);
-    customPlot->xAxis->grid()->setVisible(false);
+//    QVector<double> ticks;
+//    QVector<QString> labels;
+//    ticks << 1 << 2 << 3 << 4 << 5;
+//    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
+//    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+//    //timeTicker->setTimeFormat("%m:%s");
+//    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+//    textTicker->addTicks(ticks, labels);
+//    customPlot->xAxis->setTicker(textTicker);
+//    customPlot->axisRect()->setupFullAxesBox();
+//    customPlot->yAxis->setRange(0, 300);
+//    customPlot->setBackground(Qt::black);
+//    customPlot->yAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTickLabelColor(Qt::white);
+//    customPlot->xAxis->setTicks(false);
+//    customPlot->xAxis->grid()->setVisible(false);
 
 
     // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
+//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
+//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
 
     // End plot stuff
 
@@ -144,7 +144,7 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    logFile = new QFile(QString("/apps/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    logFile = new QFile(QString("/usr/bin/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
@@ -154,6 +154,7 @@ void EngineMonitor::setupLogFile()
 	}
 	else
 	{
+
 		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
 	}
 
@@ -547,20 +548,20 @@ void EngineMonitor::realtimeDataSlot()
   static double lastPointKey = 0;
   if (key-lastPointKey > 0.500 /*.002*/) // at most add point every 2 ms
   {
-    // add data to lines:
-    customPlot->graph(0)->addData(key, chtEgt.getCurrentChtValues().at(0));
-    customPlot->graph(1)->addData(key, chtEgt.getCurrentChtValues().at(1));
-    customPlot->graph(2)->addData(key, chtEgt.getCurrentChtValues().at(2));
-    customPlot->graph(3)->addData(key, chtEgt.getCurrentChtValues().at(3));
-    //customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
-    // rescale value (vertical) axis to fit the current data:
-//    customPlot->graph(0)->rescaleValueAxis();
-//    customPlot->graph(1)->rescaleValueAxis(true);
-    lastPointKey = key;
+//    // add data to lines:
+//    customPlot->graph(0)->addData(key, chtEgt.getCurrentChtValues().at(0));
+//    customPlot->graph(1)->addData(key, chtEgt.getCurrentChtValues().at(1));
+//    customPlot->graph(2)->addData(key, chtEgt.getCurrentChtValues().at(2));
+//    customPlot->graph(3)->addData(key, chtEgt.getCurrentChtValues().at(3));
+//    //customPlot->graph(1)->addData(key, qCos(key)+qrand()/(double)RAND_MAX*0.5*qSin(key/0.4364));
+//    // rescale value (vertical) axis to fit the current data:
+////    customPlot->graph(0)->rescaleValueAxis();
+////    customPlot->graph(1)->rescaleValueAxis(true);
+//    lastPointKey = key;
 
-    // make key axis range scroll with the data (at a constant range size of 8):
-    customPlot->xAxis->setRange(key, 120, Qt::AlignRight);
-    customPlot->replot();
+//    // make key axis range scroll with the data (at a constant range size of 8):
+//    customPlot->xAxis->setRange(key, 120, Qt::AlignRight);
+//    customPlot->replot();
   }
 
 }
@@ -657,6 +658,8 @@ void EngineMonitor::connectSignals() {
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
 
     connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
+
+    connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
 }
 
 void EngineMonitor::setupHourMeter() {
@@ -694,7 +697,11 @@ void EngineMonitor::setEngineConds() {
 
 void EngineMonitor::onSwitchScene(int scene) {
     switch (scene) {
-        case 1: // Settings
+        case 1: // EMS
+            this->setScene(&ems_full);
+            break;
+
+        case 2: // Settings
             this->setScene(&settings_scene);
             break;
     }
@@ -706,4 +713,8 @@ void EngineMonitor::onSwitchScene(int scene) {
     qDebug() << "Is EMS Scene Active?: " + QString::number(ems_full.isActive());
     qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());
 
+}
+
+void EngineMonitor::onZeroCurrent() {
+    emit zeroCurrent();
 }

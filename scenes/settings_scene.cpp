@@ -5,11 +5,13 @@ settingsScene::settingsScene(QObject* parent) :
 {
     addItem(&userSet);
 
+    connect(&userSet, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
+
 }
 
 QRectF settingsScene::boundingRect() const
 {
-    return QRectF(-400,-240,800,480);
+    return QRectF(0,0,800,480);
 }
 
 void settingsScene::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)

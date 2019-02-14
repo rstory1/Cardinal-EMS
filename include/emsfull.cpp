@@ -2,8 +2,8 @@
 
 emsFull::emsFull(QObject *parent)
     :  QGraphicsScene(parent)
-    , gaugeSettings("settings/gaugeSettings.ini", QSettings::IniFormat, parent)
-    , settings("settings/settings.ini", QSettings::IniFormat, parent)
+    , gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+    , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
     //Setting up the items to be displayed
     setupRpmIndicator();

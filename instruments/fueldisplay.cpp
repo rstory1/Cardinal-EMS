@@ -22,7 +22,7 @@
 
 FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     : QGraphicsObject(parent)
-    , settings("./settings/settings.ini", QSettings::IniFormat)
+    , settings("/ems/settings/settings.ini", QSettings::IniFormat)
     , fuelAmount(0.0)
     , fuelFlow(-1.0)
     , timeToDestination(-1.0)
