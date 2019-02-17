@@ -215,11 +215,11 @@ void settingsScene::onFinishChange() {
     keyColon.setVisible(false);
     keySlash.setVisible(false);
 
-    QString dateTimeStr = "\"" + QDate::currentDate().toString("MM/dd/yyyy") + " " + timeText + "\"";
+    QString dateTimeStr = "\"" + QDate::currentDate().toString("dd MMM yyyy") + " " + timeText + "\"";
 
     qDebug() << dateTimeStr;
-    QString execCommand = "hwclock --set --date " + dateTimeStr;
-    QString execCommand2 = "hwclock -s";
+    QString execCommand = "date -s " + dateTimeStr;
+    QString execCommand2 = "hwclock -w";
 
     qDebug() << execCommand;
     QProcess hwClock;
@@ -231,15 +231,13 @@ void settingsScene::onFinishChange() {
     cmdLog.append(stdout);
     cmdLog.append(stderr);
 
-    hwClock.start("hwclock --debug");
+    hwClock.start(execCommand2);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
     stdout = hwClock.readAllStandardOutput();
     stderr = hwClock.readAllStandardError();
     cmdLog.append(stdout);
     cmdLog.append(stderr);
-    //QProcess::execute(execCommand);
-    QProcess::execute(execCommand2);
 }
 
 void settingsScene::addColons() {
