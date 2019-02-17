@@ -7,7 +7,7 @@ settingsScene::settingsScene(QObject* parent) :
 
     setupNumPad();
 
-    setBackgroundBrush(Qt::black);
+    //setBackgroundBrush(Qt::black);
 
     label.setFrameStyle(QFrame::Panel | QFrame::Sunken);
     label.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
@@ -43,6 +43,9 @@ settingsScene::settingsScene(QObject* parent) :
     connect(&key9, SIGNAL(clicked(bool)), this, SLOT(on9Pressed()));
     connect(&key0, SIGNAL(clicked(bool)), this, SLOT(on0Pressed()));
 
+    cmdLog.setFixedSize(300,350);
+    cmdLog.setGeometry(10,40,300,350);
+    addWidget(&cmdLog);
 }
 
 QRectF settingsScene::boundingRect() const
@@ -219,7 +222,23 @@ void settingsScene::onFinishChange() {
     QString execCommand2 = "hwclock -s";
 
     qDebug() << execCommand;
-    QProcess::execute(execCommand);
+    QProcess hwClock;
+    hwClock.start(execCommand);
+    hwClock.waitForFinished(-1); // will wait forever until finished
+
+    QString stdout = hwClock.readAllStandardOutput();
+    QString stderr = hwClock.readAllStandardError();
+    cmdLog.append(stdout);
+    cmdLog.append(stderr);
+
+    hwClock.start("hwclock --debug");
+    hwClock.waitForFinished(-1); // will wait forever until finished
+
+    stdout = hwClock.readAllStandardOutput();
+    stderr = hwClock.readAllStandardError();
+    cmdLog.append(stdout);
+    cmdLog.append(stderr);
+    //QProcess::execute(execCommand);
     QProcess::execute(execCommand2);
 }
 

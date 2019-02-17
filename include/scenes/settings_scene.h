@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include "QDateTimeEdit"
 #include "QProcess"
+#include "QTextEdit"
 
 #include <userSettings.h>
 
@@ -44,6 +45,8 @@ private:
 
     QPushButton setDate;
     QPushButton setTime;
+
+    QTextEdit cmdLog;
 
     void addColons();
 
