@@ -215,11 +215,11 @@ void settingsScene::onFinishChange() {
     keyColon.setVisible(false);
     keySlash.setVisible(false);
 
-    QString dateTimeStr = /*"\"" + QDate::currentDate().toString("dd MMM yyyy") + " " + */timeText/* + "\""*/;
+    QString dateStr = QDate::currentDate().toString("yyyyMMdd");
 
-    qDebug() << dateTimeStr;
-    QString execCommand = "date +%T -s " + dateTimeStr;
-    QString execCommand2 = "hwclock -w";
+    QString execCommand = "date +%T -s " + timeText;
+    QString execCommand2 = "date +%Y%m%d -s " + dateStr;
+    QString execCommand3 = "hwclock -w";
 
     qDebug() << execCommand;
     QProcess hwClock;
@@ -231,13 +231,22 @@ void settingsScene::onFinishChange() {
     cmdLog.append(stdout);
     cmdLog.append(stderr);
 
-    hwClock.start("hwclock --debug");
+    hwClock.start(execCommand2);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
     stdout = hwClock.readAllStandardOutput();
     stderr = hwClock.readAllStandardError();
     cmdLog.append(stdout);
     cmdLog.append(stderr);
+
+    hwClock.start(execCommand3);
+    hwClock.waitForFinished(-1); // will wait forever until finished
+
+    stdout = hwClock.readAllStandardOutput();
+    stderr = hwClock.readAllStandardError();
+    cmdLog.append(stdout);
+    cmdLog.append(stderr);
+
     //QProcess::execute(execCommand);
     QProcess::execute(execCommand2);
 }
