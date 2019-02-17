@@ -19,11 +19,13 @@ settingsScene::settingsScene(QObject* parent) :
     timer.start(1000);
 
     setTime.setText("Change Time");
-    setTime.setGeometry(110,10,100,20);
+    setTime.setFixedHeight(40);
+    setTime.setGeometry(110,10,100,40);
     addWidget(&setTime);
 
     setDate.setText("Change Date");
-    setDate.setGeometry(110,30,100,20);
+    setDate.setFixedHeight(40);
+    setDate.setGeometry(110,50,100,40);
     addWidget(&setDate);
 
     connect(&keyEnt, SIGNAL(clicked(bool)), this, SLOT(onFinishChange()));
@@ -210,11 +212,13 @@ void settingsScene::onFinishChange() {
     keyColon.setVisible(false);
     keySlash.setVisible(false);
 
-    QString dateTimeStr = QDate::currentDate().toString("MM/dd/yyyy") + " " + timeText;
+    QString dateTimeStr = "\"" + QDate::currentDate().toString("MM/dd/yyyy") + " " + timeText + "\"";
 
     qDebug() << dateTimeStr;
     QString execCommand = "hwclock --set --date " + dateTimeStr;
     QString execCommand2 = "hwclock -s";
+
+    qDebug() << execCommand;
     QProcess::execute(execCommand);
     QProcess::execute(execCommand2);
 }
