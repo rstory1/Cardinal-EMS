@@ -7,25 +7,34 @@ settingsScene::settingsScene(QObject* parent) :
 
     setupNumPad();
 
-    //setBackgroundBrush(Qt::black);
+    setBackgroundBrush(Qt::black);
 
-    label.setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    label.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-    label.setGeometry(10,10,100,20);
-    addWidget(&label);
+    timeLabel.setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+    timeLabel.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+    timeLabel.setFixedSize(120, 50);
+    timeLabel.setGeometry(10,65,120,50);
+    timeLabel.setStyleSheet("QLabel { background-color : black; color : white; }");
+    addWidget(&timeLabel);
+
+    dateLabel.setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    dateLabel.setFixedSize(120, 50);
+    dateLabel.setGeometry(10,10,120,50);
+    dateLabel.setStyleSheet("QLabel { background-color : black; color : white; }");
+    dateLabel.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+    addWidget(&dateLabel);
 
     connect(&userSet, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
-    connect(&timer, SIGNAL(timeout()), this, SLOT(showTime()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(showDateTime()));
     timer.start(1000);
 
     setTime.setText("Change Time");
-    setTime.setFixedHeight(40);
-    setTime.setGeometry(110,10,100,40);
+    setTime.setFixedSize(130,50);
+    setTime.setGeometry(130,65,120,50);
     addWidget(&setTime);
 
     setDate.setText("Change Date");
-    setDate.setFixedHeight(40);
-    setDate.setGeometry(110,50,100,40);
+    setDate.setFixedSize(130,50);
+    setDate.setGeometry(130,10,120,50);
     addWidget(&setDate);
 
     connect(&keyEnt, SIGNAL(clicked(bool)), this, SLOT(onFinishChange()));
@@ -43,9 +52,11 @@ settingsScene::settingsScene(QObject* parent) :
     connect(&key9, SIGNAL(clicked(bool)), this, SLOT(on9Pressed()));
     connect(&key0, SIGNAL(clicked(bool)), this, SLOT(on0Pressed()));
 
-    cmdLog.setFixedSize(300,350);
-    cmdLog.setGeometry(10,40,300,350);
-    addWidget(&cmdLog);
+    connect(&keyClr, SIGNAL(clicked(bool)), this, SLOT(onClrPressed()));
+
+//    cmdLog.setFixedSize(300,350);
+//    cmdLog.setGeometry(10,40,300,350);
+//    addWidget(&cmdLog);
 }
 
 QRectF settingsScene::boundingRect() const
@@ -64,14 +75,20 @@ void settingsScene::paint(QPainter *painter, const QStyleOptionGraphicsItem *, Q
 
 }
 
-void settingsScene::showTime() {
+void settingsScene::showDateTime() {
     time = QTime::currentTime();
 
-    if(!keyColon.isVisible()) {
+    if (editType == 0) {
         timeText = time.toString("hh:mm:ss");
+        dateText = QDate::currentDate().toString("MM/dd/yyyy");
+    } else if(editType == 1) {
+        timeText = time.toString("hh:mm:ss");
+    } else if (editType == 2) {
+        dateText = QDate::currentDate().toString("MM/dd/yyyy");
     }
 
-    label.setText(timeText);
+    dateLabel.setText(dateText);
+    timeLabel.setText(timeText);
 }
 
 void settingsScene::setupNumPad() {
@@ -88,14 +105,12 @@ void settingsScene::setupNumPad() {
     keyClr.setText("Clr");
     key0.setText("0");
     keyEnt.setText("Ent");
-    keyColon.setText(":");
-    keySlash.setText("/");
 
-    int hwSize = 50;
+    int hwSize = 65;
     int hwSize2 = hwSize + hwSize;
     int hwSize3 = hwSize2 + hwSize;
-    int initX = 220;
-    int initY = 20;
+    int initX = 275;
+    int initY = 10;
 
     key1.setFixedSize(hwSize,hwSize);
     key2.setFixedSize(hwSize,hwSize);
@@ -109,8 +124,6 @@ void settingsScene::setupNumPad() {
     keyClr.setFixedSize(hwSize,hwSize);
     key0.setFixedSize(hwSize,hwSize);
     keyEnt.setFixedSize(hwSize,hwSize);
-    keyColon.setFixedSize(hwSize,hwSize3);
-    keySlash.setFixedSize(hwSize,hwSize3);
 
     key1.setGeometry(initX, initY, hwSize, hwSize);
     key2.setGeometry(initX+hwSize, initY, hwSize, hwSize);
@@ -128,9 +141,6 @@ void settingsScene::setupNumPad() {
     key0.setGeometry(initX+hwSize, initY+hwSize3, hwSize, hwSize);
     keyEnt.setGeometry(initX+hwSize2, initY+hwSize3, hwSize, hwSize);
 
-    keyColon.setGeometry(initX+hwSize3, initY, hwSize, hwSize3);
-    keySlash.setGeometry(initX+hwSize3, initY, hwSize, hwSize3);
-
     key1.setVisible(false);
     key2.setVisible(false);
     key3.setVisible(false);
@@ -143,8 +153,6 @@ void settingsScene::setupNumPad() {
     keyClr.setVisible(false);
     key0.setVisible(false);
     keyEnt.setVisible(false);
-    keyColon.setVisible(false);
-    keySlash.setVisible(false);
 
     addWidget(&key1);
     addWidget(&key2);
@@ -158,8 +166,6 @@ void settingsScene::setupNumPad() {
     addWidget(&keyClr);
     addWidget(&key0);
     addWidget(&keyEnt);
-    addWidget(&keyColon);
-    addWidget(&keySlash);
 
 }
 
@@ -176,9 +182,8 @@ void settingsScene::onChangeTime() {
     keyClr.setVisible(true);
     key0.setVisible(true);
     keyEnt.setVisible(true);
-    keyColon.setVisible(true);
-    keySlash.setVisible(false);
 
+    editType = 2;
     timeText.clear();
 }
 
@@ -195,8 +200,9 @@ void settingsScene::onChangeDate() {
     keyClr.setVisible(true);
     key0.setVisible(true);
     keyEnt.setVisible(true);
-    keyColon.setVisible(false);
-    keySlash.setVisible(true);
+
+    editType = 1;
+    dateText.clear();
 }
 
 void settingsScene::onFinishChange() {
@@ -212,10 +218,10 @@ void settingsScene::onFinishChange() {
     keyClr.setVisible(false);
     key0.setVisible(false);
     keyEnt.setVisible(false);
-    keyColon.setVisible(false);
-    keySlash.setVisible(false);
 
     QString dateStr = QDate::currentDate().toString("yyyyMMdd");
+
+    qDebug() << "Attempting to change time to " + dateStr + " " + timeText;
 
     QString execCommand = "date +%T -s " + timeText;
     QString execCommand2 = "date +%Y%m%d -s " + dateStr;
@@ -228,87 +234,150 @@ void settingsScene::onFinishChange() {
 
     QString stdout = hwClock.readAllStandardOutput();
     QString stderr = hwClock.readAllStandardError();
-    cmdLog.append(stdout);
-    cmdLog.append(stderr);
+    qDebug() << stderr;
 
     hwClock.start(execCommand2);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
     stdout = hwClock.readAllStandardOutput();
     stderr = hwClock.readAllStandardError();
-    cmdLog.append(stdout);
-    cmdLog.append(stderr);
+    qDebug() << stderr;
 
     hwClock.start(execCommand3);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
     stdout = hwClock.readAllStandardOutput();
     stderr = hwClock.readAllStandardError();
-    cmdLog.append(stdout);
-    cmdLog.append(stderr);
+    qDebug() << stderr;
 
-    //QProcess::execute(execCommand);
-    QProcess::execute(execCommand2);
+    editType = 0;
 }
 
-void settingsScene::addColons() {
-    int timeLength = timeText.length();
+void settingsScene::addSlashesOrColons() {
+    if (editType == 1) {
+        int dateLength = dateText.length();
 
-    if (timeLength==2 || timeLength == 5) {
-        timeText.append(":");
-    } else if (timeLength == 8) {
-        timeText.clear();
+        if (dateLength==2 || dateLength == 5) {
+            dateText.append("/");
+        } else if (dateLength == 10) {
+            dateText.clear();
+        }
+    } else if (editType == 2) {
+        int timeLength = timeText.length();
+
+        if (timeLength==2 || timeLength == 5) {
+            timeText.append(":");
+        } else if (timeLength == 8) {
+            timeText.clear();
+        }
     }
+
 }
 
 void settingsScene::on1Pressed() {
-    addColons();
+    addSlashesOrColons();
 
-    timeText.append("1");
+    if (editType == 1) {
+        dateText.append("1");
+    } else {
+        timeText.append("1");
+    }
+
 }
 
 void settingsScene::on2Pressed() {
-    addColons();
-    timeText.append("2");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("2");
+    } else {
+        timeText.append("2");
+    }
 }
 
 void settingsScene::on3Pressed() {
-    addColons();
+    addSlashesOrColons();
 
-    timeText.append("3");
+    if (editType == 1) {
+        dateText.append("3");
+    } else {
+        timeText.append("3");
+    }
 }
 
 void settingsScene::on4Pressed() {
-    addColons();
-    timeText.append("4");
+    addSlashesOrColons();
+    if (editType == 1) {
+        dateText.append("4");
+    } else {
+        timeText.append("4");
+    }
 }
 
 void settingsScene::on5Pressed() {
-    addColons();
-    timeText.append("5");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("5");
+    } else {
+        timeText.append("5");
+    }
 }
 
 void settingsScene::on6Pressed() {
-    addColons();
-    timeText.append("6");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("6");
+    } else {
+        timeText.append("6");
+    }
 }
 
 void settingsScene::on7Pressed() {
-    addColons();
-    timeText.append("7");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("7");
+    } else {
+        timeText.append("7");
+    }
 }
 
 void settingsScene::on8Pressed() {
-    addColons();
-    timeText.append("8");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("8");
+    } else {
+        timeText.append("8");
+    }
 }
 
 void settingsScene::on9Pressed() {
-    addColons();
-    timeText.append("9");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("9");
+    } else {
+        timeText.append("9");
+    }
 }
 
 void settingsScene::on0Pressed() {
-    addColons();
-    timeText.append("0");
+    addSlashesOrColons();
+
+    if (editType == 1) {
+        dateText.append("0");
+    } else {
+        timeText.append("0");
+    }
+}
+
+void settingsScene::onClrPressed() {
+    if (editType == 1) {
+        dateText.clear();
+    } else {
+        timeText.clear();
+    }
 }

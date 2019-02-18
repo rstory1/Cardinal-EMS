@@ -86,7 +86,7 @@ private:
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
     FuelDisplay fuelDisplay;
-	ManifoldPressure manifoldPressure;
+    TextBox manifoldPressure;
 	QFile *logFile;
     QSettings settings;
     QSettings gaugeSettings;

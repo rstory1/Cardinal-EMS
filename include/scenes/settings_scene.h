@@ -19,9 +19,11 @@ public:
 
 private:
     userSettings userSet;
-    QLabel label;
+    QLabel timeLabel;
+    QLabel dateLabel;
     QTime time;
     QString timeText;
+    QString dateText;
     QTimer timer;
     QDateTimeEdit dtEdit;
     void setupNumPad();
@@ -48,12 +50,14 @@ private:
 
     QTextEdit cmdLog;
 
-    void addColons();
+    void addSlashesOrColons();
+
+    int editType = 0; // 0 - Not Editing; 1 - Date; 2 - Time
 
 
 private slots:
     void onZeroCurrent() { emit zeroCurrent();}
-    void showTime();
+    void showDateTime();
     void onFinishChange();
     void onChangeTime();
     void onChangeDate();
@@ -67,6 +71,7 @@ private slots:
     void on8Pressed();
     void on9Pressed();
     void on0Pressed();
+    void onClrPressed();
 
 signals:
     void zeroCurrent();
