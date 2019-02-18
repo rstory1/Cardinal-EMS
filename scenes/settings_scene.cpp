@@ -223,8 +223,8 @@ void settingsScene::onFinishChange() {
 
     qDebug() << "Attempting to change time to " + dateStr + " " + timeText;
 
-    QString execCommand = "date +%T -s " + timeText;
-    QString execCommand2 = "date +%Y%m%d -s " + dateStr;
+    QString execCommand = "date +%T -s \"" + timeText + "\"";
+    QString execCommand2 = "date +%Y%m%d -s \"" + dateStr + "\"";
     QString execCommand3 = "hwclock -w";
 
     qDebug() << execCommand;
