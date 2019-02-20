@@ -222,7 +222,7 @@ void settingsScene::onFinishChange() {
     if (editType==1) {
         QDate dateToSet = QDate::fromString(dateLabel.text(), "MM/dd/yyyy");
         //qDebug() << "Attempting to change date to " + dateLabel.text();
-        execCommand = "date -s \"" + dateToSet.toString("yyyy-MM-dd") + "$(date +%H:%M:%S)\"" ;
+        execCommand = "date -s \"" + dateToSet.toString("dd MMM yyyy") + " $(date +%H:%M:%S)\"" ;
         qDebug() << "Command to execute '" + execCommand + "'";
     } else {
         //qDebug() << "Attempting to change time to " + timeText;
