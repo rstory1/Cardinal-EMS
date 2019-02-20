@@ -222,7 +222,7 @@ void settingsScene::onFinishChange() {
     if (editType==1) {
         QDate dateToSet = QDate::fromString(dateLabel.text(), "MM/dd/yyyy");
         //qDebug() << "Attempting to change date to " + dateLabel.text();
-        execCommand = "date +%Y%m%d -s " + dateToSet.toString("yyyyMMdd") ;
+        execCommand = "date -s \"" + dateToSet.toString("yyyy-MM-dd") + "$(date +%H:%M:%S)\"" ;
         qDebug() << "Command to execute '" + execCommand + "'";
     } else {
         //qDebug() << "Attempting to change time to " + timeText;
@@ -235,8 +235,8 @@ void settingsScene::onFinishChange() {
 
     QString stdout = hwClock.readAllStandardOutput();
     QString stderr = hwClock.readAllStandardError();
-    qDebug() << stdout;
-    qDebug() << stderr;
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
 
     execCommand = "hwclock -w";
 
@@ -245,8 +245,8 @@ void settingsScene::onFinishChange() {
 
     stdout = hwClock.readAllStandardOutput();
     stderr = hwClock.readAllStandardError();
-    qDebug() << stdout;
-    qDebug() << stderr;
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
 
     editType = 0;
 }
