@@ -219,35 +219,33 @@ void settingsScene::onFinishChange() {
     key0.setVisible(false);
     keyEnt.setVisible(false);
 
-    QString dateStr = QDate::currentDate().toString("yyyyMMdd");
+    if (editType==1) {
+        QDate dateToSet = QDate::fromString(dateLabel.text(), "MM/dd/yyyy");
+        //qDebug() << "Attempting to change date to " + dateLabel.text();
+        execCommand = "date +%Y%m%d -s " + dateToSet.toString("yyyyMMdd") ;
+        qDebug() << "Command to execute '" + execCommand + "'";
+    } else {
+        //qDebug() << "Attempting to change time to " + timeText;
+        execCommand = "date +%T -s " + timeLabel.text();
+        qDebug() << "Command to execute '" + execCommand + "'";
+    }
 
-    qDebug() << "Attempting to change time to " + dateStr + " " + timeText;
-
-    QString execCommand = "date +%T -s \"" + timeText + "\"";
-    QString execCommand2 = "date +%Y%m%d -s \"" + dateStr + "\"";
-    QString execCommand3 = "hwclock -w";
-
-    qDebug() << execCommand;
-    QProcess hwClock;
     hwClock.start(execCommand);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
     QString stdout = hwClock.readAllStandardOutput();
     QString stderr = hwClock.readAllStandardError();
+    qDebug() << stdout;
     qDebug() << stderr;
 
-    hwClock.start(execCommand2);
+    execCommand = "hwclock -w";
+
+    hwClock.start(execCommand);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
     stdout = hwClock.readAllStandardOutput();
     stderr = hwClock.readAllStandardError();
-    qDebug() << stderr;
-
-    hwClock.start(execCommand3);
-    hwClock.waitForFinished(-1); // will wait forever until finished
-
-    stdout = hwClock.readAllStandardOutput();
-    stderr = hwClock.readAllStandardError();
+    qDebug() << stdout;
     qDebug() << stderr;
 
     editType = 0;

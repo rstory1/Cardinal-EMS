@@ -50,6 +50,9 @@ private:
 
     QTextEdit cmdLog;
 
+    QProcess hwClock;
+    QString execCommand;
+
     void addSlashesOrColons();
 
     int editType = 0; // 0 - Not Editing; 1 - Date; 2 - Time
