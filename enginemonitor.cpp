@@ -37,7 +37,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setupRpmIndicator();
     setupBarGraphs();
     setupTimeToDestinationItem();
-    //setupManifoldPressure();
+    setupManifoldPressure();
     setupAlarm();
     setupChtEgt();
     //setupFuelManagement();
@@ -350,15 +350,8 @@ void EngineMonitor::setupFuelManagement()
 
 void EngineMonitor::setupManifoldPressure()
 {
-    manifoldPressure.setPos(-585, -100);
-    manifoldPressure.setStartSpan(240.0, 240.0);
-    manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
-    manifoldPressure.addBetweenValue(10.0);
-    manifoldPressure.addBetweenValue(15.0);
-    manifoldPressure.addBetweenValue(20.0);
-    manifoldPressure.addBetweenValue(25.0);
-    manifoldPressure.addBetweenValue(30.0);
-    graphicsScene.addItem(&manifoldPressure);
+    manifoldPressure.setPos(500, 350);
+    //graphicsScene.addItem(&manifoldPressure);
 }
 
 void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
@@ -399,6 +392,7 @@ void EngineMonitor::demoFunction()
     rpm += 5.0;
 
     rpmIndicator.setValue(rpm);
+    manifoldPressure.setValue(10);
 
     static double basicEGT = 750.0;
     static bool egtUp = true;

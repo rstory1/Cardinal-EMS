@@ -31,6 +31,9 @@
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     qInfo() << "Inside messageToFileHandler";
+    QDir dir("/ems/appLogs");
+    if (!dir.exists())
+        dir.mkpath(".");
     QFile debugfile("/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
@@ -84,6 +87,9 @@ int main(int argc, char *argv[])
     qInfo() << "Before app log starts";
 
 #ifdef QT_NO_DEBUG
+    QDir dir("/ems/appLogs");
+    if (!dir.exists())
+        dir.mkpath(".");
     QFile debugfile("/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
