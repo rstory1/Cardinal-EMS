@@ -82,7 +82,7 @@ RDACmessage4::RDACmessage4()
 }
 
 RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
-  , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
+  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
     serial = new QSerialPort(this);
 

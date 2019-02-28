@@ -23,10 +23,10 @@
 #include "enginemonitor.h"
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
-  , settings("/ems/settings/settings.ini", QSettings::IniFormat, parent)
-  , gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
+  , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
-
+    qDebug() << "HEY! " + QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini";
 	//Initializing the window behaviour and it's scene
     setWindowFlags(Qt::FramelessWindowHint);
     setScene(&ems_full);
@@ -144,10 +144,10 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    QDir dir("/ems/engineLogs");
+    QDir dir(QApplication::applicationDirPath() + "/ems/engineLogs");
     if (!dir.exists())
         dir.mkpath(".");
-    logFile = new QFile(QString("/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
+    logFile = new QFile(QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
 	if(logFile->open(QIODevice::WriteOnly))
 	{
 		QTimer *writeLogFileTimer = new QTimer(this);
@@ -157,7 +157,7 @@ void EngineMonitor::setupLogFile()
 	}
 	else
 	{
-
+        qDebug() << QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ");
 		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
 	}
 
