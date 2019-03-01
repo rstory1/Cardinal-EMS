@@ -466,6 +466,42 @@ void settingsScene::setupSlider() {
     qDebug() << "stdout: " + stdout;
     qDebug() << "stderr: " + stderr;
     qDebug() << "******************END******************";
+
+    execCommand = "cat /sys/class/backlight/backlight/actual_brightness";
+
+    backlightProc.start(execCommand);
+    backlightProc.waitForFinished(-1); // will wait forever until finished
+
+    stdout = backlightProc.readAllStandardOutput();
+    stderr = backlightProc.readAllStandardError();
+    qDebug() << "******************START******************";
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
+    qDebug() << "******************END******************";
+
+    execCommand = "cat /sys/class/backlight/backlight/device";
+
+    backlightProc.start(execCommand);
+    backlightProc.waitForFinished(-1); // will wait forever until finished
+
+    stdout = backlightProc.readAllStandardOutput();
+    stderr = backlightProc.readAllStandardError();
+    qDebug() << "******************START******************";
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
+    qDebug() << "******************END******************";
+
+    execCommand = "ls /sys/class/backlight/backlight/device";
+
+    backlightProc.start(execCommand);
+    backlightProc.waitForFinished(-1); // will wait forever until finished
+
+    stdout = backlightProc.readAllStandardOutput();
+    stderr = backlightProc.readAllStandardError();
+    qDebug() << "******************START******************";
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
+    qDebug() << "******************END******************";
 }
 
 void settingsScene::onBacklightChange(int sliderValue) {
@@ -481,5 +517,17 @@ void settingsScene::onBacklightChange(int sliderValue) {
     stderr = backlightProc.readAllStandardError();
     qDebug() << "stdout: " + stdout;
     qDebug() << "stderr: " + stderr;
+
+    execCommand = "cat /sys/class/backlight/backlight/brightness";
+
+    backlightProc.start(execCommand);
+    backlightProc.waitForFinished(-1); // will wait forever until finished
+
+    stdout = backlightProc.readAllStandardOutput();
+    stderr = backlightProc.readAllStandardError();
+    qDebug() << "******************START******************";
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
+    qDebug() << "******************END******************";
 
 }
