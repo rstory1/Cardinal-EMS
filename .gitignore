@@ -2,3 +2,5 @@
 *.autosave
 
 Cardinal-EMS-release/
+
+*.user
