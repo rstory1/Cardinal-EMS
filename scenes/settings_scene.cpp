@@ -418,19 +418,32 @@ void settingsScene::setupSlider() {
 
     addWidget(&backlightSlider);
     addWidget(&backlightValue);
-}
 
-void settingsScene::onBacklightChange(int sliderValue) {
-    qDebug() << sliderValue;
-    backlightValue.setText(QString::number(sliderValue));
-
-    execCommand = "echo " + QString::number(sliderValue) + "> /sys/class/backlight/backlight/brightness";
+    execCommand = "ls /sys/class/backlight";
 
     backlightProc.start(execCommand);
     backlightProc.waitForFinished(-1); // will wait forever until finished
 
     stdout = backlightProc.readAllStandardOutput();
     stderr = backlightProc.readAllStandardError();
+    qDebug() << "******************START******************";
     qDebug() << "stdout: " + stdout;
     qDebug() << "stderr: " + stderr;
+    qDebug() << "******************END******************";
+}
+
+void settingsScene::onBacklightChange(int sliderValue) {
+    backlightValue.setText(QString::number(sliderValue));
+
+    execCommand = "echo " + QString::number(sliderValue) + " > /sys/class/backlight/backlight/brightness";
+
+    backlightProc.start(execCommand);
+    backlightProc.waitForFinished(-1); // will wait forever until finished
+
+
+    stdout = backlightProc.readAllStandardOutput();
+    stderr = backlightProc.readAllStandardError();
+    qDebug() << "stdout: " + stdout;
+    qDebug() << "stderr: " + stderr;
+
 }
