@@ -37,8 +37,7 @@
 #include <instruments/windvector.h>
 #include <instruments/hourmeter.h>
 #include <scenes/settings_scene.h>
-#include <scenes/emsscene.h>
-#include <emsfull.h>
+#include <scenes/emsfull.h>
 
 #include <QMessageBox>
 
@@ -86,7 +85,7 @@ private:
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
     FuelDisplay fuelDisplay;
-    TextBox manifoldPressure;
+    ManifoldPressure manifoldPressure;
 	QFile *logFile;
     QSettings settings;
     QSettings gaugeSettings;
@@ -108,7 +107,6 @@ private:
     int timeOilTBelowWarmup=0;
 
     settingsScene settings_scene;
-    emsScene ems_scene;
     emsFull ems_full;
 
     QString currentScene = "";

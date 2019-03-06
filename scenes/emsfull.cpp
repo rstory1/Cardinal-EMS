@@ -1,4 +1,4 @@
-#include "emsfull.h"
+#include "scenes/emsfull.h"
 
 emsFull::emsFull(QObject *parent)
     :  QGraphicsScene(parent)
@@ -8,15 +8,22 @@ emsFull::emsFull(QObject *parent)
     //Setting up the items to be displayed
     setupRpmIndicator();
     setupBarGraphs();
-    //setupManifoldPressure();
+    setupManifoldPressure();
     setupChtEgt();
     //setupFuelManagement();
     //setupWindVector();
-    //setupHourMeter();
+    setupHourMeter();
 
     setSceneRect(0,0,800,480);
 
     setBackgroundBrush(Qt::black);
+
+    connectSignals();
+
+    // Initialize the timer to flash values on alarm
+    flashTimer.start(1000);
+
+    clockTimer.start(1000);
 
 }
 
@@ -61,40 +68,6 @@ void emsFull::setupRpmIndicator()
     }
     this->addItem(&rpmIndicator);
 }
-
-//void emsFull::setupExhaustGasTemperature()
-//{
-//	exhaustGasTemperature.setPos(-475, 175);
-//	exhaustGasTemperature.setBorders(300.0, 850.0, 750.0, 800.0);
-//	exhaustGasTemperature.addBetweenValue(450);
-//	exhaustGasTemperature.addBetweenValue(550);
-//	exhaustGasTemperature.addBetweenValue(650);
-//	exhaustGasTemperature.addBetweenValue(750);
-//	exhaustGasTemperature.addBetweenValue(800);
-//	exhaustGasTemperature.addBetweenValue(850);
-//	exhaustGasTemperature.setLeanWindow(200.0);
-//    graphicsScene.addItem(&exhaustGasTemperature);
-//}
-
-//void emsFull::setupCylinderHeadTemperature()
-//{
-//	cylinderHeadTemperature.setPos(-200, 175);
-//	cylinderHeadTemperature.setBorders(60.0, 160.0, 140.0, 150.0);
-//	cylinderHeadTemperature.addBetweenValue(80);
-//	cylinderHeadTemperature.addBetweenValue(100);
-//	cylinderHeadTemperature.addBetweenValue(120);
-//	cylinderHeadTemperature.addBetweenValue(140);
-//	cylinderHeadTemperature.addBetweenValue(150);
-//	cylinderHeadTemperature.addBetweenValue(160);
-//	graphicsScene.addItem(&cylinderHeadTemperature);
-
-//    chtEgt.addBetweenValue(80);
-//    chtEgt.addBetweenValue(100);
-//    chtEgt.addBetweenValue(120);
-//    chtEgt.addBetweenValue(140);
-//    chtEgt.addBetweenValue(150);
-//    chtEgt.addBetweenValue(160);
-//}
 
 void emsFull::setupChtEgt()
 {
@@ -171,7 +144,7 @@ void emsFull::setupFuelManagement()
 
 void emsFull::setupManifoldPressure()
 {
-    manifoldPressure.setPos(-585, -100);
+    manifoldPressure.setPos(150, 150);
     manifoldPressure.setStartSpan(240.0, 240.0);
     manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
     manifoldPressure.addBetweenValue(10.0);
@@ -196,17 +169,17 @@ void emsFull::setupWindVector() {
     windVector.setVisible(true);
 }
 
-//void emsFull::connectSignals() {
+void emsFull::connectSignals() {
 
-//    qDebug()<<"Connecting flashing alarm signals";
-//    // Connect signals for alarm flashing
-//    connect(&flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
-//    connect(&flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
-//    connect(&flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
-//    connect(&flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
-//    connect(&flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
-//    connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
-//    connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
+    qDebug()<<"Connecting flashing alarm signals";
+    // Connect signals for alarm flashing
+    //connect(&flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
 
 //    qDebug()<<"Connecting RPM signals";
 //    //  Connect signal for alarm from rpm indicator
@@ -251,12 +224,11 @@ void emsFull::setupWindVector() {
 //    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
 //    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &rpmIndicator, SLOT(onAlarmAck()));
 
-//    qDebug()<<"Connecting hobb/flight time Signals";
-//    // Connect a timer for handling hobbs/flight time
-//    connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
-
-//    connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
-//}
+    qDebug()<<"Connecting hobb/flight time Signals";
+    // Connect a timer for handling hobbs/flight time
+    connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
+    connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
+}
 
 void emsFull::setupHourMeter() {
     hobbs.setPos(250, 360);
@@ -264,29 +236,22 @@ void emsFull::setupHourMeter() {
     hobbs.setVisible(true);
 }
 
-//void emsFull::setupuserSettings()
-//{
-//    uSettings.setPos(400,240);
-//    graphicsScene.addItem(&uSettings);
-//    uSettings.setVisible(false);
-//}
+void emsFull::setEngineConds() {
+    if (oilPressure.getValue() > 10.0) {
+        hobbs.setEngineOn(true);
+    } else {
+        hobbs.setEngineOn(false);
+    }
 
-//void emsFull::setEngineConds() {
-//    if (oilPressure.getValue() > 10.0) {
-//        hobbs.setEngineOn(true);
-//    } else {
-//        hobbs.setEngineOn(false);
-//    }
-
-//    if (oilTemperature.getValue() < warmupTemp) {
-//        timeOilTBelowWarmup += 1;
-//        if (timeOilTAboveWarmup < 5 * 60) {
-//            timeOilTAboveWarmup = 0;
-//            rpmIndicator.isWarmup = true;
-//        }
-//    } else {
-//        timeOilTAboveWarmup += 1;
-//        timeOilTBelowWarmup = 0;
-//        rpmIndicator.isWarmup = false;
-//    }
-//}
+    if (oilTemperature.getValue() < warmupTemp) {
+        timeOilTBelowWarmup += 1;
+        if (timeOilTAboveWarmup < 5 * 60) {
+            timeOilTAboveWarmup = 0;
+            rpmIndicator.isWarmup = true;
+        }
+    } else {
+        timeOilTAboveWarmup += 1;
+        timeOilTBelowWarmup = 0;
+        rpmIndicator.isWarmup = false;
+    }
+}

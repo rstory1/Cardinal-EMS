@@ -66,8 +66,7 @@ SOURCES += main.cpp\
     utilities/gaugesettings.cpp \
     utilities/userSettings.cpp \
     scenes/settings_scene.cpp \
-    scenes/emsscene.cpp \
-    include/emsfull.cpp \
+    scenes/emsfull.cpp \
     utilities/instrumentsettings.cpp
     instruments/diagnosticwidget.cpp
 
@@ -95,8 +94,7 @@ HEADERS  += include/enginemonitor.h \
     include/gaugesettings.h \
     include/userSettings.h \
     include/scenes/settings_scene.h \
-    include/scenes/emsscene.h \
-    include/emsfull.h \
+    include/scenes/emsfull.h \
     include/instrumentsettings.h
     include/diagnosticwidget.h
 

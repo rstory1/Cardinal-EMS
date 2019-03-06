@@ -44,6 +44,10 @@ private:
     QSettings gaugeSettings;
     QSettings settings;
 
+    int timeOilTAboveWarmup=0;
+    int timeOilTBelowWarmup=0;
+    int warmupTemp=0;
+
     void setupRpmIndicator();
     void setupBarGraphs();
     void setupExhaustGasTemperature();
@@ -54,7 +58,13 @@ private:
     void setupWindVector();
     void setupHourMeter();
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
+    void connectSignals();
 
+    QTimer flashTimer;
+    QTimer clockTimer;
+
+    public slots:
+        void setEngineConds();
 };
 
 #endif // EMSFULL_H

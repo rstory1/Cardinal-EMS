@@ -141,8 +141,9 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr);
+    convertMAP(map);
 
-    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, egt3, egt4, cht[0], cht[1], cht[2], cht[3], oat, intTemp);
+    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
@@ -159,3 +160,6 @@ void SensorConvert::onZeroCurrent() {
     gaugeSettings.setValue("Amps/zeroVal", currentAdc);
 }
 
+void SensorConvert::convertMAP(qreal adc) {
+    manP = 5.7993 * (adc / (4095/5)) + 1.1599;
+}

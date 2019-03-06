@@ -26,7 +26,6 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
   , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
-    qDebug() << "HEY! " + QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini";
 	//Initializing the window behaviour and it's scene
     setWindowFlags(Qt::FramelessWindowHint);
     setScene(&ems_full);
@@ -34,16 +33,16 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	//Setting up the items to be displayed
-    setupRpmIndicator();
-    setupBarGraphs();
-    setupTimeToDestinationItem();
-    setupManifoldPressure();
-    setupAlarm();
-    setupChtEgt();
+//    setupRpmIndicator();
+//    setupBarGraphs();
+//    setupTimeToDestinationItem();
+//    setupManifoldPressure();
+//    setupAlarm();
+//    setupChtEgt();
     //setupFuelManagement();
-    setupStatusItem();
+//    setupStatusItem();
     //setupWindVector();
-    setupHourMeter();
+//    setupHourMeter();
     setupuserSettings();
 
     this->mapToScene(this->rect());
@@ -350,8 +349,11 @@ void EngineMonitor::setupFuelManagement()
 
 void EngineMonitor::setupManifoldPressure()
 {
-    manifoldPressure.setPos(500, 350);
-    //graphicsScene.addItem(&manifoldPressure);
+    manifoldPressure.setPos(100, 200);
+    manifoldPressure.setStartSpan(230.0, 240.0);
+    rpmIndicator.setBorders(0.0, 35.0);
+    graphicsScene.addItem(&manifoldPressure);
+    manifoldPressure.setVisible(true);
 }
 
 void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)

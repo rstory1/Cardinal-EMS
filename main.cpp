@@ -32,7 +32,7 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
 {
     qInfo() << "Inside messageToFileHandler";
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
-    qDebug() << dir.path();
+    //qDebug() << dir.path();
     if (!dir.exists())
         dir.mkpath(".");
     QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon.log");
