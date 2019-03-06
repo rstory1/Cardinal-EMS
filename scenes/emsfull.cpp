@@ -77,20 +77,20 @@ void emsFull::setupChtEgt()
 
 void emsFull::setupBarGraphs()
 {
-    oilTemperature.setPos(620, 60);
+    oilTemperature.setPos(620, 65);
     oilTemperature.setTitle("OIL T");
     oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     oilTemperature.setIndicatorSide("left");
     oilTemperature.setGaugeType("OilTemp");
     this->addItem(&oilTemperature);
 
-    oilPressure.setPos(690, 60);
+    oilPressure.setPos(690, 65);
     oilPressure.setTitle("OIL P");
     oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
     oilPressure.setGaugeType("OilPress");
     this->addItem(&oilPressure);
 
-    voltMeter.setPos(760, 60);
+    voltMeter.setPos(760, 65);
     voltMeter.setTitle("VOLTS");
     voltMeter.setUnit("V");
     voltMeter.setPrecision(1, 1);
@@ -98,14 +98,14 @@ void emsFull::setupBarGraphs()
     voltMeter.setGaugeType("Volt");
     this->addItem(&voltMeter);
 
-    ampereMeter.setPos(690, 200);
+    ampereMeter.setPos(690, 205);
     ampereMeter.setTitle("AMPS");
     ampereMeter.setUnit("A");
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
     this->addItem(&ampereMeter);
 
-    fuelFlow.setPos(760, 200);
+    fuelFlow.setPos(760, 205);
     fuelFlow.setTitle("FF");
     fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
     fuelFlow.setPrecision(1);
@@ -113,7 +113,7 @@ void emsFull::setupBarGraphs()
     fuelFlow.setGaugeType("Fuel");
     this->addItem(&fuelFlow);
 
-    insideAirTemperature.setPos(800, 200);
+    insideAirTemperature.setPos(800, 205);
     insideAirTemperature.setTitle("IAT");
     insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     insideAirTemperature.setPrecision(1);
@@ -122,9 +122,9 @@ void emsFull::setupBarGraphs()
     connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
     connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
 
-    outsideAirTemperature.setPos(850, 350);
+    outsideAirTemperature.setPos(150, 375);
     outsideAirTemperature.setTitle("OAT");
-    outsideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
+    outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
     outsideAirTemperature.setPrecision(1);
     this->addItem(&outsideAirTemperature);
     connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
@@ -231,7 +231,7 @@ void emsFull::connectSignals() {
 }
 
 void emsFull::setupHourMeter() {
-    hobbs.setPos(250, 360);
+    hobbs.setPos(55, 360);
     this->addItem(&hobbs);
     hobbs.setVisible(true);
 }

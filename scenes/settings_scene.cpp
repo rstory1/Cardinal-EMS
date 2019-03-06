@@ -479,7 +479,7 @@ void settingsScene::setupSlider() {
     qDebug() << "stderr: " + stderr;
     qDebug() << "******************END******************";
 
-    execCommand = "ls /sys/class/backlight/backlight/device";
+    execCommand = "ls /sys/class/backlight/backlight/device/backlight";
 
     backlightProc.start(execCommand);
     backlightProc.waitForFinished(-1); // will wait forever until finished
@@ -491,7 +491,7 @@ void settingsScene::setupSlider() {
     qDebug() << "stderr: " + stderr;
     qDebug() << "******************END******************";
 
-    execCommand = "ls /sys/class/backlight/backlight/device";
+    execCommand = "ls /sys/class/backlight/backlight/device/driver";
 
     backlightProc.start(execCommand);
     backlightProc.waitForFinished(-1); // will wait forever until finished
