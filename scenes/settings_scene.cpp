@@ -507,7 +507,7 @@ void settingsScene::setupSlider() {
 void settingsScene::onBacklightChange(int sliderValue) {
     backlightValue.setText(QString::number(sliderValue));
 
-    execCommand = "echo " + QString::number(sliderValue) + " > /sys/class/backlight/backlight/brightness";
+    execCommand = "echo " + QString::number(sliderValue) + " > sudo tee /sys/class/backlight/backlight/brightness";
 
     backlightProc.start(execCommand);
     backlightProc.waitForFinished(-1); // will wait forever until finished
