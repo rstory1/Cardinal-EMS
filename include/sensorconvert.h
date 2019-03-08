@@ -62,8 +62,6 @@ private:
 
     void convertIat(double sensorValue);
 
-    void convertOat(double sensorValue);
-
     void convertFuelFlow(double pulses);
 
     void convertOilTemp(qreal adc);
@@ -78,6 +76,8 @@ private:
     void convertCurrent(qreal adc);
 
     void convertMAP(qreal adc);
+
+    void convertOAT(qreal adc);
 
 signals:
     void userMessage(QString,QString,bool);

@@ -69,9 +69,20 @@ void SensorConvert::convertOilPress(double adc)
     oilPress =  0.625*tempCurrent + 0.75;
 }
 
-void SensorConvert::convertOat(double sensorValue)
+void SensorConvert::convertOAT(qreal adc)
 {
-    oat = sensorValue;
+
+    //  Convert ADC Voltage value to resistance
+    resistance = puResistorValue/(4095.0/adc-1);
+
+    // Convert resistance to temperauter. This equation was created from fitting a line to the VDO calibration curve.
+    oat = 1065*pow(resistance, -0.1352)-229.7;
+
+    // If our desired scale is not farenheit, then we need to convert it
+    if (temperatureScale != "F")
+    {
+        oat = convertTemperature(oat);
+    }
 }
 
 void SensorConvert::convertIat(double sensorValue)
@@ -142,6 +153,7 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOilTemp(oilT);
     convertCurrent(curr);
     convertMAP(map);
+    convertOAT(coolantT);
 
     emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP);
 }
@@ -152,8 +164,9 @@ void SensorConvert::setKFactor(qreal kFac) {
 
 void SensorConvert::convertCurrent(qreal adc)
 {
-    currentAdc = adc;
-    current = 0.0244 * currentAdc - 50.024;
+//    currentAdc = adc;
+//    current = 0.0244 * currentAdc - 50.024; // MGL Current Sensor
+    current = 73.3 * (adc / (4096/5)) / 5 - 36.7; // Pololu sensor acs711ex
 }
 
 void SensorConvert::onZeroCurrent() {
@@ -163,3 +176,4 @@ void SensorConvert::onZeroCurrent() {
 void SensorConvert::convertMAP(qreal adc) {
     manP = 5.7993 * (adc / (4095/5)) + 1.1599;
 }
+

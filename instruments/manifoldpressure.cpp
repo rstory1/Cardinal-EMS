@@ -92,7 +92,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 		painter->drawLine(50, 0, 70, 0);
 		painter->restore();
 		//Define a box, move it and draw the text centered to this position
-		QRectF textRect(-7, -7, 14, 14);
+        QRectF textRect(-8, -8, 16, 16);
 		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*40.0, -sin(calculateLocalValue(value)/180.0*M_PI)*40.0));
 		painter->drawText(textRect, Qt::AlignCenter, QString::number(value, 'f', 0));
 	}

@@ -60,24 +60,25 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     //painter->restore();
 
     painter->fillRect(buttonRect1, gradient1);
-    painter->fillRect(buttonRect2, gradient2);
+//    painter->fillRect(buttonRect2, gradient2);
 
     switch(buttonDisplay) {
     case 1: painter->drawRect(buttonRect1);
-            painter->drawRect(buttonRect2);
+//            painter->drawRect(buttonRect2);
 
-            painter->drawText(buttonRect1, Qt::AlignCenter,"Fuel");
-            painter->drawText(buttonRect2, Qt::AlignCenter,"Settings");
+//            painter->drawText(buttonRect1, Qt::AlignCenter,"Fuel");
+            painter->drawText(buttonRect1, Qt::AlignCenter,"Settings");
 
             if (isAlarmFlashing) {
-                painter->fillRect(buttonRect3, gradient3);
-                painter->drawRect(buttonRect3);
-                painter->drawText(buttonRect3, Qt::AlignCenter,"Ack");
+                painter->fillRect(buttonRect2, gradient2);
+                painter->drawRect(buttonRect2);
+                painter->drawText(buttonRect2, Qt::AlignCenter,"Ack");
             }
 
             break;
 
-    case 2: painter->fillRect(buttonRect3, gradient3);
+    case 2: painter->fillRect(buttonRect2, gradient2);
+            painter->fillRect(buttonRect3, gradient3);
 
             painter->drawRect(buttonRect1);
             painter->drawRect(buttonRect2);
@@ -95,23 +96,24 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
             break;
 
-    case 3: painter->fillRect(buttonRect3, gradient3);
-            painter->fillRect(buttonRect4, gradient4);
+    case 3: //painter->fillRect(buttonRect2, gradient2);
+//            painter->fillRect(buttonRect3, gradient3);
+//            painter->fillRect(buttonRect4, gradient4);
 
             painter->drawRect(buttonRect1);
-            painter->drawRect(buttonRect2);
-            painter->drawRect(buttonRect3);
-            painter->drawRect(buttonRect4);
+//            painter->drawRect(buttonRect2);
+//            painter->drawRect(buttonRect3);
+//            painter->drawRect(buttonRect4);
 
             painter->drawText(buttonRect1, Qt::AlignCenter,"<-EMS");
-            painter->drawText(buttonRect2, Qt::AlignCenter,"Export");
-            painter->drawText(buttonRect3, Qt::AlignCenter,"Update");
-            painter->drawText(buttonRect4, Qt::AlignCenter,"Quit App");
+//            painter->drawText(buttonRect2, Qt::AlignCenter,"Export");
+//            painter->drawText(buttonRect3, Qt::AlignCenter,"Update");
+//            painter->drawText(buttonRect4, Qt::AlignCenter,"Quit App");
 
             if (isAlarmFlashing) {
-                painter->fillRect(buttonRect5, gradient5);
-                painter->drawRect(buttonRect5);
-                painter->drawText(buttonRect5, Qt::AlignCenter,"Ack");
+                painter->fillRect(buttonRect2, gradient2);
+                painter->drawRect(buttonRect2);
+                painter->drawText(buttonRect2, Qt::AlignCenter,"Ack");
             }
 
             break;
@@ -124,14 +126,14 @@ void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QPointF clickedPos = event->buttonDownPos(Qt::LeftButton);
     qDebug() << buttonDisplay;
     switch(buttonDisplay) {
-    case 1: if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
+    case 1: /*if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
             buttonDisplay = 2;
 
-        } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
+        } else*/ if ((clickedPos.x() > buttonRect1.x() && clickedPos.x() < buttonRect1.x() + buttonRect1.width()) && (clickedPos.y() > buttonRect1.y())) {
             buttonDisplay = 3;
             emit switchScene(2); // Change scene to settings scene
 
-        } else if ((clickedPos.x() > buttonRect3.x() && clickedPos.x() < buttonRect3.x() + buttonRect3.width()) && (clickedPos.y() > buttonRect3.y())) {
+        } else if ((clickedPos.x() > buttonRect2.x() && clickedPos.x() < buttonRect2.x() + buttonRect2.width()) && (clickedPos.y() > buttonRect2.y())) {
             ackPressed();
         }
 

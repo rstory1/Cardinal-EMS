@@ -56,7 +56,6 @@ settingsScene::settingsScene(QObject* parent) :
 
     setupSlider();
 
-
 //    cmdLog.setFixedSize(300,350);
 //    cmdLog.setGeometry(10,40,300,350);
 //    addWidget(&cmdLog);
@@ -390,22 +389,22 @@ void settingsScene::setupSlider() {
                                     "max-width: 300px;"
                                     "max-height: 100px;"
                                     "min-height: 100px; "
-                                    "background: #5F4141;}"
+                                    "background: #000000;}"
                                   "QSlider::groove:horizontal {"
-                                    "border: 1px solid #262626;"
-                                    "background: #393939;"
+                                    "border: 1px solid #B7B7B7;"
+                                    "background: #B7B7B7;"
                                     "height: 25px;"
                                     "margin: 12px 12px;}"
                                   "QSlider::handle:horizontal {"
-                                    "background: #22B14C;"
-                                    "border: 1px solid #B5E61D;"
+                                    "background: #5AC2F2;"
+                                    "border: 1px solid #5AC2F2;"
                                     "width: 40px;"
                                     "height: 40px;"
                                     "margin: -5px -5px;}"
                                   );
 
     backlightSlider.setMaximumSize(300, 100);
-    backlightSlider.setGeometry(400, 250, 300, 100);
+    backlightSlider.setGeometry(450, 30, 300, 100);
 
     backlightSlider.setRange(0,100);
     backlightSlider.setValue(100);
@@ -414,14 +413,16 @@ void settingsScene::setupSlider() {
 
     backlightValue.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     backlightValue.setFixedSize(backlightSlider.width(), 50);
-    backlightValue.setGeometry(backlightSlider.x(), backlightSlider.y() - 50, backlightSlider.width(), 50);
+    backlightValue.setGeometry(backlightSlider.x(), backlightSlider.y() - 25, backlightSlider.width(), 25);
+    backlightValue.setText("Backlight: 100%");
+    backlightValue.setStyleSheet("QLabel { background-color : black; color : white; }");
 
     addWidget(&backlightSlider);
     addWidget(&backlightValue);
 }
 
 void settingsScene::onBacklightChange(int sliderValue) {
-    backlightValue.setText(QString::number(sliderValue));
+    backlightValue.setText("Backlight: " + QString::number(sliderValue) + "%");
     QString val = QString::number(sliderValue);
 
     QByteArray ba = val.toLocal8Bit();

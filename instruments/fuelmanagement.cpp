@@ -187,7 +187,7 @@ void FuelManagement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void FuelManagement::setFuelFlow(double value)
+void FuelManagement::setFuelFlow(qreal value)
 {
 	fuelFlow = value;
 }

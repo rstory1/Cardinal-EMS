@@ -66,7 +66,7 @@ private:
 	};
 	QSettings settings;
 	double fuelAmount;
-	double fuelFlow;
+    qreal fuelFlow;
 	double timeToDestination;
 	fuelingMode currentMode;
 	QRectF remainingFuelRect;

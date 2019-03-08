@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
     SensorConvert sensorConvert;
     //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
 //SLOT(userMessageHandler(QString,QString,bool)));
-    a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
     a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
     //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
 //SLOT(setFuelData(double,double)));

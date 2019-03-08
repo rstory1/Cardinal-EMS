@@ -33,16 +33,6 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
 	//Setting up the items to be displayed
-//    setupRpmIndicator();
-//    setupBarGraphs();
-//    setupTimeToDestinationItem();
-//    setupManifoldPressure();
-//    setupAlarm();
-//    setupChtEgt();
-    //setupFuelManagement();
-//    setupStatusItem();
-    //setupWindVector();
-//    setupHourMeter();
     setupuserSettings();
 
     this->mapToScene(this->rect());
@@ -515,30 +505,6 @@ void EngineMonitor::demoFunction()
 ////	painter.end();
 //}
 
-void EngineMonitor::setValuesBulkUpdate(qreal rpm, qreal fuelFlowValue, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat) {
-    rpmIndicator.setValue(rpm);
-    fuelDisplay.setFuelFlow(fuelFlowValue);
-    fuelFlow.setValue(fuelFlowValue);
-    oilTemperature.setValue(oilTemp);
-    oilPressure.setValue(oilPress);
-    ampereMeter.setValue(amps);
-    voltMeter.setValue(volts);
-    chtEgt.setEgtValues(egt1, egt2, egt3, egt4);
-    chtEgt.setChtValues(cht1, cht2, cht3, cht4);
-    outsideAirTemperature.setValue(oat);
-    insideAirTemperature.setValue(iat);
-
-    if (oilTemp < warmupTemp ) {
-        rpmIndicator.isWarmup = true;
-    } else {
-        rpmIndicator.isWarmup = false;
-    }
-
-    if (rpm > 0) {
-        hobbs.setEngineOn(true);
-    }
-}
-
 void EngineMonitor::realtimeDataSlot()
 {
   static QTime time(QTime::currentTime());
@@ -596,59 +562,14 @@ void EngineMonitor::setupWindVector() {
 }
 
 void EngineMonitor::connectSignals() {
-
-    qDebug()<<"Connecting flashing alarm signals";
-    // Connect signals for alarm flashing
-    connect(&flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
-
-    qDebug()<<"Connecting RPM signals";
-    //  Connect signal for alarm from rpm indicator
-    connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    qDebug()<<"Connecting CHT/EGT Signals";
-    //  Connect signal for alarm from CHT/EGT
-    connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&chtEgt, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from Volt Meter
-    connect(&voltMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&voltMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from OILT
-    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from OILP
-    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from ampere meter
-    connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
     // Connect buttonBar to the alarm window for alarm acknowledgement
-    connect(&buttonBar, SIGNAL(sendAlarmAck()), &alarmWindow, SLOT(onAlarmAck()));
+    connect(&buttonBar, SIGNAL(sendAlarmAck()), &ems_full, SLOT(onAckAlarm()));
 
     // Connect buttonBar to the fuelDisplay window to increment fuel amount
-    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
+//    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
 
     // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
-    connect(&alarmWindow, SIGNAL(flashingAlarm()), &buttonBar, SLOT(onAlarmFlash()));
-
-    // Connect signal to stop flashing alarm after it has been acknowledged
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &chtEgt, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &voltMeter, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilTemperature, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &rpmIndicator, SLOT(onAlarmAck()));
+    connect(&ems_full, SIGNAL(alarmFlashing()), &buttonBar, SLOT(onAlarmFlash()));
 
     qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time
@@ -659,12 +580,8 @@ void EngineMonitor::connectSignals() {
     connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
 
     connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
-}
 
-void EngineMonitor::setupHourMeter() {
-    hobbs.setPos(250, 360);
-    graphicsScene.addItem(&hobbs);
-    hobbs.setVisible(true);
+    connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
 }
 
 void EngineMonitor::setupuserSettings()
