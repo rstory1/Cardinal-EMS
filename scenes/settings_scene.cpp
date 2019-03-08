@@ -418,116 +418,18 @@ void settingsScene::setupSlider() {
 
     addWidget(&backlightSlider);
     addWidget(&backlightValue);
-
-    execCommand = "ls /sys/class/backlight/backlight";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
-
-    execCommand = "ls /sys/class/backlight/backlight";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
-
-    execCommand = "cat /sys/class/backlight/backlight/brightness";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
-
-    execCommand = "cat /sys/class/backlight/backlight/max_brightness";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
-
-    execCommand = "cat /sys/class/backlight/backlight/actual_brightness";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
-
-    execCommand = "ls /sys/class/backlight/backlight/device/backlight";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
-
-    execCommand = "ls /sys/class/backlight/backlight/device/driver";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
 }
 
 void settingsScene::onBacklightChange(int sliderValue) {
     backlightValue.setText(QString::number(sliderValue));
+    QString val = QString::number(sliderValue);
 
-    execCommand = "echo " + QString::number(sliderValue) + " > sudo tee /sys/class/backlight/backlight/brightness";
+    QByteArray ba = val.toLocal8Bit();
+    const char *c_str2 = ba.data();
 
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-
-    execCommand = "cat /sys/class/backlight/backlight/brightness";
-
-    backlightProc.start(execCommand);
-    backlightProc.waitForFinished(-1); // will wait forever until finished
-
-    stdout = backlightProc.readAllStandardOutput();
-    stderr = backlightProc.readAllStandardError();
-    qDebug() << "******************START******************";
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
-    qDebug() << "******************END******************";
+    QFile f("/sys/class/backlight/backlight/brightness");
+    f.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    f.write(c_str2);
+    f.close();
 
 }
