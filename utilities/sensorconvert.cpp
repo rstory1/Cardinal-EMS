@@ -152,7 +152,7 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr);
-    convertMAP(map);
+    convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensro integral to the RDAC
     convertOAT(coolantT);
 
     emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP);
