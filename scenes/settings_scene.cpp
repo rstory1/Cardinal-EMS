@@ -54,6 +54,8 @@ settingsScene::settingsScene(QObject* parent) :
 
     connect(&keyClr, SIGNAL(clicked(bool)), this, SLOT(onClrPressed()));
 
+    setupSlider();
+
 //    cmdLog.setFixedSize(300,350);
 //    cmdLog.setGeometry(10,40,300,350);
 //    addWidget(&cmdLog);
@@ -233,8 +235,8 @@ void settingsScene::onFinishChange() {
     hwClock.start(execCommand);
     hwClock.waitForFinished(-1); // will wait forever until finished
 
-    QString stdout = hwClock.readAllStandardOutput();
-    QString stderr = hwClock.readAllStandardError();
+    stdout = hwClock.readAllStandardOutput();
+    stderr = hwClock.readAllStandardError();
     qDebug() << "stdout: " + stdout;
     qDebug() << "stderr: " + stderr;
 
@@ -378,4 +380,57 @@ void settingsScene::onClrPressed() {
     } else {
         timeText.clear();
     }
+}
+
+void settingsScene::setupSlider() {
+    backlightSlider.setOrientation(Qt::Horizontal);
+    backlightSlider.setStyleSheet("QSlider {"
+                                    "min-width: 300px;"
+                                    "max-width: 300px;"
+                                    "max-height: 100px;"
+                                    "min-height: 100px; "
+                                    "background: #000000;}"
+                                  "QSlider::groove:horizontal {"
+                                    "border: 1px solid #B7B7B7;"
+                                    "background: #B7B7B7;"
+                                    "height: 25px;"
+                                    "margin: 12px 12px;}"
+                                  "QSlider::handle:horizontal {"
+                                    "background: #5AC2F2;"
+                                    "border: 1px solid #5AC2F2;"
+                                    "width: 40px;"
+                                    "height: 40px;"
+                                    "margin: -5px -5px;}"
+                                  );
+
+    backlightSlider.setMaximumSize(300, 100);
+    backlightSlider.setGeometry(450, 30, 300, 100);
+
+    backlightSlider.setRange(0,100);
+    backlightSlider.setValue(100);
+
+    connect(&backlightSlider, SIGNAL(valueChanged(int)), this, SLOT(onBacklightChange(int)));
+
+    backlightValue.setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    backlightValue.setFixedSize(backlightSlider.width(), 50);
+    backlightValue.setGeometry(backlightSlider.x(), backlightSlider.y() - 25, backlightSlider.width(), 25);
+    backlightValue.setText("Backlight: 100%");
+    backlightValue.setStyleSheet("QLabel { background-color : black; color : white; }");
+
+    addWidget(&backlightSlider);
+    addWidget(&backlightValue);
+}
+
+void settingsScene::onBacklightChange(int sliderValue) {
+    backlightValue.setText("Backlight: " + QString::number(sliderValue) + "%");
+    QString val = QString::number(sliderValue);
+
+    QByteArray ba = val.toLocal8Bit();
+    const char *c_str2 = ba.data();
+
+    QFile f("/sys/class/backlight/backlight/brightness");
+    f.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    f.write(c_str2);
+    f.close();
+
 }

@@ -71,7 +71,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(minChtValue)+4, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
     }
     painter->setPen( QPen(Qt::white, 1));
-    painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
+    painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(maxChtValue)-25, 50.0, 23.0), Qt::AlignCenter | Qt::AlignBottom, QString::fromUtf8("°F"));
 
     //Set painter for texts
     painter->setPen(QPen(Qt::white, 1));

@@ -21,8 +21,8 @@
 #include "sensorconvert.h"
 
 SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
-  ,settings("//ems/settings/settings.ini", QSettings::IniFormat, parent)
-  ,gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  ,settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
+  ,gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
     //Let's set what type of thermocouple we are using
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "NTC").toString());
@@ -69,9 +69,20 @@ void SensorConvert::convertOilPress(double adc)
     oilPress =  0.625*tempCurrent + 0.75;
 }
 
-void SensorConvert::convertOat(double sensorValue)
+void SensorConvert::convertOAT(qreal adc)
 {
-    oat = sensorValue;
+
+    //  Convert ADC Voltage value to resistance
+    resistance = puResistorValue/(4095.0/adc-1);
+
+    // Convert resistance to temperauter. This equation was created from fitting a line to the VDO calibration curve.
+    oat = 1065*pow(resistance, -0.1352)-229.7;
+
+    // If our desired scale is not farenheit, then we need to convert it
+    if (temperatureScale != "F")
+    {
+        oat = convertTemperature(oat);
+    }
 }
 
 void SensorConvert::convertIat(double sensorValue)
@@ -141,8 +152,10 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr);
+    convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensro integral to the RDAC
+    convertOAT(coolantT);
 
-    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, egt3, egt4, cht[0], cht[1], cht[2], cht[3], oat, intTemp);
+    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
@@ -151,11 +164,16 @@ void SensorConvert::setKFactor(qreal kFac) {
 
 void SensorConvert::convertCurrent(qreal adc)
 {
-    currentAdc = adc;
-    current = 0.0244 * currentAdc - 50.024;
+//    currentAdc = adc;
+//    current = 0.0244 * currentAdc - 50.024; // MGL Current Sensor
+    current = 73.3 * (adc / (4096/5)) / 5 - 36.7; // Pololu sensor acs711ex
 }
 
 void SensorConvert::onZeroCurrent() {
     gaugeSettings.setValue("Amps/zeroVal", currentAdc);
+}
+
+void SensorConvert::convertMAP(qreal adc) {
+    manP = 5.7993 * (adc / (4095/5)) + 1.1599;
 }
 

@@ -67,7 +67,8 @@ public slots:
 private:
 	double calculateLocalValue(double value) const;
 	QString titleText, unitText;
-	double minValue, maxValue, currentValue;
+    double minValue, maxValue;
+    qreal currentValue;
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;

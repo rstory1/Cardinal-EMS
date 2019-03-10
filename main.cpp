@@ -31,10 +31,11 @@
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
     qInfo() << "Inside messageToFileHandler";
-    QDir dir("/ems/appLogs");
+    QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
+    //qDebug() << dir.path();
     if (!dir.exists())
         dir.mkpath(".");
-    QFile debugfile("/ems/appLogs/EngineMon.log");
+    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
@@ -87,10 +88,10 @@ int main(int argc, char *argv[])
     qInfo() << "Before app log starts";
 
 #ifdef QT_NO_DEBUG
-    QDir dir("/ems/appLogs");
+    QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
     if (!dir.exists())
         dir.mkpath(".");
-    QFile debugfile("/ems/appLogs/EngineMon.log");
+    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon.log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
     SensorConvert sensorConvert;
     //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
 //SLOT(userMessageHandler(QString,QString,bool)));
-    a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
     a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
     //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
 //SLOT(setFuelData(double,double)));

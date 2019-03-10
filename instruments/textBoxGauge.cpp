@@ -34,7 +34,7 @@ TextBox::TextBox(QGraphicsObject *parent)
 
 QRectF TextBox::boundingRect() const
 {
-    return QRectF(-25, -25, 50, 50);
+    return QRectF(-30, -30, 60, 60);
 
 }
 
@@ -47,6 +47,11 @@ void TextBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 	Q_UNUSED(option);
 	Q_UNUSED(widget);
 
+    font.setFamily("Arial");
+    font.setBold(false);
+    font.setPointSize(12);
+    painter->setFont(font);
+
 	//Save thje painter and deactivate Antialising for rectangle drawing
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, false);
@@ -55,23 +60,23 @@ void TextBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     //Define pen, brush and rect for the bar
     painter->setPen(Qt::gray);
     painter->setBrush(Qt::NoBrush);
-    painter->drawRect(QRectF(QPointF(-25.0, -25.0), QPointF(25.0, 25.0)));
+    painter->drawRect(QRectF(QPointF(-30.0, -30.0), QPointF(30.0, 30.0)));
 
 	//Restore the painter with antialising
 	painter->restore();
 
     //Draw Texts around (title, min and max value)
-    painter->setPen(Qt::gray);
+    painter->setPen(Qt::white);
     isPenAlarmColored = false;
-    painter->drawText(QRectF(-25, -20, 50, 10), Qt::AlignCenter | Qt::AlignVCenter,titleText);
-    painter->drawText(QRectF(-25, -10, 50, 10), Qt::AlignCenter | Qt::AlignVCenter,unitText);
+    painter->drawText(QRectF(-30, -25, 60, 15), Qt::AlignCenter | Qt::AlignVCenter,titleText);
+    painter->drawText(QRectF(-30, -10, 60, 15), Qt::AlignCenter | Qt::AlignVCenter,unitText);
     painter->setPen(Qt::white);
 
     //Draw readout
+    font.setPointSize(14);
     font.setBold(true);
-    font.setPointSize(12);
     painter->setFont(font);
-    painter->drawText(QRectF(-25, 0, 50, 15), Qt::AlignCenter | Qt::AlignVCenter, QString::number(currentValue, 'f', readoutPrecision));
+    painter->drawText(QRectF(-30, 10, 60, 15), Qt::AlignCenter | Qt::AlignVCenter, QString::number(currentValue, 'f', readoutPrecision));
 }
 
 void TextBox::setTitle(QString title)

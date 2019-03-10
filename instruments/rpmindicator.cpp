@@ -101,7 +101,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 		painter->drawLine(100, 0, 130, 0);
 		painter->restore();
 		//Define a box, move it and draw the text centered to this position
-		QRectF textRect(-10, -10, 20, 20);
+        QRectF textRect(-12, -12, 24, 24);
 		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*85.0, -sin(calculateLocalValue(value)/180.0*M_PI)*85.0));
 		painter->drawText(textRect, Qt::AlignCenter, QString::number(value/100.0, 'f', 0));
 	}

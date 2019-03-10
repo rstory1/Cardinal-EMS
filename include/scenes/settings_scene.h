@@ -27,6 +27,7 @@ private:
     QTimer timer;
     QDateTimeEdit dtEdit;
     void setupNumPad();
+    void setupSlider();
     QButtonGroup buttonGroup;
     QPushButton key1;
     QPushButton key2;
@@ -53,10 +54,20 @@ private:
     QProcess hwClock;
     QString execCommand;
 
+    QSlider backlightSlider;
+
     void addSlashesOrColons();
 
     int editType = 0; // 0 - Not Editing; 1 - Date; 2 - Time
 
+    QPushButton backlightBrighter;
+    QPushButton backlightDimmer;
+    QLabel backlightValue;
+    void setupBacklight();
+    QProcess backlightProc;
+
+    QString stdout;
+    QString stderr;
 
 private slots:
     void onZeroCurrent() { emit zeroCurrent();}
@@ -78,6 +89,9 @@ private slots:
 
 signals:
     void zeroCurrent();
+
+private slots:
+    void onBacklightChange(int);
 };
 
 #endif // SETTINGS_SCENE_H

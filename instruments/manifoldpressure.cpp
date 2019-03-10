@@ -37,7 +37,7 @@ ManifoldPressure::~ManifoldPressure()
 
 QRectF ManifoldPressure::boundingRect() const
 {
-	return QRectF(-80.0, -80.0, 170.0, 160.0);
+    return QRectF(-80.0, -80.0, 170.0, 160.0);
 }
 
 /*! \brief Handles drawing of the object
@@ -50,7 +50,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	Q_UNUSED(widget);
 
 	//Draw the arc
-	QRectF circle = QRectF(-70.0, -70.0, 140.0, 140.0);
+    QRectF circle = QRectF(-70.0, -70.0, 140.0, 140.0);
 	//Calculate angles for white and red arc part
 	double whiteGreenAngle = calculateLocalValue(whiteGreenBorder);
 	double greenRedAngle = calculateLocalValue(greenRedBorder);
@@ -60,7 +60,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	painter->drawPie(circle, startAngle*16.0, -spanAngle*16.0);
 	//Draw the white part
 	painter->setPen(QPen(Qt::white, 0));
-	painter->setBrush(Qt::white);
+    painter->setBrush(Qt::white);
 	painter->drawPie(circle, startAngle*16.0, -fabs(whiteGreenAngle-startAngle)*16.0);
 	//Draw the red part
 	painter->setPen(QPen(Qt::red, 0));
@@ -77,13 +77,13 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 		painter->restore();
 	}
 	//Overlay the center with a black circle
-	painter->setPen(QPen(Qt::black, 0));
-	painter->setBrush(Qt::black);
+    painter->setPen(QPen(Qt::black, 0));
+    painter->setBrush(Qt::black);
 	painter->drawEllipse(circle.center(), 55.0, 55.0);
 
 	//Set the pen and font to draw the ticks
 	painter->setPen(QPen(Qt::white, 2));
-	painter->setFont(QFont("Arial", 10));
+    painter->setFont(QFont("Arial", 10));
 	foreach(double value, beetweenValues)
 	{
 		//Rotate painter and draw the ticks
@@ -92,14 +92,15 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 		painter->drawLine(50, 0, 70, 0);
 		painter->restore();
 		//Define a box, move it and draw the text centered to this position
-		QRectF textRect(-7, -7, 14, 14);
+        QRectF textRect(-8, -8, 16, 16);
 		textRect.moveCenter(QPointF(cos(calculateLocalValue(value)/180.0*M_PI)*40.0, -sin(calculateLocalValue(value)/180.0*M_PI)*40.0));
 		painter->drawText(textRect, Qt::AlignCenter, QString::number(value, 'f', 0));
 	}
 
 	//Draw the center text
-	QRectF centerTextRect(-25, -25, 50, 50);
-	painter->drawText(centerTextRect, Qt::AlignCenter, "Manifold\nPressure");
+//    QRectF centerTextRect(55, 55, 50, 50);
+//    painter->setFont(QFont("Arial", 30));
+//	painter->drawText(centerTextRect, Qt::AlignCenter, "Manifold\nPressure");
 
 	//Draw the needle if value is in range
 	if((currentValue > minValue) &&
@@ -130,14 +131,14 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 		painter->setPen(Qt::white);
 	}
 	//Round value to the nearest 10
-	QString rpm = QString::number(currentValue, 'f', 1);
+    QString pressure = QString::number(currentValue, 'f', 1);
 	//Set position and font for the value and draw it
 	QRectF textRect(-82, 25, 130, 25);
-	painter->setFont(QFont("Arial", 20, 1));
-	painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
+    painter->setFont(QFont("Arial", 20, 1));
+    painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, pressure);
 	//Set position and font for the unit and draw it
 	QRectF unitRect(55, 25, 60, 25);
-	painter->setFont(QFont("Arial", 14, 1));
+    painter->setFont(QFont("Arial", 15, 1));
 	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "psi");
 }
 

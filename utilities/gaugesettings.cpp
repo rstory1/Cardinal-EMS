@@ -21,7 +21,7 @@
 #include "gaugesettings.h"
 
 GaugeSettings::GaugeSettings(QObject *parent) : QObject(parent)
-  , settings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
+  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
 {
 
 }

@@ -178,7 +178,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     //Draw Texts around (title, min and max value)
     painter->setPen(Qt::white);
-    painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-35, 50, 15), Qt::AlignCenter,titleText);
+    painter->drawText(QRectF(-30, calculateLocalValue(maxValue)-35, 60, 15), Qt::AlignCenter,titleText);
     painter->drawText(QRectF(-25, calculateLocalValue(maxValue)-20, 50, 15), Qt::AlignCenter,unitText);
 
     //Set readout details

@@ -28,7 +28,7 @@ circularGauge::circularGauge(QGraphicsItem *parent) : QGraphicsItem(parent)
   , greenRedBorder(0.0)
   , startAngle(0.0)
   , spanAngle(0.0)
-  , gaugeSettings("/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
+  , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
 {
     isWarmup=true;
 }

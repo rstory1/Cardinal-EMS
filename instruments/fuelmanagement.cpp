@@ -22,7 +22,7 @@
 
 FuelManagement::FuelManagement(QGraphicsObject *parent)
 	: QGraphicsObject(parent)
-    , settings("/ems/settings/settings.ini", QSettings::IniFormat)
+    , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat)
 	, fuelAmount(0.0)
 	, fuelFlow(0.0)
 	, timeToDestination(0.0)
@@ -187,7 +187,7 @@ void FuelManagement::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	}
 }
 
-void FuelManagement::setFuelFlow(double value)
+void FuelManagement::setFuelFlow(qreal value)
 {
 	fuelFlow = value;
 }

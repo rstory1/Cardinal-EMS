@@ -37,8 +37,7 @@
 #include <instruments/windvector.h>
 #include <instruments/hourmeter.h>
 #include <scenes/settings_scene.h>
-#include <scenes/emsscene.h>
-#include <emsfull.h>
+#include <scenes/emsfull.h>
 
 #include <QMessageBox>
 
@@ -86,7 +85,7 @@ private:
 	QGraphicsTextItem timeToDestinationItem;
 	FuelManagement fuelManagement;
     FuelDisplay fuelDisplay;
-    TextBox manifoldPressure;
+    ManifoldPressure manifoldPressure;
 	QFile *logFile;
     QSettings settings;
     QSettings gaugeSettings;
@@ -108,7 +107,6 @@ private:
     int timeOilTBelowWarmup=0;
 
     settingsScene settings_scene;
-    emsScene ems_scene;
     emsFull ems_full;
 
     QString currentScene = "";
@@ -123,7 +121,9 @@ public slots:
 	void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
     void showStatusMessage(QString text, QColor color);
-    void setValuesBulkUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat);
+    void setValuesBulkUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map) {
+        emit updateEngineValues(rpm, fuelFlow, oilTemp, oilPress, amps, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat, map);
+    }
     void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
     void onUpdateWindInfo(float spd, float dir, float mHdg);
@@ -132,6 +132,7 @@ public slots:
 
 signals:
     void zeroCurrent();
+    void updateEngineValues(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map);
 };
 
 #endif // ENGINEMONITOR_H
