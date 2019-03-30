@@ -272,7 +272,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
     qreal ax2 = message.aux2 ;
     qreal fuelP = message.fuelPress / (4096/5);
     qreal coolantT = message.coolant / (4096/5);
-    qreal fuelL1 = message.fuelLevel1 / (4096/5);
+    //qreal fuelL1 = message.fuelLevel1 / (4096/5);
     qreal fuelL2 = message.fuelLevel1 / (4096/5);
     qreal curr = message.current / (2048/2.5);
 
@@ -282,7 +282,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
     qDebug() << "RDAC Message Update Sent" + lastMessage1.toString("hh:mm:ss.zzz");
 
 
-    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, oilP, ax1, ax2, fuelP, coolantT, fuelL1, fuelL2, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
+    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, oilP, ax1, ax2, fuelP, coolantT, message.fuelLevel1, fuelL2, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)

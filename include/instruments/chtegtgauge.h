@@ -75,7 +75,7 @@ private:
     GaugeSettings egtGauge;
 
     int numOfCht = 2; //This needs to be made to be able to be configured by the user
-    int numOfEgt = 2; //This needs to be made to be able to be configured by the user
+    int numOfEgt = 0; //This needs to be made to be able to be configured by the user
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
