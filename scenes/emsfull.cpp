@@ -145,7 +145,7 @@ void emsFull::setupFuelManagement()
 
 void emsFull::setupManifoldPressure()
 {
-    manifoldPressure.setPos(150, 150);
+    manifoldPressure.setPos(140, 150);
     manifoldPressure.setStartSpan(240.0, 240.0);
     manifoldPressure.setBorders(10.0, 35.0, 15.0, 35.0);
     manifoldPressure.addBetweenValue(10.0);
