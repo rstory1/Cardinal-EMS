@@ -137,7 +137,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     painter->setFont(QFont("Arial", 20, 1));
     painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, pressure);
 	//Set position and font for the unit and draw it
-	QRectF unitRect(55, 25, 60, 25);
+    QRectF unitRect(58, 25, 60, 25);
     painter->setFont(QFont("Arial", 15, 1));
     painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "in Hg");
 }

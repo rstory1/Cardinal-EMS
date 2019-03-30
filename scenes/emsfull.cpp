@@ -147,12 +147,12 @@ void emsFull::setupManifoldPressure()
 {
     manifoldPressure.setPos(150, 150);
     manifoldPressure.setStartSpan(240.0, 240.0);
-    manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
+    manifoldPressure.setBorders(10.0, 35.0, 15.0, 35.0);
     manifoldPressure.addBetweenValue(10.0);
     manifoldPressure.addBetweenValue(15.0);
     manifoldPressure.addBetweenValue(20.0);
     manifoldPressure.addBetweenValue(25.0);
-    manifoldPressure.addBetweenValue(30.0);
+    manifoldPressure.addBetweenValue(35.0);
     this->addItem(&manifoldPressure);
 }
 
