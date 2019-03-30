@@ -174,6 +174,6 @@ void SensorConvert::onZeroCurrent() {
 }
 
 void SensorConvert::convertMAP(qreal adc) {
-    manP = 5.7993 * (adc / (4095/5)) + 1.1599;
+    manP = 8.94 * (adc / (4095/5)) + 14.53;
 }
 
