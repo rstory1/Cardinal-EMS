@@ -99,7 +99,7 @@ void emsFull::setupBarGraphs()
     this->addItem(&voltMeter);
 
     ampereMeter.setPos(760, 205);
-    ampereMeter.setTitle("AMPS");
+    ampereMeter.setTitle("LOAD");
     ampereMeter.setUnit("A");
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
@@ -145,7 +145,7 @@ void emsFull::setupFuelManagement()
 
 void emsFull::setupManifoldPressure()
 {
-    manifoldPressure.setPos(140, 150);
+    manifoldPressure.setPos(130, 150);
     manifoldPressure.setStartSpan(240.0, 240.0);
     manifoldPressure.setBorders(10.0, 35.0, 15.0, 35.0);
     manifoldPressure.addBetweenValue(10.0);
