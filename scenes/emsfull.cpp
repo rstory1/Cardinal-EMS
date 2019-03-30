@@ -269,6 +269,7 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qre
     chtEgt.setChtValues(cht1, cht2, cht3, cht4);
     outsideAirTemperature.setValue(oat);
     insideAirTemperature.setValue(iat);
+    manifoldPressure.setValue(map);
 
     if (oilTemp < warmupTemp ) {
         rpmIndicator.isWarmup = true;
