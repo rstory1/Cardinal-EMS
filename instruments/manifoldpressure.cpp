@@ -139,7 +139,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	//Set position and font for the unit and draw it
 	QRectF unitRect(55, 25, 60, 25);
     painter->setFont(QFont("Arial", 15, 1));
-	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "psi");
+    painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "in Hg");
 }
 
 void ManifoldPressure::setStartSpan(double start, double span)
