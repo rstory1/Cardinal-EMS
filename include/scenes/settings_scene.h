@@ -69,6 +69,8 @@ private:
     QString stdout;
     QString stderr;
 
+    QPushButton button1;
+
 private slots:
     void onZeroCurrent() { emit zeroCurrent();}
     void showDateTime();
@@ -89,9 +91,13 @@ private slots:
 
 signals:
     void zeroCurrent();
+    void switchScene(int);
 
 private slots:
     void onBacklightChange(int);
+    void onButton1Pressed() {
+        emit switchScene(1);
+    }
 };
 
 #endif // SETTINGS_SCENE_H

@@ -25,6 +25,7 @@ private:
     QRectF buttonRect4 = QRectF(300,-50.0,100,50);
     QRectF buttonRect5 = QRectF(400,-50.0,100,50);
     QRectF buttonRect6 = QRectF(500,-50.0,100,50);
+    QPushButton button1;
 
     int buttonWidth;
     int buttonHeight;

@@ -65,17 +65,24 @@ private:
     QTimer flashTimer;
     QTimer clockTimer;
 
+    QPushButton button1;
+    QPushButton button2;
+
     public slots:
         void setEngineConds();
-        void onAckAlarm() {emit ackAlarm();}
+        void onAckAlarm() {button2.setVisible(false);}
         void onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map);
 
     private slots:
         void onAlarmFlash() {emit alarmFlashing();}
+        void onButton1Press() {
+            emit switchScene(2);
+        }
 
     signals:
         void alarmFlashing();
         void ackAlarm();
+        void switchScene(int);
 
 };
 

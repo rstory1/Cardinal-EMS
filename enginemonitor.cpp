@@ -40,7 +40,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     this->scene()->setSceneRect(0,0,800,480);
     buttonBar.setPos(0,this->scene()->height());
-    this->scene()->addItem(&buttonBar);
+    //this->scene()->addItem(&buttonBar);
 
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
@@ -191,174 +191,6 @@ void EngineMonitor::writeLogFile()
     logFile->write("\r\n");
 	logFile->flush();
 	++sample;
-}
-
-void EngineMonitor::setupAlarm()
-{
-    alarmWindow.setPos(50, 100);
-    graphicsScene.addItem(&alarmWindow);
-    alarmWindow.setVisible(false);
-}
-
-void EngineMonitor::setupRpmIndicator()
-{
-    double minValue, maxValue;
-    minValue = gaugeSettings.value("RPM/min",0).toInt();
-    maxValue = gaugeSettings.value("RPM/max",0).toInt();
-    rpmIndicator.setPos(450, 140);
-	rpmIndicator.setStartSpan(230.0, 240.0);
-    rpmIndicator.setBorders(minValue, maxValue);
-
-    for(int i=0;(i<=maxValue);i=i+1000) {
-        rpmIndicator.addBetweenValue(i);
-    }
-	graphicsScene.addItem(&rpmIndicator);
-}
-
-//void EngineMonitor::setupExhaustGasTemperature()
-//{
-//	exhaustGasTemperature.setPos(-475, 175);
-//	exhaustGasTemperature.setBorders(300.0, 850.0, 750.0, 800.0);
-//	exhaustGasTemperature.addBetweenValue(450);
-//	exhaustGasTemperature.addBetweenValue(550);
-//	exhaustGasTemperature.addBetweenValue(650);
-//	exhaustGasTemperature.addBetweenValue(750);
-//	exhaustGasTemperature.addBetweenValue(800);
-//	exhaustGasTemperature.addBetweenValue(850);
-//	exhaustGasTemperature.setLeanWindow(200.0);
-//    graphicsScene.addItem(&exhaustGasTemperature);
-//}
-
-//void EngineMonitor::setupCylinderHeadTemperature()
-//{
-//	cylinderHeadTemperature.setPos(-200, 175);
-//	cylinderHeadTemperature.setBorders(60.0, 160.0, 140.0, 150.0);
-//	cylinderHeadTemperature.addBetweenValue(80);
-//	cylinderHeadTemperature.addBetweenValue(100);
-//	cylinderHeadTemperature.addBetweenValue(120);
-//	cylinderHeadTemperature.addBetweenValue(140);
-//	cylinderHeadTemperature.addBetweenValue(150);
-//	cylinderHeadTemperature.addBetweenValue(160);
-//	graphicsScene.addItem(&cylinderHeadTemperature);
-
-//    chtEgt.addBetweenValue(80);
-//    chtEgt.addBetweenValue(100);
-//    chtEgt.addBetweenValue(120);
-//    chtEgt.addBetweenValue(140);
-//    chtEgt.addBetweenValue(150);
-//    chtEgt.addBetweenValue(160);
-//}
-
-void EngineMonitor::setupChtEgt()
-{
-    chtEgt.setPos(700, 450);
-    graphicsScene.addItem(&chtEgt);
-}
-
-void EngineMonitor::setupBarGraphs()
-{
-    oilTemperature.setPos(620, 60);
-    oilTemperature.setTitle("OIL T");
-    oilTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    oilTemperature.setIndicatorSide("left");
-    oilTemperature.setGaugeType("OilTemp");
-    graphicsScene.addItem(&oilTemperature);
-
-    oilPressure.setPos(690, 60);
-    oilPressure.setTitle("OIL P");
-    oilPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
-    oilPressure.setGaugeType("OilPress");
-    graphicsScene.addItem(&oilPressure);
-
-    voltMeter.setPos(760, 60);
-    voltMeter.setTitle("VOLTS");
-    voltMeter.setUnit("V");
-    voltMeter.setPrecision(1, 1);
-    voltMeter.setIndicatorSide("left");
-    voltMeter.setGaugeType("Volt");
-    graphicsScene.addItem(&voltMeter);
-
-    ampereMeter.setPos(690, 200);
-    ampereMeter.setTitle("AMPS");
-    ampereMeter.setUnit("A");
-    ampereMeter.addBetweenValue(0.0);
-    ampereMeter.setGaugeType("Amp");
-    graphicsScene.addItem(&ampereMeter);
-
-    fuelFlow.setPos(760, 200);
-    fuelFlow.setTitle("FF");
-    fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
-    fuelFlow.setPrecision(1);
-    fuelFlow.setIndicatorSide("left");
-    fuelFlow.setGaugeType("Fuel");
-    graphicsScene.addItem(&fuelFlow);
-    fuelFlow.setVisible(false);
-
-    insideAirTemperature.setPos(800, 200);
-    insideAirTemperature.setTitle("IAT");
-    insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    insideAirTemperature.setPrecision(1);
-    graphicsScene.addItem(&insideAirTemperature);
-    insideAirTemperature.setVisible(false);
-    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
-    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
-
-    outsideAirTemperature.setPos(850, 350);
-    outsideAirTemperature.setTitle("OAT");
-    outsideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    outsideAirTemperature.setPrecision(1);
-    graphicsScene.addItem(&outsideAirTemperature);
-    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
-    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
-}
-
-void EngineMonitor::setupStatusItem()
-{
-    statusItem.setPos(5, 300);
-	graphicsScene.addItem(&statusItem);
-    statusItem.setVisible(true);
-}
-
-void EngineMonitor::setupTimeToDestinationItem()
-{
-    timeToDestinationItem.setPos(0, 65);
-	timeToDestinationItem.setDefaultTextColor(Qt::white);
-    graphicsScene.addItem(&timeToDestinationItem);
-}
-
-void EngineMonitor::setupFuelManagement()
-{
-	fuelManagement.setPos(-495, -240);
-	fuelManagement.setScale(1.8);
-    fuelManagement.setVisible(false);
-	connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
-	graphicsScene.addItem(&fuelManagement);
-    fuelDisplay.setPos(102,102);
-    graphicsScene.addItem(&fuelDisplay);
-}
-
-void EngineMonitor::setupManifoldPressure()
-{
-    manifoldPressure.setPos(100, 200);
-    manifoldPressure.setStartSpan(230.0, 240.0);
-    rpmIndicator.setBorders(0.0, 35.0);
-    graphicsScene.addItem(&manifoldPressure);
-    manifoldPressure.setVisible(true);
-}
-
-void EngineMonitor::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
-{
-	fuelFlow.setValue(fuelFlowValue);
-	fuelManagement.setFuelFlow(fuelFlowValue);
-    fuelDisplay.setFuelFlow(fuelFlowValue);
-	fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
-}
-
-void EngineMonitor::setTimeToDestination(double time)
-{
-	timeToDestinationItem.setPlainText(QString::number(time, 'f', 1).prepend("Time to destination: ").append(" minutes"));
-	fuelManagement.setTimeToDestination(time);
-    fuelDisplay.setTimeToDestination(time);
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
@@ -581,6 +413,9 @@ void EngineMonitor::connectSignals() {
 
     connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
 
+    connect(&ems_full, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
+    connect(&settings_scene, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
+
     connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
 }
 
@@ -624,7 +459,7 @@ void EngineMonitor::onSwitchScene(int scene) {
 
     this->scene()->setSceneRect(0,0,800,480);
     buttonBar.setPos(0,this->scene()->height());
-    this->scene()->addItem(&buttonBar);
+//    this->scene()->addItem(&buttonBar);
 
     qDebug() << "Is EMS Scene Active?: " + QString::number(ems_full.isActive());
     qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());

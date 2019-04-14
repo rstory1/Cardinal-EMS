@@ -174,6 +174,8 @@ void SensorConvert::onZeroCurrent() {
 }
 
 void SensorConvert::convertMAP(qreal adc) {
-    manP = 5.7993 * (adc / (4095/5)) + 1.1599;
+    manP = 39.958 * (adc / (4096/4.93)) + 13.26;
+
+    manP = manP * 0.2953; // COnvert from kPa to in Hg
 }
 

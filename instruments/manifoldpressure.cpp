@@ -98,9 +98,9 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	}
 
 	//Draw the center text
-//    QRectF centerTextRect(55, 55, 50, 50);
-//    painter->setFont(QFont("Arial", 30));
-//	painter->drawText(centerTextRect, Qt::AlignCenter, "Manifold\nPressure");
+    QRectF centerTextRect(55, 55, 50, 20);
+    painter->setFont(QFont("Arial", 12));
+    painter->drawText(centerTextRect, Qt::AlignCenter, "MAP");
 
 	//Draw the needle if value is in range
 	if((currentValue > minValue) &&
@@ -137,9 +137,9 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
     painter->setFont(QFont("Arial", 20, 1));
     painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, pressure);
 	//Set position and font for the unit and draw it
-	QRectF unitRect(55, 25, 60, 25);
+    QRectF unitRect(58, 25, 60, 25);
     painter->setFont(QFont("Arial", 15, 1));
-	painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "psi");
+    painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "in Hg");
 }
 
 void ManifoldPressure::setStartSpan(double start, double span)

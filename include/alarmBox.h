@@ -50,7 +50,6 @@ private:
     int boundingY = -100;
     int boundingWidth = 100;
     int boundingHeight = 150;
-    bool flashState = false;
 
 public:
     explicit AlarmBox(QGraphicsObject * parent = 0);
@@ -61,6 +60,7 @@ public:
     static void buttonClicked();
     void hideAlarmBox();
     void setText(QString text);
+    bool flashState = false;
 
 public slots:
     void onAlarm(QString text, QColor color, bool flashing);

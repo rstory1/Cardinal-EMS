@@ -59,6 +59,17 @@ settingsScene::settingsScene(QObject* parent) :
 //    cmdLog.setFixedSize(300,350);
 //    cmdLog.setGeometry(10,40,300,350);
 //    addWidget(&cmdLog);
+
+    button1.setText("<- EMS");
+    button1.setFixedSize(100,50);
+    button1.setGeometry(0,430,100,50);
+    button1.setStyleSheet("QPushButton {\
+                              background-color: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,stop: 0.7 black, stop: 1 darkGray);\
+                                color: white;\
+                                border:1px solid white;}");
+    addWidget(&button1);
+
+    connect(&button1, SIGNAL(clicked(bool)), this, SLOT(onButton1Pressed()));
 }
 
 QRectF settingsScene::boundingRect() const

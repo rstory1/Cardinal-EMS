@@ -25,6 +25,24 @@ emsFull::emsFull(QObject *parent)
 
     clockTimer.start(1000);
 
+    button1.setText("Settings");
+    button1.setFixedSize(100,50);
+    button1.setGeometry(0,430,100,50);
+    button1.setStyleSheet("QPushButton {\
+                              background-color: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,stop: 0.7 black, stop: 1 darkGray);\
+                                color: white;\
+                                border:1px solid white;}");
+    addWidget(&button1);
+
+    button2.setText("Ack");
+    button2.setFixedSize(100,50);
+    button2.setGeometry(100,430,100,50);
+    button2.setStyleSheet("QPushButton {\
+                              background-color: qlineargradient(x1: 0, y1: 1, x2: 0, y2: 0,stop: 0.7 black, stop: 1 darkGray);\
+                                color: white;\
+                                border:1px solid white;}");
+    addWidget(&button2);
+
 }
 
 QRectF emsFull::boundingRect() const
@@ -46,6 +64,12 @@ void emsFull::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
     painter->setFont(QFont("Arial", 14));
 
     painter->drawRect(boundingRect());
+
+    if (alarmWindow.flashState == true) {
+        button2.setVisible(true);
+    } else {
+        button2.setVisible(false);
+    }
 
     if(isActive()) {
         update();
@@ -99,37 +123,37 @@ void emsFull::setupBarGraphs()
     this->addItem(&voltMeter);
 
     ampereMeter.setPos(760, 205);
-    ampereMeter.setTitle("AMPS");
+    ampereMeter.setTitle("LOAD");
     ampereMeter.setUnit("A");
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
     this->addItem(&ampereMeter);
 
-    fuelFlow.setPos(760, 205);
-    fuelFlow.setTitle("FF");
-    fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
-    fuelFlow.setPrecision(1);
-    fuelFlow.setIndicatorSide("left");
-    fuelFlow.setGaugeType("Fuel");
-    this->addItem(&fuelFlow);
-    fuelFlow.setVisible(false);
+//    fuelFlow.setPos(760, 205);
+//    fuelFlow.setTitle("FF");
+//    fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
+//    fuelFlow.setPrecision(1);
+//    fuelFlow.setIndicatorSide("left");
+//    fuelFlow.setGaugeType("Fuel");
+//    this->addItem(&fuelFlow);
+//    fuelFlow.setVisible(false);
 
-    insideAirTemperature.setPos(800, 205);
-    insideAirTemperature.setTitle("IAT");
-    insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-    insideAirTemperature.setPrecision(1);
-    this->addItem(&insideAirTemperature);
-    insideAirTemperature.setVisible(false);
-    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
-    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
+//    insideAirTemperature.setPos(800, 205);
+//    insideAirTemperature.setTitle("IAT");
+//    insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
+//    insideAirTemperature.setPrecision(1);
+//    this->addItem(&insideAirTemperature);
+//    insideAirTemperature.setVisible(false);
+//    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
+//    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
 
-    outsideAirTemperature.setPos(150, 375);
-    outsideAirTemperature.setTitle("OAT");
-    outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
-    outsideAirTemperature.setPrecision(1);
-    this->addItem(&outsideAirTemperature);
-    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
-    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
+//    outsideAirTemperature.setPos(150, 375);
+//    outsideAirTemperature.setTitle("OAT");
+//    outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
+//    outsideAirTemperature.setPrecision(1);
+//    this->addItem(&outsideAirTemperature);
+//    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
+//    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }
 
 void emsFull::setupFuelManagement()
@@ -145,14 +169,15 @@ void emsFull::setupFuelManagement()
 
 void emsFull::setupManifoldPressure()
 {
-    manifoldPressure.setPos(150, 150);
+    manifoldPressure.setPos(130, 150);
     manifoldPressure.setStartSpan(240.0, 240.0);
-    manifoldPressure.setBorders(10.0, 30.0, 13.0, 30.0);
+    manifoldPressure.setBorders(10.0, 35.0, 15.0, 35.0);
     manifoldPressure.addBetweenValue(10.0);
     manifoldPressure.addBetweenValue(15.0);
     manifoldPressure.addBetweenValue(20.0);
     manifoldPressure.addBetweenValue(25.0);
     manifoldPressure.addBetweenValue(30.0);
+    manifoldPressure.addBetweenValue(35.0);
     this->addItem(&manifoldPressure);
 }
 
@@ -209,7 +234,9 @@ void emsFull::connectSignals() {
     connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     // Connect buttonBar to the alarm window for alarm acknowledgement
-    connect(this, SIGNAL(ackAlarm()), &alarmWindow, SLOT(onAlarmAck()));
+    connect(&button2, SIGNAL(clicked(bool)), &alarmWindow, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), this, SLOT(onAckAlarm()));
+    connect(&button1, SIGNAL(clicked(bool)), this, SLOT(onButton1Press()));
 
 //    // Connect buttonBar to the fuelDisplay window to increment fuel amount
 //    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));

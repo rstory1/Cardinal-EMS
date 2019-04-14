@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.8.1, 2019-02-17T13:40:51. -->
+<!-- Written by QtCreator 4.8.1, 2019-04-14T08:35:48. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -328,7 +328,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default"></value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">/home/rstory/Avionics/Cardinal-EMS/Cardinal-EMS-release</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
@@ -532,9 +532,9 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">RemoteLinux.DirectUploadStep</value>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedFiles">
+       <value type="QString">/home/rstory/Avionics/Cardinal-EMS/settings/settings.ini</value>
        <value type="QString">/home/rstory/Avionics/build-EngineMonitor-BBB-Release/EngineMonitor</value>
        <value type="QString">/home/rstory/Avionics/Cardinal-EMS/settings/gaugeSettings.ini</value>
-       <value type="QString">/home/rstory/Avionics/Cardinal-EMS/settings/settings.ini</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedHosts">
        <value type="QString">192.168.0.17</value>
@@ -542,8 +542,8 @@
        <value type="QString">192.168.0.17</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedRemotePaths">
-       <value type="QString">/Cardinal-EMS</value>
        <value type="QString">/Cardinal-EMS/settings</value>
+       <value type="QString">/Cardinal-EMS</value>
        <value type="QString">/Cardinal-EMS/settings</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedSysroots">
@@ -552,9 +552,9 @@
        <value type="QString">/opt/poky/2.3.2/sysroots/cortexa8hf-neon-poky-linux-gnueabi</value>
       </valuelist>
       <valuelist type="QVariantList" key="ProjectExplorer.RunConfiguration.LastDeployedTimes">
+       <value type="QDateTime">2018-01-05T20:22:17.000</value>
        <value type="QDateTime">2018-01-05T20:14:33.000</value>
        <value type="QDateTime">2018-01-05T20:27:30.000</value>
-       <value type="QDateTime">2018-01-05T20:22:17.000</value>
       </valuelist>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.IgnoreMissingFiles">false</value>
       <value type="bool" key="RemoteLinux.GenericDirectUploadStep.Incremental">true</value>
