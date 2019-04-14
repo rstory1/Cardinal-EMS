@@ -119,7 +119,7 @@ void ButtonBar::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
             break;
     }
 
-    update();
+
 }
 
 void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -177,6 +177,8 @@ void ButtonBar::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 
     QGraphicsItem::mousePressEvent(event);
+
+    update();
 }
 
 void ButtonBar::ackPressed() {
