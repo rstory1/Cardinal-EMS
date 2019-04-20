@@ -48,7 +48,7 @@ private:
 
     int timeOilTAboveWarmup=0;
     int timeOilTBelowWarmup=0;
-    int warmupTemp=0;
+    int warmupTemp=120;
 
     void setupRpmIndicator();
     void setupBarGraphs();

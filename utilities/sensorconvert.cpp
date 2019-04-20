@@ -166,7 +166,7 @@ void SensorConvert::convertCurrent(qreal adc)
 {
 //    currentAdc = adc;
 //    current = 0.0244 * currentAdc - 50.024; // MGL Current Sensor
-    current = 73.3 * (adc / (4096/5)) / 5 - 36.7; // Pololu sensor acs711ex
+    current = 73.3 * (adc / (4096/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
 }
 
 void SensorConvert::onZeroCurrent() {
