@@ -67,6 +67,9 @@ void SensorConvert::convertOilPress(double adc)
     tempVoltage = adc / (4095/5);
     tempCurrent = tempVoltage / pdResistorValue;
     oilPress =  0.625*tempCurrent + 0.75;
+
+    // Conert to psi since equation produces reading in bars
+    oilPress = oilPress * 14.5038;
 }
 
 void SensorConvert::convertOAT(qreal adc)
