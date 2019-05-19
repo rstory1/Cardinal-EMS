@@ -95,7 +95,7 @@ void emsFull::setupRpmIndicator()
 
 void emsFull::setupChtEgt()
 {
-    chtEgt.setPos(700, 450);
+    chtEgt.setPos(680, 450);
     this->addItem(&chtEgt);
 }
 

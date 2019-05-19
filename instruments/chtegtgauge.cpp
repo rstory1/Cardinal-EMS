@@ -48,7 +48,7 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 QRectF ChtEgt::boundingRect() const
 {
-    return QRectF(-240, -170, 340, 190);
+    return QRectF(-240, -170, 350, 190);
 }
 
 /*! \brief Handles drawing of the object
@@ -65,7 +65,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     painter->setFont(QFont("Arial", 16));
 
     //Draw the static texts
-    QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 50.0, 20.0);
+    QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 60.0, 20.0);
     if (numOfEgt>0) {
         painter->setPen(QPen(QColor(0,255,255), 1));
         painter->drawText(QRectF(-(60*(numOfCht-1))-60, calculateLocalChtValue(minChtValue)+4, 50.0, 20.0), Qt::AlignCenter | Qt::AlignVCenter, "EGT");
@@ -267,12 +267,12 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->drawRect(chtTitleRect);
             painter->setPen(Qt::white);
             painter->setFont(QFont("Arial", 16));
-            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CLNT");
 
         } else {
             painter->setPen(Qt::red);
             painter->setFont(QFont("Arial", 16));
-            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CLNT");
         }
 
     } else if ((isAlarmedYellow)) {
@@ -282,17 +282,17 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->drawRect(chtTitleRect);
             painter->setFont(QFont("Arial", 16));
             painter->setPen(Qt::black);
-            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CLNT");
 
         } else {
             painter->setPen(Qt::yellow);
             painter->setFont(QFont("Arial", 16));
-            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+            painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CLNT");
         }
     } else {
         painter->setPen(Qt::white);
         painter->setFont(QFont("Arial", 16));
-        painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CHT");
+        painter->drawText(chtTitleRect, Qt::AlignCenter | Qt::AlignVCenter, "CLNT");
         isAcknowledged = false;
         emit cancelAlarm("CHT");
         isAlarmedRed = false;
