@@ -26,7 +26,6 @@ public:
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-private:
     RpmIndicator rpmIndicator;
     BarGraph oilTemperature;
     BarGraph oilPressure;
@@ -43,6 +42,7 @@ private:
     HourMeter hobbs;
     AlarmBox alarmWindow;
 
+private:
     QSettings gaugeSettings;
     QSettings settings;
 
