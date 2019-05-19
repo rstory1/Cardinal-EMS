@@ -64,9 +64,9 @@ void SensorConvert::convertRpm(double pulses)
 void SensorConvert::convertOilPress(double adc)
 {
     // 456-180 (Keller)
-    tempVoltage = adc / (4095/5);
+    tempVoltage = adc / (4095.0/5.0);
     tempCurrent = tempVoltage / pdResistorValue;
-    oilPress =  0.625*tempCurrent + 0.75;
+    oilPress =  625.0*tempCurrent - 2.5;
 
     // Conert to psi since equation produces reading in bars
     oilPress = oilPress * 14.5038;
