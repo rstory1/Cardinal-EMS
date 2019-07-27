@@ -30,7 +30,7 @@ BarGraph::BarGraph(QGraphicsObject *parent)
 	, barPrecision(0)
 	, readoutPrecision(0)
 {
-
+    smoothData.setSampleSize(20);
 }
 
 QRectF BarGraph::boundingRect() const
@@ -287,7 +287,13 @@ double BarGraph::calculateLocalValue(double value) const
 
 void BarGraph::setValue(qreal value)
 {
-    currentValue = value;
+    if (smooth) {
+        currentValue = smoothData.dsp_ema_double(value);
+        qDebug() << QString::number(value) + "; " + QString::number(currentValue);
+    } else {
+        currentValue = value;
+    }
+
     //qDebug() << "Current " + titleText + ": " + QString::number(value);
 
     update();

@@ -23,6 +23,7 @@
 
 #include <QtWidgets>
 #include <gaugesettings.h>
+#include <datasmoothing.h>
 
 //! Bar Graph Class
 /*!
@@ -59,6 +60,10 @@ public:
         gauge.setGauge(gaugeType);
     }
 
+    void setSmoothBool(bool tf) {
+        smooth=tf;
+    }
+
 public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
@@ -89,6 +94,9 @@ private:
     float start;
     float end;
     QColor color;
+
+    DataSmoothing smoothData;
+    bool smooth = false;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{

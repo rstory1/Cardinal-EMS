@@ -68,6 +68,8 @@ private:
     QPushButton button1;
     QPushButton button2;
 
+
+
     public slots:
         void setEngineConds();
         void onAckAlarm() {button2.setVisible(false);}
@@ -78,6 +80,7 @@ private:
         void onButton1Press() {
             emit switchScene(2);
         }
+        void demoFunction();
 
     signals:
         void alarmFlashing();

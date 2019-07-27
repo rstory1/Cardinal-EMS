@@ -43,6 +43,7 @@ RC_FILE = ./res/icon.rc
 
 SOURCES += main.cpp\
     enginemonitor.cpp \
+    utilities/datasmoothing.cpp \
     instruments/bargraph.cpp \
     instruments/rpmindicator.cpp \
     instruments/cylinderheadtemperature.cpp \
@@ -71,6 +72,7 @@ SOURCES += main.cpp\
     instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
+    include/datasmoothing.h \
     include/instruments/bargraph.h \
     include/instruments/rpmindicator.h \
     include/instruments/cylinderheadtemperature.h \
