@@ -1,7 +1,7 @@
 #include "scenes/settings_scene.h"
 
-settingsScene::settingsScene(QObject* parent) :
-    QGraphicsScene(parent)
+settingsScene::settingsScene(QObject* parent)  :
+    QGraphicsScene(parent), settingsINI(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
     //addItem(&userSet);
 
@@ -23,8 +23,16 @@ settingsScene::settingsScene(QObject* parent) :
     dateLabel.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
     addWidget(&dateLabel);
 
+    hobbsLabel.setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+    hobbsLabel.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+    hobbsLabel.setFixedSize(120, 50);
+    hobbsLabel.setGeometry(10,120,120,50);
+    hobbsLabel.setStyleSheet("QLabel { background-color : black; color : white; }");
+    addWidget(&hobbsLabel);
+
     connect(&userSet, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(showDateTime()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(getHobbsFromINI()));
     timer.start(1000);
 
     setTime.setText("Change Time");
@@ -37,9 +45,15 @@ settingsScene::settingsScene(QObject* parent) :
     setDate.setGeometry(130,10,120,50);
     addWidget(&setDate);
 
+    setHobbs.setText("Change Hobbs");
+    setHobbs.setFixedSize(130,50);
+    setHobbs.setGeometry(130,120,120,50);
+    addWidget(&setHobbs);
+
     connect(&keyEnt, SIGNAL(clicked(bool)), this, SLOT(onFinishChange()));
     connect(&setTime, SIGNAL(clicked(bool)), this, SLOT(onChangeTime()));
     connect(&setDate, SIGNAL(clicked(bool)), this, SLOT(onChangeDate()));
+    connect(&setHobbs, SIGNAL(clicked(bool)), this, SLOT(onChangeHobbs()));
 
     connect(&key1, SIGNAL(clicked(bool)), this, SLOT(on1Pressed()));
     connect(&key2, SIGNAL(clicked(bool)), this, SLOT(on2Pressed()));
@@ -218,6 +232,25 @@ void settingsScene::onChangeDate() {
     dateText.clear();
 }
 
+void settingsScene::onChangeHobbs() {
+    key1.setVisible(true);
+    key2.setVisible(true);
+    key3.setVisible(true);
+    key4.setVisible(true);
+    key5.setVisible(true);
+    key6.setVisible(true);
+    key7.setVisible(true);
+    key8.setVisible(true);
+    key9.setVisible(true);
+    keyClr.setVisible(true);
+    keyClr.setText(".");
+    key0.setVisible(true);
+    keyEnt.setVisible(true);
+
+    editType = 3;
+    hobbsText.clear();
+}
+
 void settingsScene::onFinishChange() {
     key1.setVisible(false);
     key2.setVisible(false);
@@ -237,29 +270,36 @@ void settingsScene::onFinishChange() {
         //qDebug() << "Attempting to change date to " + dateLabel.text();
         execCommand = "date -s \"" + dateToSet.toString("yyyy-MM-dd").toUpper() + " " + timeLabel.text() + "\"" ;
         qDebug() << "Command to execute '" + execCommand + "'";
-    } else {
+    } else if (editType == 2) {
         //qDebug() << "Attempting to change time to " + timeText;
         execCommand = "date +%T -s " + timeLabel.text();
         qDebug() << "Command to execute '" + execCommand + "'";
+    } else if (editType==3) {
+        //qDebug() << "Attempting to change hobbs to " + hobbsText;
+        settingsINI.setValue("Time/hobbs", hobbsText);
+        keyClr.setText("Clr");
+        emit hobbsUpdated();
     }
 
-    hwClock.start(execCommand);
-    hwClock.waitForFinished(-1); // will wait forever until finished
+    if (editType==1 || editType==2) {
+        hwClock.start(execCommand);
+        hwClock.waitForFinished(-1); // will wait forever until finished
 
-    stdout = hwClock.readAllStandardOutput();
-    stderr = hwClock.readAllStandardError();
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
+        stdout = hwClock.readAllStandardOutput();
+        stderr = hwClock.readAllStandardError();
+        qDebug() << "stdout: " + stdout;
+        qDebug() << "stderr: " + stderr;
 
-    execCommand = "hwclock -w";
+        execCommand = "hwclock -w";
 
-    hwClock.start(execCommand);
-    hwClock.waitForFinished(-1); // will wait forever until finished
+        hwClock.start(execCommand);
+        hwClock.waitForFinished(-1); // will wait forever until finished
 
-    stdout = hwClock.readAllStandardOutput();
-    stderr = hwClock.readAllStandardError();
-    qDebug() << "stdout: " + stdout;
-    qDebug() << "stderr: " + stderr;
+        stdout = hwClock.readAllStandardOutput();
+        stderr = hwClock.readAllStandardError();
+        qDebug() << "stdout: " + stdout;
+        qDebug() << "stderr: " + stderr;
+    }
 
     editType = 0;
 }
@@ -290,8 +330,10 @@ void settingsScene::on1Pressed() {
 
     if (editType == 1) {
         dateText.append("1");
-    } else {
+    } else if (editType==2) {
         timeText.append("1");
+    } else if (editType==3) {
+        hobbsText.append("1");
     }
 
 }
@@ -301,8 +343,10 @@ void settingsScene::on2Pressed() {
 
     if (editType == 1) {
         dateText.append("2");
-    } else {
+    } else if (editType==2) {
         timeText.append("2");
+    } else if (editType==3) {
+        hobbsText.append("2");
     }
 }
 
@@ -311,8 +355,10 @@ void settingsScene::on3Pressed() {
 
     if (editType == 1) {
         dateText.append("3");
-    } else {
+    } else if (editType==2) {
         timeText.append("3");
+    } else if (editType==3) {
+        hobbsText.append("3");
     }
 }
 
@@ -320,8 +366,10 @@ void settingsScene::on4Pressed() {
     addSlashesOrColons();
     if (editType == 1) {
         dateText.append("4");
-    } else {
+    } else if (editType==2) {
         timeText.append("4");
+    } else if (editType==3) {
+        hobbsText.append("4");
     }
 }
 
@@ -330,8 +378,10 @@ void settingsScene::on5Pressed() {
 
     if (editType == 1) {
         dateText.append("5");
-    } else {
+    } else if (editType==2) {
         timeText.append("5");
+    } else if (editType==3) {
+        hobbsText.append("5");
     }
 }
 
@@ -340,8 +390,10 @@ void settingsScene::on6Pressed() {
 
     if (editType == 1) {
         dateText.append("6");
-    } else {
+    } else if (editType==2) {
         timeText.append("6");
+    } else if (editType==3) {
+        hobbsText.append("6");
     }
 }
 
@@ -350,8 +402,10 @@ void settingsScene::on7Pressed() {
 
     if (editType == 1) {
         dateText.append("7");
-    } else {
+    } else if (editType==2) {
         timeText.append("7");
+    } else if (editType==3) {
+        hobbsText.append("7");
     }
 }
 
@@ -360,8 +414,10 @@ void settingsScene::on8Pressed() {
 
     if (editType == 1) {
         dateText.append("8");
-    } else {
+    } else if (editType==2) {
         timeText.append("8");
+    } else if (editType==3) {
+        hobbsText.append("8");
     }
 }
 
@@ -370,8 +426,10 @@ void settingsScene::on9Pressed() {
 
     if (editType == 1) {
         dateText.append("9");
-    } else {
+    } else if (editType==2) {
         timeText.append("9");
+    } else if (editType==3) {
+        hobbsText.append("9");
     }
 }
 
@@ -380,16 +438,20 @@ void settingsScene::on0Pressed() {
 
     if (editType == 1) {
         dateText.append("0");
-    } else {
+    } else if (editType==2) {
         timeText.append("0");
+    } else if (editType==3) {
+        hobbsText.append("0");
     }
 }
 
 void settingsScene::onClrPressed() {
     if (editType == 1) {
         dateText.clear();
-    } else {
+    } else if (editType==2) {
         timeText.clear();
+    } else if (editType==3) {
+        hobbsText.append(".");
     }
 }
 
@@ -444,4 +506,13 @@ void settingsScene::onBacklightChange(int sliderValue) {
     f.write(c_str2);
     f.close();
 
+}
+
+void settingsScene::getHobbsFromINI() {
+    if (editType==0) {
+        hobbsText = QString::number(settingsINI.value("Time/hobbs", "0.0").toDouble());
+    }
+
+    hobbsLabel.setText(hobbsText);
+    //qDebug() << hobbsText;
 }

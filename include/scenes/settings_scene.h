@@ -6,6 +6,7 @@
 #include "QDateTimeEdit"
 #include "QProcess"
 #include "QTextEdit"
+#include "QString"
 
 #include <userSettings.h>
 
@@ -13,7 +14,7 @@ class settingsScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    settingsScene(QObject* parent = 0);
+    settingsScene(QObject* parent = nullptr);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -21,9 +22,12 @@ private:
     userSettings userSet;
     QLabel timeLabel;
     QLabel dateLabel;
+    QLabel hobbsLabel;
     QTime time;
     QString timeText;
     QString dateText;
+    QString hobbsText;
+    double hobbs;
     QTimer timer;
     QDateTimeEdit dtEdit;
     void setupNumPad();
@@ -48,6 +52,7 @@ private:
 
     QPushButton setDate;
     QPushButton setTime;
+    QPushButton setHobbs;
 
     QTextEdit cmdLog;
 
@@ -71,6 +76,8 @@ private:
 
     QPushButton button1;
 
+    QSettings settingsINI;
+
 private slots:
     void onZeroCurrent() { emit zeroCurrent();}
     void showDateTime();
@@ -88,16 +95,20 @@ private slots:
     void on9Pressed();
     void on0Pressed();
     void onClrPressed();
+    void onChangeHobbs();
+    void getHobbsFromINI();
 
 signals:
     void zeroCurrent();
     void switchScene(int);
+    void hobbsUpdated();
 
 private slots:
     void onBacklightChange(int);
     void onButton1Pressed() {
         emit switchScene(1);
     }
+
 };
 
 #endif // SETTINGS_SCENE_H

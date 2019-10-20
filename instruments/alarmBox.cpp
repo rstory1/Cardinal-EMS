@@ -138,6 +138,7 @@ void AlarmBox::onRemoveAlarm(QString text)
 //                }
 
                 alarmCount = alarmCount - 1;
+                qDebug() << "Remove Alarm: " + alarmText[removedItem];
             }
         }
 
@@ -152,15 +153,18 @@ void AlarmBox::onRemoveAlarm(QString text)
 */
 void AlarmBox::onAlarm(QString text, QColor color, bool flashing)
 {
-//    alarmText[alarmCount] = text;
-//    alarmColor[alarmCount] = color;
-//    alarmFlash[alarmCount] = flashing;
+    alarmText[alarmCount] = text;
+    alarmColor[alarmCount] = color;
+    alarmFlash[alarmCount] = flashing;
 
-//    alarmCount++;
+    alarmCount++;
 
     if (flashing) {
         emit flashingAlarm();
+        //qDebug() << "This is a flashing alarm.";
     }
+
+    //qDebug() << "Alarm Created:" + QString(alarmCount) + "; " + alarmFlash[alarmCount];
 
 //    QSound::play(":/elevator-ding.wav");
 //    QTextToSpeech *m_speech;
@@ -189,4 +193,6 @@ void AlarmBox::onAlarmAck() {
     }
 
     emit stopAlarmFlash();
+
+    //qDebug() << "Alarm Acknowledged";
 }

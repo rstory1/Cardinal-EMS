@@ -416,6 +416,8 @@ void EngineMonitor::connectSignals() {
     connect(&ems_full, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
     connect(&settings_scene, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
 
+    connect(&settings_scene, SIGNAL(hobbsUpdated()), &ems_full.hobbs, SLOT(onHobbsINIChanged()));
+
     connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
 }
 

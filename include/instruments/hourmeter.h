@@ -42,6 +42,7 @@ signals:
 public slots:
     void onTic(/*bool isFlying*/);
     void onShutdown();
+    void onHobbsINIChanged();
 };
 
 #endif // HOURMETER_H

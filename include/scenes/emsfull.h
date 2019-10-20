@@ -76,7 +76,9 @@ private:
         void onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map);
 
     private slots:
-        void onAlarmFlash() {emit alarmFlashing();}
+        void onAlarmFlash() {emit alarmFlashing();
+                             button2.setVisible(true);
+                            qDebug() << "An alarm is flashing!";}
         void onButton1Press() {
             emit switchScene(2);
         }

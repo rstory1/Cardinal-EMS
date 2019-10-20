@@ -42,6 +42,7 @@ emsFull::emsFull(QObject *parent)
                                 color: white;\
                                 border:1px solid white;}");
     addWidget(&button2);
+    button2.setVisible(false);
 
     //Demo timer, for testing purposes only
 #ifdef QT_DEBUG

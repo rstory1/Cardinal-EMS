@@ -116,6 +116,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 if (color == Qt::red) {
                     if (isAlarmedRed == false) {
                         emit sendAlarm(titleText, color, true);
+                        isAcknowledged = false;
                     }
 
                     isAlarmedRed = true;
@@ -125,6 +126,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 } else if (color == Qt::yellow) {
                     if (isAlarmedYellow == false) {
                         emit sendAlarm(titleText, color, true);
+                        isAcknowledged = false;
                     }
 
                     isAlarmedRed = false;
@@ -158,6 +160,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 if (color == Qt::yellow) {
                     if(isAlarmedYellow == false) {
                         emit sendAlarm(titleText, Qt::yellow, true);
+                        isAcknowledged = false;
                     }
                     isPenAlarmColored = true;
                     isAlarmedYellow = true;
@@ -166,6 +169,7 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
                 } else if (color == Qt::red) {
                     if(isAlarmedRed == false) {
                         emit sendAlarm(titleText, Qt::red, true);
+                        isAcknowledged = false;
                     }
                     isPenAlarmColored = true;
                     isAlarmedRed = true;
@@ -289,7 +293,7 @@ void BarGraph::setValue(qreal value)
 {
     if (smooth) {
         currentValue = smoothData.dsp_ema_double(value);
-        qDebug() << QString::number(value) + "; " + QString::number(currentValue);
+        //qDebug() << QString::number(value) + "; " + QString::number(currentValue);
     } else {
         currentValue = value;
     }
