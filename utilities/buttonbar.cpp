@@ -189,3 +189,7 @@ void ButtonBar::ackPressed() {
 void ButtonBar::onAlarmFlash() {
     isAlarmFlashing = true;
 }
+
+void ButtonBar::onNoFlashingAlarm() {
+    ackPressed();
+}

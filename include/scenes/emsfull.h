@@ -32,6 +32,7 @@ public:
     BarGraph voltMeter;
     BarGraph ampereMeter;
     BarGraph fuelFlow;
+    BarGraph fuelPressure;
     TextBox insideAirTemperature;
     TextBox outsideAirTemperature;
     FuelManagement fuelManagement;

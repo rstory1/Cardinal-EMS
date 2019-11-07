@@ -158,7 +158,7 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensro integral to the RDAC
     convertOAT(coolantT);
 
-    emit updateMonitor(rpm1, fuelFlow1, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP);
+    emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
@@ -181,4 +181,12 @@ void SensorConvert::convertMAP(qreal adc) {
 
     manP = manP * 0.2953; // COnvert from kPa to in Hg
 }
+
+void SensorConvert::convertFuelP(qreal adc)
+{
+    // 456-180 (Keller)
+    tempVoltage = adc / (4095.0/5.0);
+    fuelPress =  3.75*tempVoltage - 1.875;
+}
+
 

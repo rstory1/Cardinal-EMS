@@ -23,6 +23,8 @@ public:
         fuelAmount -= fuel;
         this->update();
     }
+
+    bool gpsAvailable = false;
 private:
     QSettings settings;
     double fuelAmount;
@@ -40,7 +42,7 @@ private:
     void applyFuelBurn();
 
 public slots:
-    void onFuelAmountChange(QString changeDirection); // Direction is + or -
+    void onFuelAmountChange(); // Direction is + or -
     void saveFuelState()
     {
         settings.setValue("Fueling/LastShutdown", fuelAmount);

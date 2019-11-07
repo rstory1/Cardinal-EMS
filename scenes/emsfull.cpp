@@ -10,7 +10,7 @@ emsFull::emsFull(QObject *parent)
     setupBarGraphs();
     setupManifoldPressure();
     setupChtEgt();
-    //setupFuelManagement();
+    setupFuelManagement();
     //setupWindVector();
     setupHourMeter();
 
@@ -92,7 +92,7 @@ void emsFull::setupRpmIndicator()
     double minValue, maxValue;
     minValue = gaugeSettings.value("RPM/min",0).toInt();
     maxValue = gaugeSettings.value("RPM/max",0).toInt();
-    rpmIndicator.setPos(450, 140);
+    rpmIndicator.setPos(410, 140);
     rpmIndicator.setStartSpan(230.0, 240.0);
     rpmIndicator.setBorders(minValue, maxValue);
 
@@ -139,14 +139,23 @@ void emsFull::setupBarGraphs()
     ampereMeter.setGaugeType("Amp");
     this->addItem(&ampereMeter);
 
-//    fuelFlow.setPos(760, 205);
-//    fuelFlow.setTitle("FF");
-//    fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
-//    fuelFlow.setPrecision(1);
-//    fuelFlow.setIndicatorSide("left");
-//    fuelFlow.setGaugeType("Fuel");
-//    this->addItem(&fuelFlow);
-//    fuelFlow.setVisible(false);
+    fuelFlow.setPos(690, 205);
+    fuelFlow.setTitle("FF");
+    fuelFlow.setUnit(settings.value("Units/fuelFlow").toString().toLatin1());
+    fuelFlow.setPrecision(1);
+    fuelFlow.setIndicatorSide("left");
+    fuelFlow.setGaugeType("FuelFlow");
+    this->addItem(&fuelFlow);
+    fuelFlow.setVisible(true);
+
+    fuelPressure.setPos(620, 205);
+    fuelPressure.setTitle("FUEL P");
+    fuelPressure.setUnit(settings.value("Units/pressure").toString().toLatin1());
+    fuelPressure.setPrecision(1);
+    fuelPressure.setIndicatorSide("left");
+    fuelPressure.setGaugeType("FuelPressure");
+    this->addItem(&fuelPressure);
+    fuelPressure.setVisible(true);
 
 //    insideAirTemperature.setPos(800, 205);
 //    insideAirTemperature.setTitle("IAT");
@@ -173,7 +182,7 @@ void emsFull::setupFuelManagement()
     fuelManagement.setVisible(false);
     connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
     this->addItem(&fuelManagement);
-    fuelDisplay.setPos(102,102);
+    fuelDisplay.setPos(215,435);
     this->addItem(&fuelDisplay);
 }
 

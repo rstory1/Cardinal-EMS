@@ -23,10 +23,12 @@ private:
     QLabel timeLabel;
     QLabel dateLabel;
     QLabel hobbsLabel;
+    QLabel fuelLabel;
     QTime time;
     QString timeText;
     QString dateText;
     QString hobbsText;
+    QString fuelText;
     double hobbs;
     QTimer timer;
     QDateTimeEdit dtEdit;
@@ -53,6 +55,7 @@ private:
     QPushButton setDate;
     QPushButton setTime;
     QPushButton setHobbs;
+    QPushButton setFuel;
 
     QTextEdit cmdLog;
 
@@ -97,11 +100,14 @@ private slots:
     void onClrPressed();
     void onChangeHobbs();
     void getHobbsFromINI();
+    void onChangeFuel();
+    void getFuelFromINI();
 
 signals:
     void zeroCurrent();
     void switchScene(int);
     void hobbsUpdated();
+    void fuelUpdated();
 
 private slots:
     void onBacklightChange(int);

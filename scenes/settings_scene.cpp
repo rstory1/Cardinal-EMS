@@ -30,9 +30,17 @@ settingsScene::settingsScene(QObject* parent)  :
     hobbsLabel.setStyleSheet("QLabel { background-color : black; color : white; }");
     addWidget(&hobbsLabel);
 
+    fuelLabel.setFrameStyle(QFrame::NoFrame | QFrame::Plain);
+    fuelLabel.setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+    fuelLabel.setFixedSize(120, 50);
+    fuelLabel.setGeometry(10,175,120,50);
+    fuelLabel.setStyleSheet("QLabel { background-color : black; color : white; }");
+    addWidget(&fuelLabel);
+
     connect(&userSet, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(showDateTime()));
     connect(&timer, SIGNAL(timeout()), this, SLOT(getHobbsFromINI()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(getFuelFromINI()));
     timer.start(1000);
 
     setTime.setText("Change Time");
@@ -50,10 +58,17 @@ settingsScene::settingsScene(QObject* parent)  :
     setHobbs.setGeometry(130,120,120,50);
     addWidget(&setHobbs);
 
+    setFuel.setText("Change Fuel");
+    setFuel.setFixedSize(130,50);
+    setFuel.setGeometry(130,175,120,50);
+    addWidget(&setFuel);
+    getFuelFromINI();
+
     connect(&keyEnt, SIGNAL(clicked(bool)), this, SLOT(onFinishChange()));
     connect(&setTime, SIGNAL(clicked(bool)), this, SLOT(onChangeTime()));
     connect(&setDate, SIGNAL(clicked(bool)), this, SLOT(onChangeDate()));
     connect(&setHobbs, SIGNAL(clicked(bool)), this, SLOT(onChangeHobbs()));
+    connect(&setFuel, SIGNAL(clicked(bool)), this, SLOT(onChangeFuel()));
 
     connect(&key1, SIGNAL(clicked(bool)), this, SLOT(on1Pressed()));
     connect(&key2, SIGNAL(clicked(bool)), this, SLOT(on2Pressed()));
@@ -279,6 +294,11 @@ void settingsScene::onFinishChange() {
         settingsINI.setValue("Time/hobbs", hobbsText);
         keyClr.setText("Clr");
         emit hobbsUpdated();
+    } else if (editType == 4) {
+        //qDebug() << "Attempting to change fuel to " + hobbsText;
+        settingsINI.setValue("Fueling/LastShutdown", fuelText);
+        keyClr.setText("Clr");
+        emit fuelUpdated();
     }
 
     if (editType==1 || editType==2) {
@@ -334,6 +354,8 @@ void settingsScene::on1Pressed() {
         timeText.append("1");
     } else if (editType==3) {
         hobbsText.append("1");
+    } else if (editType==4) {
+        fuelText.append("1");
     }
 
 }
@@ -347,6 +369,8 @@ void settingsScene::on2Pressed() {
         timeText.append("2");
     } else if (editType==3) {
         hobbsText.append("2");
+    } else if (editType==4) {
+        fuelText.append("2");
     }
 }
 
@@ -359,6 +383,8 @@ void settingsScene::on3Pressed() {
         timeText.append("3");
     } else if (editType==3) {
         hobbsText.append("3");
+    } else if (editType==4) {
+        fuelText.append("3");
     }
 }
 
@@ -370,6 +396,8 @@ void settingsScene::on4Pressed() {
         timeText.append("4");
     } else if (editType==3) {
         hobbsText.append("4");
+    } else if (editType==4) {
+        fuelText.append("4");
     }
 }
 
@@ -382,6 +410,8 @@ void settingsScene::on5Pressed() {
         timeText.append("5");
     } else if (editType==3) {
         hobbsText.append("5");
+    } else if (editType==4) {
+        fuelText.append("5");
     }
 }
 
@@ -394,6 +424,8 @@ void settingsScene::on6Pressed() {
         timeText.append("6");
     } else if (editType==3) {
         hobbsText.append("6");
+    } else if (editType==4) {
+        fuelText.append("6");
     }
 }
 
@@ -406,6 +438,8 @@ void settingsScene::on7Pressed() {
         timeText.append("7");
     } else if (editType==3) {
         hobbsText.append("7");
+    } else if (editType==4) {
+        fuelText.append("7");
     }
 }
 
@@ -418,6 +452,8 @@ void settingsScene::on8Pressed() {
         timeText.append("8");
     } else if (editType==3) {
         hobbsText.append("8");
+    } else if (editType==4) {
+        fuelText.append("8");
     }
 }
 
@@ -430,6 +466,8 @@ void settingsScene::on9Pressed() {
         timeText.append("9");
     } else if (editType==3) {
         hobbsText.append("9");
+    } else if (editType==4) {
+        fuelText.append("9");
     }
 }
 
@@ -442,6 +480,8 @@ void settingsScene::on0Pressed() {
         timeText.append("0");
     } else if (editType==3) {
         hobbsText.append("0");
+    } else if (editType==4) {
+        fuelText.append("0");
     }
 }
 
@@ -452,6 +492,8 @@ void settingsScene::onClrPressed() {
         timeText.clear();
     } else if (editType==3) {
         hobbsText.append(".");
+    } else if (editType==4) {
+        fuelText.append(".");
     }
 }
 
@@ -477,7 +519,7 @@ void settingsScene::setupSlider() {
                                   );
 
     backlightSlider.setMaximumSize(300, 100);
-    backlightSlider.setGeometry(450, 30, 300, 100);
+    backlightSlider.setGeometry(450, 400, 300, 100);
 
     backlightSlider.setRange(0,100);
     backlightSlider.setValue(100);
@@ -516,3 +558,31 @@ void settingsScene::getHobbsFromINI() {
     hobbsLabel.setText(hobbsText);
     //qDebug() << hobbsText;
 }
+
+void settingsScene::onChangeFuel() {
+    key1.setVisible(true);
+    key2.setVisible(true);
+    key3.setVisible(true);
+    key4.setVisible(true);
+    key5.setVisible(true);
+    key6.setVisible(true);
+    key7.setVisible(true);
+    key8.setVisible(true);
+    key9.setVisible(true);
+    keyClr.setVisible(true);
+    keyClr.setText(".");
+    key0.setVisible(true);
+    keyEnt.setVisible(true);
+
+    editType = 4;
+    fuelText.clear();
+}
+
+void settingsScene::getFuelFromINI() {
+    if (editType==0) {
+        fuelText = QString::number(settingsINI.value("Fueling/LastShutdown", "0.0").toDouble(), 'f', 1);
+    }
+
+    fuelLabel.setText(fuelText);
+}
+

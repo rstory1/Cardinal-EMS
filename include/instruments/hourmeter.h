@@ -36,11 +36,13 @@ private:
 
     bool engineState;
 
+    bool isFlying = false;
+
 signals:
     void hobbsChange(float hour, float min, float sec);
 
 public slots:
-    void onTic(/*bool isFlying*/);
+    void onTic();
     void onShutdown();
     void onHobbsINIChanged();
 };

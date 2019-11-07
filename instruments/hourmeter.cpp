@@ -80,8 +80,8 @@ void HourMeter::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->drawText(QRectF(-75, 40, 150, 15), Qt::AlignCenter | Qt::AlignVCenter, flightString);
 }
 
-void HourMeter::onTic(/*bool isFlying*/) {
-    bool isFlying = false;
+void HourMeter::onTic() {
+
 
     if (engineState) {
         if (hobbs.sec < 59) {
@@ -140,6 +140,7 @@ QString HourMeter::getHobbsTime() {
 
 void HourMeter::setEngineOn(bool state) {
     engineState = state;
+    isFlying = state;
 }
 
 void HourMeter::onHobbsINIChanged() {
