@@ -54,6 +54,7 @@ signals:
 
 public slots:
     void onAlarmFlash(); /*!< This slot is entered when a flashing alarm is created */
+    void onNoFlashingAlarm();
 };
 
 #endif // BUTTONBAR_H

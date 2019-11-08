@@ -123,6 +123,6 @@ void FuelDisplay::onFuelAmountChange() {
 
 void FuelDisplay::applyFuelBurn() {
     fuelAmount = fuelAmount - (fuelFlow * (t.elapsed() * 0.000000277778));
-    saveFuelState();
     t.restart();
+    saveFuelState();
 }
