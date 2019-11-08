@@ -225,6 +225,8 @@ void emsFull::connectSignals() {
     connect(&flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
     connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
     connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &fuelFlow, SLOT(changeFlashState()));
+    connect(&flashTimer, SIGNAL(timeout()), &fuelPressure, SLOT(changeFlashState()));
 
     qDebug()<<"Connecting RPM signals";
     //  Connect signal for alarm from rpm indicator
@@ -251,6 +253,16 @@ void emsFull::connectSignals() {
     //  Connect signal for alarm from ampere meter
     connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
     connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    qDebug()<<"Connecting Fuel Flow Signals";
+    //  Connect signal for alarm from CHT/EGT
+    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
+
+    qDebug()<<"Connecting Fuel Pressure Signals";
+    //  Connect signal for alarm from CHT/EGT
+    connect(&fuelPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
+    connect(&fuelPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
 
     // Connect buttonBar to the alarm window for alarm acknowledgement
     connect(&button2, SIGNAL(clicked(bool)), &alarmWindow, SLOT(onAlarmAck()));
@@ -303,10 +315,10 @@ void emsFull::setEngineConds() {
     }
 }
 
-void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map) {
+void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP) {
     rpmIndicator.setValue(rpm);
-    fuelDisplay.setFuelFlow(fuelFlow);
-    //fuelFlow.setValue(fuelFlow);
+    fuelDisplay.setFuelFlow(fuelF);
+    fuelFlow.setValue(fuelF);
     oilTemperature.setValue(oilTemp);
     oilPressure.setValue(oilPress);
     ampereMeter.setValue(amps);
@@ -316,6 +328,7 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qre
     outsideAirTemperature.setValue(oat);
     insideAirTemperature.setValue(iat);
     manifoldPressure.setValue(map);
+    fuelPressure.setValue(fuelP);
 
     if (oilTemp < warmupTemp ) {
         rpmIndicator.isWarmup = true;
