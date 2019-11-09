@@ -92,7 +92,7 @@ void emsFull::setupRpmIndicator()
     double minValue, maxValue;
     minValue = gaugeSettings.value("RPM/min",0).toInt();
     maxValue = gaugeSettings.value("RPM/max",0).toInt();
-    rpmIndicator.setPos(410, 140);
+    rpmIndicator.setPos(400, 170);
     rpmIndicator.setStartSpan(230.0, 240.0);
     rpmIndicator.setBorders(minValue, maxValue);
 
@@ -188,7 +188,7 @@ void emsFull::setupFuelManagement()
 
 void emsFull::setupManifoldPressure()
 {
-    manifoldPressure.setPos(130, 150);
+    manifoldPressure.setPos(100, 160);
     manifoldPressure.setStartSpan(240.0, 240.0);
     manifoldPressure.setBorders(10.0, 35.0, 15.0, 35.0);
     manifoldPressure.addBetweenValue(10.0);
@@ -282,6 +282,8 @@ void emsFull::connectSignals() {
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
     connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &rpmIndicator, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &fuelPressure, SLOT(onAlarmAck()));
+    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &fuelFlow, SLOT(onAlarmAck()));
 
     qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time

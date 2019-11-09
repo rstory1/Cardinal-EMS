@@ -135,12 +135,12 @@ int main(int argc, char *argv[])
     //Create the RDAC connector
     RDACconnect rdac;
 
-	NMEAconnect nmeaConnect;
-	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
-    a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
-#ifndef QT_DEBUG
-	nmeaConnect.start();
-#endif
+//	NMEAconnect nmeaConnect;
+//	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
+//    a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
+//#ifndef QT_DEBUG
+//	nmeaConnect.start();
+//#endif
 
     SensorConvert sensorConvert;
     //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 

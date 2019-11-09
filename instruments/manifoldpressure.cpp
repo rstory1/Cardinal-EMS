@@ -46,8 +46,8 @@ QRectF ManifoldPressure::boundingRect() const
 */
 void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	Q_UNUSED(option);
-	Q_UNUSED(widget);
+    Q_UNUSED(option)
+    Q_UNUSED(widget)
 
 	//Draw the arc
     QRectF circle = QRectF(-70.0, -70.0, 140.0, 140.0);
