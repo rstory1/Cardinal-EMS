@@ -68,7 +68,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
             painter->setPen(QPen(color, 0));
             painter->setBrush(color);
-            painter->drawPie(circle, startRange * 16.0, -fabs( endRange - startRange)*16.0);
+            painter->drawPie(circle, startRange * 16, -fabs( endRange - startRange)*16);
         }
     } else {
         i=0;

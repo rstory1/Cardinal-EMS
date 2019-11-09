@@ -51,7 +51,12 @@ void SensorConvert::convertFuelFlow(qreal pulses)
 {
     // User enters k factor which is pulse for one volumetric unit of fluid.
     // The eninge interface data will be coming in pulses per hour.
-    fuelFlow = pulses / kFactor;
+    if (pulses <= 0) {
+        fuelFlow = 0.0;
+    } else {
+        fuelFlow = pulses / kFactor;
+    }
+
 }
 
 void SensorConvert::convertRpm(double pulses)
@@ -155,8 +160,9 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr);
-    convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensro integral to the RDAC
+    convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensor integral to the RDAC
     convertOAT(coolantT);
+    convertFuelP(fuelP);
 
     emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
 }
@@ -184,7 +190,7 @@ void SensorConvert::convertMAP(qreal adc) {
 
 void SensorConvert::convertFuelP(qreal adc)
 {
-    // 456-180 (Keller)
+    // Kavlico P4055-15G
     tempVoltage = adc / (4095.0/5.0);
     fuelPress =  3.75*tempVoltage - 1.875;
 }

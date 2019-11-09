@@ -53,7 +53,7 @@ private:
 	double minValue, maxValue, currentValue;
     double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
     double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
-	double startAngle, spanAngle;
+    double startAngle, spanAngle;
     QList<double> beetweenValues;
     bool flashState = false;
 
