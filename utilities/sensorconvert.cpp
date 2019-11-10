@@ -30,9 +30,9 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
     setTemperatureScale(settings.value("Units/temp", "F").toString());
     setKFactor(gaugeSettings.value("FuelFlow/kfactor", "F").toString().toDouble());
 
-    QTimer *timerPulses = new QTimer(this);
-    connect(timerPulses, SIGNAL(timeout()), this, SLOT(showPulses()));
-    timerPulses->start(30000); //time specified in ms
+//    QTimer *timerPulses = new QTimer(this);
+//    connect(timerPulses, SIGNAL(timeout()), this, SLOT(showPulses()));
+//    timerPulses->start(30000); //time specified in ms
 
 }
 
@@ -62,13 +62,13 @@ void SensorConvert::convertFuelFlow(qreal pulses)
         fuelFlow = pulses / kFactor;
     }
 
-    if (popPulses) {
-        QMessageBox msgBox;
-        msgBox.setText("FF Pulses: " + QString::number(pulses));
-        msgBox.exec();
+//    if (popPulses) {
+//        QMessageBox msgBox;
+//        msgBox.setText("FF Pulses: " + QString::number(pulses));
+//        msgBox.exec();
 
-        popPulses = false;
-    }
+//        popPulses = false;
+//    }
 
 }
 

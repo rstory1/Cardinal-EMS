@@ -271,7 +271,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
     qreal coolantT = message.coolant / (4096/5);
     qreal fuelL2 = message.fuelLevel1 / (4096/5);
 
-    qreal fuelFlow1 = (227 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+    qreal fuelFlow1 = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
     qreal fuelFlow2 = (message.flow2 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
 
     qDebug() << "RDAC Message Update Sent" + lastMessage1.toString("hh:mm:ss.zzz");
