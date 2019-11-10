@@ -260,7 +260,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
         message.pulseRatio2 = 0;
     }
 
-    //qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
+    qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
 
     volts = round(message.volts/5.73758)*0.1;
 
@@ -268,17 +268,16 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
 
     qreal ax1 = message.aux1 ;
     qreal ax2 = message.aux2 ;
-    qreal fuelP = message.fuelPress / (4096/5);
     qreal coolantT = message.coolant / (4096/5);
     qreal fuelL2 = message.fuelLevel1 / (4096/5);
 
-    qreal fuelFlow1 = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+    qreal fuelFlow1 = (227 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
     qreal fuelFlow2 = (message.flow2 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
 
     qDebug() << "RDAC Message Update Sent" + lastMessage1.toString("hh:mm:ss.zzz");
 
 
-    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, ax1, ax2, fuelP, coolantT, message.fuelLevel1, fuelL2, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
+    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, ax1, ax2, message.fuelPress, coolantT, message.fuelLevel1, fuelL2, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)

@@ -30,6 +30,10 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
     setTemperatureScale(settings.value("Units/temp", "F").toString());
     setKFactor(gaugeSettings.value("Fuel/kfactor", "F").toString().toDouble());
 
+    QTimer *timerPulses = new QTimer(this);
+    connect(timerPulses, SIGNAL(timeout()), this, SLOT(showPulses()));
+    timerPulses->start(30000); //time specified in ms
+
 }
 
 void SensorConvert::convertOilTemp(double adc)
@@ -49,12 +53,21 @@ void SensorConvert::convertOilTemp(double adc)
 
 void SensorConvert::convertFuelFlow(qreal pulses)
 {
-    // User enters k factor which is pulse for one volumetric unit of fluid.
-    // The eninge interface data will be coming in pulses per hour.
+    // User enters k factor which is used to convert pulses from the sensor into flow. The FT-60 lists its K Factor as 68E3 pulses/gal
+    // The pulses are converted after being read to be in pulses/hour to standardize the equation and leave the sensor specific conversion to the data reading classes.
     if (pulses <= 0) {
         fuelFlow = 0.0;
     } else {
+        // This gives fuel flow in gallons/hour
         fuelFlow = pulses / kFactor;
+    }
+
+    if (popPulses) {
+        QMessageBox msgBox;
+        msgBox.setText("FF Pulses: " + QString::number(pulses));
+        msgBox.exec();
+
+        popPulses = false;
     }
 
 }
@@ -191,8 +204,12 @@ void SensorConvert::convertMAP(qreal adc) {
 void SensorConvert::convertFuelP(qreal adc)
 {
     // Kavlico P4055-15G
-    tempVoltage = adc / (4095.0/5.0);
-    fuelPress =  3.75*tempVoltage - 1.875;
+    fuelPress =  3.75*(adc / (4095.0/5.0)) - 1.875;
+}
+
+void SensorConvert::showPulses() {
+    popPulses = true;
+    timerPulses.start(30000);
 }
 
 
