@@ -28,7 +28,7 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "NTC").toString());
     setThermocoupleTypeEgt(settings.value("Sensors/egtThermocoupleType", "K").toString());
     setTemperatureScale(settings.value("Units/temp", "F").toString());
-    setKFactor(gaugeSettings.value("Fuel/kfactor", "F").toString().toDouble());
+    setKFactor(gaugeSettings.value("FuelFlow/kfactor", "F").toString().toDouble());
 
     QTimer *timerPulses = new QTimer(this);
     connect(timerPulses, SIGNAL(timeout()), this, SLOT(showPulses()));
