@@ -243,10 +243,10 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
 void RDACconnect::handleMessageRDACXF(QByteArray *data)
 {
     lastMessageReception = QDateTime::currentDateTimeUtc();
-//    QFile file("/home/rstory/datapacket.log");
-//    file.open(QIODevice::WriteOnly);
-//    file.write(data->toHex());
-//    file.close();
+    QFile file(QCoreApplication::applicationDirPath() + "/ems/appLogs/datapacket.log");
+    file.open(QIODevice::WriteOnly | QIODevice::Append);
+    file.write(data->toHex());
+    file.close();
     RDACXFmessage message;
     memcpy(&message, data->constData(), 66);
 

@@ -186,6 +186,7 @@ void EngineMonitor::writeLogFile()
     logFile->write(QString::number(ems_full.rpmIndicator.getValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.manifoldPressure.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.fuelFlow.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.fuelPressure.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString(ems_full.hobbs.getHobbsTime().append(';')).toLatin1());
     logFile->write(QString(ems_full.hobbs.getFlightTime().append(';')).toLatin1());
     logFile->write("\r\n");
