@@ -43,6 +43,8 @@ RC_FILE = ./res/icon.rc
 
 SOURCES += main.cpp\
     enginemonitor.cpp \
+    qdevicewatcher/qdevicewatcher.cpp \
+    qdevicewatcher/qdevicewatcher_linux.cpp \
     utilities/datasmoothing.cpp \
     instruments/bargraph.cpp \
     instruments/rpmindicator.cpp \
@@ -70,6 +72,8 @@ SOURCES += main.cpp\
     scenes/emsfull.cpp \
     utilities/instrumentsettings.cpp
     instruments/diagnosticwidget.cpp
+    qdevicewatcher/qdevicewatcher.cpp
+
 
 HEADERS  += include/enginemonitor.h \
     include/datasmoothing.h \
@@ -78,6 +82,8 @@ HEADERS  += include/enginemonitor.h \
     include/instruments/cylinderheadtemperature.h \
     include/instruments/exhaustgastemperature.h \
     include/instruments/fuelmanagement.h \
+    include/qdevicewatcher/qdevicewatcher.h \
+    include/qdevicewatcher/qdevicewatcher_p.h \
     include/rdacconnect.h \
     include/nmeaconnect.h \
     include/instruments/manifoldpressure.h \
@@ -99,6 +105,8 @@ HEADERS  += include/enginemonitor.h \
     include/scenes/emsfull.h \
     include/instrumentsettings.h
     include/diagnosticwidget.h
+    include/qdevicewatcher/qdevicewatcher.h
+    include/qdevicewatcher/qdevicewatcher_p.h
 
 RESOURCES += \
     res/res.qrc
