@@ -36,6 +36,7 @@ private:
     QRectF mpgRect;
     QRectF rangeRect;
     BarGraph fuelFlowGraph;
+    double range;
 
     QTime t;
 

@@ -98,7 +98,13 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setFont(QFont("Arial", 18, QFont::Bold));
     painter->setPen(Qt::white);
     painter->drawText(QRectF(remainingFuelRect.left(), remainingFuelRect.top() + 35, remainingFuelRect.width(), 18), Qt::AlignVCenter | Qt::AlignCenter, QString::number(fuelAmount, 'f', 1));
-    painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 35, rangeRect.width(), 18), Qt::AlignVCenter | Qt::AlignCenter, QString::number(fuelAmount/fuelFlow,'f',1));
+
+    if (fuelFlow <1.5) {
+        painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 35, rangeRect.width(), 18), Qt::AlignVCenter | Qt::AlignCenter, "--.-");
+    } else {
+        painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 35, rangeRect.width(), 18), Qt::AlignVCenter | Qt::AlignCenter, QString::number(fuelAmount/fuelFlow,'f',1));
+    }
+
 }
 
 void FuelDisplay::setFuelFlow(double value)

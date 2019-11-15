@@ -30,7 +30,7 @@
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
-    qInfo() << "Inside messageToFileHandler";
+    //qInfo() << "Inside messageToFileHandler";
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
     //qDebug() << dir.path();
     if (!dir.exists())
