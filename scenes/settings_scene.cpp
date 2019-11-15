@@ -99,6 +99,13 @@ settingsScene::settingsScene(QObject* parent)  :
     addWidget(&button1);
 
     connect(&button1, SIGNAL(clicked(bool)), this, SLOT(onButton1Pressed()));
+
+    watcher = new QDeviceWatcher;
+    watcher->appendEventReceiver(this);
+    connect(watcher, SIGNAL(deviceAdded(QString)), this, SLOT(slotDeviceAdded(QString)), Qt::DirectConnection);
+    connect(watcher, SIGNAL(deviceChanged(QString)), this, SLOT(slotDeviceChanged(QString)), Qt::DirectConnection);
+    connect(watcher, SIGNAL(deviceRemoved(QString)), this, SLOT(slotDeviceRemoved(QString)), Qt::DirectConnection);
+    watcher->start();
 }
 
 QRectF settingsScene::boundingRect() const

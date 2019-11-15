@@ -7,8 +7,10 @@
 #include "QProcess"
 #include "QTextEdit"
 #include "QString"
+#include <QtCore/QThread>
 
 #include <userSettings.h>
+#include <qdevicewatcher/qdevicewatcher.h>
 
 class settingsScene : public QGraphicsScene
 {
@@ -81,6 +83,8 @@ private:
 
     QSettings settingsINI;
 
+    QDeviceWatcher *watcher;
+
 private slots:
     void onZeroCurrent() { emit zeroCurrent();}
     void showDateTime();
@@ -113,6 +117,31 @@ private slots:
     void onBacklightChange(int);
     void onButton1Pressed() {
         emit switchScene(1);
+    }
+
+public slots:
+    void slotDeviceAdded(const QString &dev)
+    {
+        //qDebug("tid=%#x: add %s", (quintptr) QThread::currentThreadId(), qPrintable(dev));
+
+        qDebug() << "Add:" << dev;
+//        tray->showMessage(tr("New device"), dev);
+    }
+
+    void slotDeviceChanged(const QString &dev)
+    {
+        //qDebug("tid=%#x: change %s", (quintptr) QThread::currentThreadId(), qPrintable(dev));
+
+        qDebug() << "Change:" << dev;
+//        tray->showMessage(tr("Change device"), dev);
+    }
+
+    void slotDeviceRemoved(const QString &dev)
+    {
+        //qDebug("tid=%#x: remove %s", (quintptr) QThread::currentThreadId(), qPrintable(dev));
+
+        qDebug() << "Remove:" << dev;
+//        tray->showMessage(tr("Remove device"), dev);
     }
 
 };
