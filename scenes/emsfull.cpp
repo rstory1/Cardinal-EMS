@@ -176,12 +176,8 @@ void emsFull::setupBarGraphs()
 }
 
 void emsFull::setupFuelManagement()
+
 {
-    fuelManagement.setPos(-495, -240);
-    fuelManagement.setScale(1.8);
-    fuelManagement.setVisible(false);
-    connect(&fuelFlow, SIGNAL(hasBeenClicked()), &fuelManagement, SLOT(activateOverlay()));
-    this->addItem(&fuelManagement);
     fuelDisplay.setPos(215,435);
     this->addItem(&fuelDisplay);
 }

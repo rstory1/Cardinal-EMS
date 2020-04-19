@@ -32,7 +32,7 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
 {
     //qInfo() << "Inside messageToFileHandler";
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
-    //qDebug() << dir.path();
+    qInfo() << dir.path();
     if (!dir.exists())
         dir.mkpath(".");
     QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon.log");
@@ -87,7 +87,6 @@ int main(int argc, char *argv[])
 
     qInfo() << "Before app log starts";
 
-#ifdef QT_NO_DEBUG
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
     if (!dir.exists())
         dir.mkpath(".");
@@ -101,8 +100,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		QMessageBox::warning(NULL, "No debug output", "Unable to open 'EngineMon.log', therefore no debug output available.");
-	}
-#endif
+    }
 
 	a.processEvents();
 
