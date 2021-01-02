@@ -53,7 +53,9 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     double fuelAtDestination = fuelAmount - (fuelFlow * timeToDestination);
 
-    applyFuelBurn();
+    if (t.elapsed()>2000) {
+        applyFuelBurn();
+    }
 
     // This is purely for testing.
     double airspeed = 100;

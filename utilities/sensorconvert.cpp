@@ -177,6 +177,11 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOAT(coolantT);
     convertFuelP(fuelP);
 
+    emsSerialString = QString::number(rpm1) + "," + QString::number(fuelFlow) + "," + QString::number(oilTemp) + "," + QString::number(oilPress) + "," + QString::number(current) + "," +
+            QString::number(volts) + "," + QString::number(fuelPress) + "," + QString::number(cht[0]) + "," + QString::number(cht[1]);
+    emsSerialStringByteArray = emsSerialString.toLocal8Bit();
+    emit sendSerialData(emsSerialStringByteArray);
+
     emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
 }
 
