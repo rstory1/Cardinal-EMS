@@ -29,18 +29,21 @@ private:
     QSettings settings;
     double fuelAmount;
     QString fuelUnits;
-    double fuelFlow;
+    float fuelFlow;
     double timeToDestination;
     QRectF remainingFuelRect;
     QRectF remainingFuelAtDestinationRect;
     QRectF mpgRect;
     QRectF rangeRect;
     BarGraph fuelFlowGraph;
-    double range;
+    float range;
+    float avgFuelFlow;
+    int fuelBurnUpdateInterval = 4000;
 
-    QTime t;
+    QTimer fuelBurnTimer;
 
-    void applyFuelBurn();
+private slots:
+    void updateFuelBurn();
 
 public slots:
     void onFuelAmountChange(); // Direction is + or -

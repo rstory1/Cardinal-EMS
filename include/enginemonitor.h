@@ -83,8 +83,7 @@ private:
     TextBox outsideAirTemperature;
 	QGraphicsTextItem statusItem;
 	QGraphicsTextItem timeToDestinationItem;
-	FuelManagement fuelManagement;
-    FuelDisplay fuelDisplay;
+    FuelManagement fuelManagement;
     ManifoldPressure manifoldPressure;
 	QFile *logFile;
     QSettings settings;

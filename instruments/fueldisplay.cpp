@@ -34,7 +34,9 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
     fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
     fuelUnits = settings.value("Units/fuel", "gal").toString();
-    t.start();
+
+    connect(&fuelBurnTimer, SIGNAL(timeout()), this, SLOT(updateFuelBurn()));
+    fuelBurnTimer.start(fuelBurnUpdateInterval);
 }
 
 QRectF FuelDisplay::boundingRect() const
@@ -53,14 +55,10 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     double fuelAtDestination = fuelAmount - (fuelFlow * timeToDestination);
 
-    if (t.elapsed()>2000) {
-        applyFuelBurn();
-    }
-
     // This is purely for testing.
     double airspeed = 100;
 
-    //Save thje painter and deactivate Antialising for rectangle drawing
+    //Save the painter and deactivate Antialising for rectangle drawing
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing, false);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
@@ -94,7 +92,7 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setPen(Qt::gray);
     painter->drawText(QRectF(-100,-95,200,17.5), Qt::AlignVCenter | Qt::AlignCenter, "FUEL (gal)");
     painter->drawText(QRectF(remainingFuelRect.left(), remainingFuelRect.top() + 2.5, remainingFuelRect.width(), 30), Qt::AlignVCenter | Qt::AlignCenter, "Qty");
-    painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 2.5, rangeRect.width(), 30), Qt::AlignVCenter | Qt::AlignCenter, "Range");
+    painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 2.5, rangeRect.width(), 30), Qt::AlignVCenter | Qt::AlignCenter, "Range (hr)");
 
     // Draw values
     painter->setFont(QFont("Arial", 18, QFont::Bold));
@@ -106,6 +104,8 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     } else {
         painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 35, rangeRect.width(), 18), Qt::AlignVCenter | Qt::AlignCenter, QString::number(fuelAmount/fuelFlow,'f',1));
     }
+
+    update();
 
 }
 
@@ -119,19 +119,13 @@ void FuelDisplay::setTimeToDestination(double time)
     timeToDestination = time;
 }
 
-void FuelDisplay::onFuelAmountChange() {
-//    if (changeDirection=="+") {
-//        fuelAmount++;
-//    } else {
-//        fuelAmount--;
-//    }
-
+void FuelDisplay::onFuelAmountChange()
+{
     fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
 }
 
-void FuelDisplay::applyFuelBurn() {
-    fuelAmount = fuelAmount - (fuelFlow * (t.elapsed() * 0.000000277778));
-    qDebug() << fuelAmount << fuelFlow;
-    t.restart();
+void FuelDisplay::updateFuelBurn()
+{
+    fuelAmount = fuelAmount - (fuelFlow * (fuelBurnUpdateInterval * 0.000000277778));
     saveFuelState();
 }

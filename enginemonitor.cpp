@@ -159,7 +159,7 @@ void EngineMonitor::setupLogFile()
 	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
     logFile->write(QString("All temperatures in degree %1\r\n oil pressure in %2\r\n fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
 	logFile->write("[data]\r\n");
-    logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;HOBBS;FLIGHT;MARK\r\n");
+    logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;FUELP;HOBBS;FLIGHT\r\n");
 }
 
 void EngineMonitor::writeLogFile()
@@ -307,11 +307,11 @@ void EngineMonitor::demoFunction()
 	{
         flow = 7.0;
 	}
-	fuelFlow.setValue(flow);
+    //fuelFlow.setValue(flow);
 	fuelManagement.setFuelFlow(flow);
 	fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
-    fuelDisplay.setFuelFlow(flow);
-    fuelDisplay.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
+    //fuelDisplay.setFuelFlow(flow);
+    //fuelDisplay.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
 
 	static double airTemp = -10.0;
 	airTemp += 0.07;

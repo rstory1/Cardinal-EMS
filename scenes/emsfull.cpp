@@ -166,11 +166,11 @@ void emsFull::setupBarGraphs()
 //    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
 //    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
 
-//    outsideAirTemperature.setPos(150, 375);
-//    outsideAirTemperature.setTitle("OAT");
-//    outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
-//    outsideAirTemperature.setPrecision(1);
-//    this->addItem(&outsideAirTemperature);
+    outsideAirTemperature.setPos(55, 300);
+    outsideAirTemperature.setTitle("OAT");
+    outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
+    outsideAirTemperature.setPrecision(1);
+    this->addItem(&outsideAirTemperature);
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }
@@ -441,7 +441,7 @@ void emsFull::demoFunction()
     fuelManagement.setFuelFlow(flow);
     fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
     fuelDisplay.setFuelFlow(flow);
-    fuelDisplay.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
+    //fuelDisplay.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
 
     static double airTemp = -10.0;
     airTemp += 0.07;
