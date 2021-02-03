@@ -44,6 +44,8 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
 
     minEgtValue = egtGauge.getMin();
     maxEgtValue = egtGauge.getMax();
+
+    smoothData.setSampleSize(10);
 }
 
 QRectF ChtEgt::boundingRect() const
@@ -320,11 +322,19 @@ void ChtEgt::addBetweenValue(double value)
 
 void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
 {
+    if (smooth) {
+        currentChtValues.replace(0, smoothData.dsp_ema_double(val1));
+        currentChtValues.replace(1, smoothData.dsp_ema_double(val2));
+        currentChtValues.replace(2, smoothData.dsp_ema_double(val3));
+        currentChtValues.replace(3, smoothData.dsp_ema_double(val4));
+        //qDebug() << QString::number(value) + "; " + QString::number(currentValue);
+    } else {
+        currentChtValues.replace(0, val1);
+        currentChtValues.replace(1, val2);
+        currentChtValues.replace(2, val3);
+        currentChtValues.replace(3, val4);
+    }
 
-    currentChtValues.replace(0, val1);
-    currentChtValues.replace(1, val2);
-    currentChtValues.replace(2, val3);
-    currentChtValues.replace(3, val4);
 
 }
 

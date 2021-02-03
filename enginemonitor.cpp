@@ -46,7 +46,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
 
     // Get the temp for when the engine is warmed up
-    warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
+//    warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
 
 //    // Plot stuff
 //    customPlot = new QCustomPlot();
@@ -95,14 +95,6 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     // End plot stuff
 
     setupLogFile();
-
-	//Demo timer, for testing purposes only
-#ifdef QT_DEBUG
-    QTimer *demoTimer = new QTimer(this);
-    connect(demoTimer, SIGNAL(timeout()), this, SLOT(demoFunction()));
-    demoTimer->setSingleShot(false);
-    demoTimer->start(200);
-#endif
 
     //socket = new QUdpSocket(this);
 
@@ -179,7 +171,7 @@ void EngineMonitor::writeLogFile()
 	logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilTemperature.getValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilPressure.getValue(), 'f', 1).append(';').toLatin1());
-	logFile->write(QString::number(outsideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.outsideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.insideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.voltMeter.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.ampereMeter.getValue(), 'f', 1).append(';').toLatin1());
@@ -208,120 +200,6 @@ void EngineMonitor::showStatusMessage(QString text, QColor color)
     //qDebug() << Q_FUNC_INFO;
 	statusItem.setPlainText(text);
 	statusItem.setDefaultTextColor(color);
-}
-
-void EngineMonitor::demoFunction()
-{
-	qsrand(QDateTime::currentDateTime().toTime_t());
-    static double rpm = 1100.0;
-    rpm += 5.0;
-
-    rpmIndicator.setValue(rpm);
-    manifoldPressure.setValue(10);
-
-    static double basicEGT = 750.0;
-    static bool egtUp = true;
-	static bool leaned = false;
-	static double off13 = 0.0;
-	static double off24 = 0.0;
-	if(leaned)
-	{
-        if(basicEGT < 680.0)
-		{
-			off13 = double(qrand())/double(RAND_MAX)*3.0;
-			off24 = double(qrand())/double(RAND_MAX)*5.0;
-		}
-	}
-	else if(egtUp)
-	{
-		basicEGT += 1.0;
-	}
-	else
-	{
-		basicEGT -= 1.0;
-	}
-	if(basicEGT > 1200.0 && egtUp)
-	{
-		egtUp = false;
-	}
-	if(basicEGT < 1150.0 && !egtUp)
-	{
-		leaned = true;
-		egtUp = true;
-    }
-    chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
-
-    static double basicCHT = 60.0;
-
-    if(basicCHT > 250.0)
-	{
-        basicCHT -= 0.5;
-    } else {
-        basicCHT += 0.5;
-    }
-    static double offset1 = double(qrand())/double(RAND_MAX)*50.0;
-	static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
-	static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
-    static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
-    chtEgt.setChtValues(basicCHT+offset1,
-                        basicCHT-offset2,
-                        basicCHT+offset3,
-                        basicCHT-offset4);
-
-    static double oilTemp = 100.0;
-    if(oilTemp < 80.0)
-	{
-        oilTemp = 100.0;
-	}
-    oilTemp += 0.25;
-
-	oilTemperature.setValue(oilTemp);
-
-	static double oilPress = 0.0;
-	oilPress += 0.05;
-	if(oilPress > 60.0)
-	{
-		oilPress = 0.0;
-	}
-	oilPressure.setValue(oilPress);
-
-	static double volts = 11.5;
-	volts += 0.01;
-	if(volts > 18.0)
-	{
-		volts = 11.5;
-	}
-	voltMeter.setValue(volts);
-
-    static double amperes = 35.0;
-	amperes -= 0.1;
-    if(amperes < -20.0)
-	{
-        amperes = 30.0;
-	}
-	ampereMeter.setValue(amperes);
-
-    static double flow = 7.0;
-	flow -= 0.05;
-	if(flow < 0.0)
-	{
-        flow = 7.0;
-	}
-    //fuelFlow.setValue(flow);
-	fuelManagement.setFuelFlow(flow);
-	fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
-    //fuelDisplay.setFuelFlow(flow);
-    //fuelDisplay.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
-
-	static double airTemp = -10.0;
-	airTemp += 0.07;
-	if(airTemp > 40.0)
-	{
-		airTemp = -10.0;
-	}
-	outsideAirTemperature.setValue(airTemp);
-	insideAirTemperature.setValue(airTemp);
-
 }
 
 //void EngineMonitor::saveSceneToSvg(const QString fileName)
@@ -372,7 +250,7 @@ void EngineMonitor::processPendingDatagrams() {
 //    qDebug()<<"Processing";
 //    qDebug()<<"Message: " << tr("Received datagram: \"%1\"").arg(datagram.data());
 
-    QString msg;
+    //QString msg;
     //while (socket->hasPendingDatagrams()) {
     //    QByteArray buffer;
     //    buffer.resize(socket->pendingDatagramSize());
@@ -381,18 +259,18 @@ void EngineMonitor::processPendingDatagrams() {
     //    qDebug()<<buffer.data();
     //}
 
-    qDebug()<< msg;
+    //qDebug()<< msg;
 }
 
-void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
-    windVector.updateWind(spd, dir, mHdg);
-}
+//void EngineMonitor::onUpdateWindInfo(float spd, float dir, float mHdg) {
+//    windVector.updateWind(spd, dir, mHdg);
+//}
 
-void EngineMonitor::setupWindVector() {
-    windVector.setPos(50, 385);
-    graphicsScene.addItem(&windVector);
-    windVector.setVisible(false);
-}
+//void EngineMonitor::setupWindVector() {
+//    windVector.setPos(50, 385);
+//    graphicsScene.addItem(&windVector);
+//    windVector.setVisible(false);
+//}
 
 void EngineMonitor::connectSignals() {
     // Connect buttonBar to the alarm window for alarm acknowledgement
@@ -408,11 +286,11 @@ void EngineMonitor::connectSignals() {
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
 
-    connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
+    //connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
 
     connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
 
-    connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
+    //connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
 
     connect(&ems_full, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
     connect(&settings_scene, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
@@ -423,6 +301,8 @@ void EngineMonitor::connectSignals() {
 
     connect(&settings_scene, SIGNAL(fuelUpdated()), &ems_full.fuelDisplay, SLOT(onFuelAmountChange()));
 
+    connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
+
 }
 
 void EngineMonitor::setupuserSettings()
@@ -432,25 +312,25 @@ void EngineMonitor::setupuserSettings()
     uSettings.setVisible(false);
 }
 
-void EngineMonitor::setEngineConds() {
-    if (oilPressure.getValue() > 10.0) {
-        hobbs.setEngineOn(true);
-    } else {
-        hobbs.setEngineOn(false);
-    }
+//void EngineMonitor::setEngineConds() {
+//    if (oilPressure.getValue() > 10.0) {
+//        hobbs.setEngineOn(true);
+//    } else {
+//        hobbs.setEngineOn(false);
+//    }
 
-    if (oilTemperature.getValue() < warmupTemp) {
-        timeOilTBelowWarmup += 1;
-        if (timeOilTAboveWarmup < 5 * 60) {
-            timeOilTAboveWarmup = 0;
-            rpmIndicator.isWarmup = true;
-        }
-    } else {
-        timeOilTAboveWarmup += 1;
-        timeOilTBelowWarmup = 0;
-        rpmIndicator.isWarmup = false;
-    }
-}
+//    if (oilTemperature.getValue() < warmupTemp) {
+//        timeOilTBelowWarmup += 1;
+//        if (timeOilTAboveWarmup < 5 * 60) {
+//            timeOilTAboveWarmup = 0;
+//            rpmIndicator.isWarmup = true;
+//        }
+//    } else {
+//        timeOilTAboveWarmup += 1;
+//        timeOilTBelowWarmup = 0;
+//        rpmIndicator.isWarmup = false;
+//    }
+//}
 
 void EngineMonitor::onSwitchScene(int scene) {
     switch (scene) {
@@ -467,11 +347,11 @@ void EngineMonitor::onSwitchScene(int scene) {
     buttonBar.setPos(0,this->scene()->height());
 //    this->scene()->addItem(&buttonBar);
 
-    qDebug() << "Is EMS Scene Active?: " + QString::number(ems_full.isActive());
-    qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());
+//    qDebug() << "Is EMS Scene Active?: " + QString::number(ems_full.isActive());
+//    qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());
 
 }
 
-void EngineMonitor::onZeroCurrent() {
-    emit zeroCurrent();
-}
+//void EngineMonitor::onZeroCurrent() {
+//    emit zeroCurrent();
+//}

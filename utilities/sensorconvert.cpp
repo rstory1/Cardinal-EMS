@@ -47,7 +47,7 @@ void SensorConvert::convertOilTemp(double adc)
     // If our desired scale is not celsius, then we need to convert it
     if (temperatureScale != "C")
     {
-        oilTemp = convertTemperature(temp);
+        oilTemp = convertTemperature(temp, 'F');
     }
 }
 
@@ -94,16 +94,19 @@ void SensorConvert::convertOAT(qreal adc)
 {
 
     //  Convert ADC Voltage value to resistance
-    resistance = puResistorValue/(4095.0/adc-1);
+    resistance = 10000.0/((4095.0/adc)-1.0);
 
-    // Convert resistance to temperauter. This equation was created from fitting a line to the VDO calibration curve.
-    oat = 1065*pow(resistance, -0.1352)-229.7;
+    // Convert resistance to temperature of the Littelfuse NTC Thermistor
+    oat = -20.14*log10(resistance)+211.7;
+    oat = 0.0031*(oat*oat)+0.9713*oat-2.3687; // Celsius
 
-    // If our desired scale is not farenheit, then we need to convert it
-    if (temperatureScale != "F")
+    // If our desired scale is not Celsius, then we need to convert it
+    if (temperatureScale != "C")
     {
-        oat = convertTemperature(oat);
+        oat = convertTemperature(oat, 'F');
     }
+
+
 }
 
 void SensorConvert::convertIat(double sensorValue)
@@ -111,10 +114,14 @@ void SensorConvert::convertIat(double sensorValue)
     iat = sensorValue;
 }
 
-double SensorConvert::convertTemperature(qreal temp)
+double SensorConvert::convertTemperature(qreal temp, char convertToUnits)
 {
-    // Code needs to be added to convert to different units
-    temp = temp * 1.8 + 32;
+    if (convertToUnits == 'F') {
+        temp = temp * 1.8 + 32;
+    } else {
+        temp = (temp - 32) * 0.5555;
+    }
+
 
     return temp;
 }
@@ -155,7 +162,7 @@ void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
             // If our desired scale is not celsius, then we need to convert it
             if (temperatureScale != "C")
             {
-                cht[a] = convertTemperature(cht[a]);
+                cht[a] = convertTemperature(cht[a], 'F');
             }
         }
 //    }
@@ -172,28 +179,29 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOilPress(oilP);
     convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
-    convertCurrent(curr);
+    convertCurrent(curr,1);
+    convertCurrent(fuelL2,2);
     convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensor integral to the RDAC
     convertOAT(coolantT);
     convertFuelP(fuelP);
 
-    emsSerialString = QString::number(rpm1) + "," + QString::number(fuelFlow) + "," + QString::number(oilTemp) + "," + QString::number(oilPress) + "," + QString::number(current) + "," +
-            QString::number(volts) + "," + QString::number(fuelPress) + "," + QString::number(cht[0]) + "," + QString::number(cht[1]);
-    emsSerialStringByteArray = emsSerialString.toLocal8Bit();
-    emit sendSerialData(emsSerialStringByteArray);
-
-    emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
+    emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current1, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
     kFactor = kFac;
 }
 
-void SensorConvert::convertCurrent(qreal adc)
+void SensorConvert::convertCurrent(qreal adc, int sensorNum)
 {
 //    currentAdc = adc;
 //    current = 0.0244 * currentAdc - 50.024; // MGL Current Sensor
-    current = 73.3 * (adc / (4096/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
+    if (sensorNum==1) {
+        current1 = 73.3 * (adc / (4096/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
+    } else {
+        current2 = 73.3 * (adc / (4096/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
+    }
+
 }
 
 void SensorConvert::onZeroCurrent() {
@@ -217,4 +225,8 @@ void SensorConvert::showPulses() {
     timerPulses.start(30000);
 }
 
+qreal SensorConvert::filterReading(qreal inputVal, qreal preVal, qreal dt, qreal tau)
+{
+    return ((preVal - inputVal) * tau) / (tau + dt) + inputVal;
+}
 

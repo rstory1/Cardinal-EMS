@@ -22,6 +22,7 @@
 #define TEXTBOX_H
 
 #include <QtWidgets>
+#include <datasmoothing.h>
 
 //! Text Box Gauge Class
 /*!
@@ -42,6 +43,7 @@ public:
     void addBetweenValue(double value);
     void setValue(double value);
     double getValue() {return currentValue;};
+    void setSmoothBool(bool value) {smooth = value;};
 public slots:
 	void makeVisible() {setVisible(true);};
 	void makeInvisible() {setVisible(false);};
@@ -56,6 +58,9 @@ private:
     bool isPenAlarmColored = false;
     QPen pen;
     QFont font;
+
+    DataSmoothing smoothData;
+    bool smooth;
 
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)

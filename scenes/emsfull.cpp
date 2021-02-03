@@ -130,6 +130,7 @@ void emsFull::setupBarGraphs()
     voltMeter.setPrecision(1, 1);
     voltMeter.setIndicatorSide("left");
     voltMeter.setGaugeType("Volt");
+    voltMeter.setSmoothBool(true);
     this->addItem(&voltMeter);
 
     ampereMeter.setPos(760, 205);
@@ -170,6 +171,7 @@ void emsFull::setupBarGraphs()
     outsideAirTemperature.setTitle("OAT");
     outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
     outsideAirTemperature.setPrecision(1);
+    outsideAirTemperature.setSmoothBool(true);
     this->addItem(&outsideAirTemperature);
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
@@ -328,15 +330,21 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal 
     manifoldPressure.setValue(map);
     fuelPressure.setValue(fuelP);
 
-    if (oilTemp < warmupTemp ) {
-        rpmIndicator.isWarmup = true;
-    } else {
-        rpmIndicator.isWarmup = false;
-    }
+//    if (oilTemp < warmupTemp ) {
+//        rpmIndicator.isWarmup = true;
+//    } else {
+//        rpmIndicator.isWarmup = false;
+//    }
 
-    if (rpm > 0) {
-        hobbs.setEngineOn(true);
-    }
+//    if (rpm > 0) {
+//        hobbs.setEngineOn(true);
+//    }
+
+    emsSerialString = QString::number(rpmIndicator.getValue()) + "," + QString::number(fuelFlow.getValue()) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(oilPress) + "," + QString::number(ampereMeter.getValue()) + "," +
+            QString::number(ampereMeter.getValue()) + "," + QString::number(voltMeter.getValue()) + "," + QString::number(fuelPressure.getValue()) + "," + QString::number(chtEgt.getCurrentChtValues().at(0)) + "," + QString::number(chtEgt.getCurrentChtValues().at(1))+ "," + QString::number(oat);
+    emsSerialStringByteArray = emsSerialString.toLocal8Bit();
+
+    emit sendSerialData(emsSerialStringByteArray);
 }
 
 ////

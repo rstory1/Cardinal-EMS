@@ -105,13 +105,13 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->drawText(QRectF(rangeRect.left(), rangeRect.top() + 35, rangeRect.width(), 18), Qt::AlignVCenter | Qt::AlignCenter, QString::number(fuelAmount/fuelFlow,'f',1));
     }
 
-    update();
-
 }
 
 void FuelDisplay::setFuelFlow(double value)
 {
     fuelFlow = value;
+
+    update();
 }
 
 void FuelDisplay::setTimeToDestination(double time)

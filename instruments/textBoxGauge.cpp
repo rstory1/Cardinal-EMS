@@ -30,6 +30,7 @@ TextBox::TextBox(QGraphicsObject *parent)
 	, barPrecision(0)
 	, readoutPrecision(0)
 {
+    smoothData.setSampleSize(20);
 }
 
 QRectF TextBox::boundingRect() const
@@ -103,6 +104,10 @@ void TextBox::setPrecision(quint8 readout, quint8 bar)
 
 void TextBox::setValue(double value)
 {
-	currentValue = value;
+    if (smooth) {
+        currentValue = smoothData.dsp_ema_double(value);
+    } else {
+        currentValue = value;
+    }
 	update();
 }

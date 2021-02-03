@@ -23,6 +23,7 @@
 
 #include <QtWidgets>
 #include <gaugesettings.h>
+#include <datasmoothing.h>
 
 //! CHT EGT Gauge Class
 /*!
@@ -76,6 +77,9 @@ private:
 
     int numOfCht = 2; //This needs to be made to be able to be configured by the user
     int numOfEgt = 0; //This needs to be made to be able to be configured by the user
+
+    DataSmoothing smoothData;
+    bool smooth = true;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);

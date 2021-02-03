@@ -69,7 +69,8 @@ private:
     QPushButton button1;
     QPushButton button2;
 
-
+    QString emsSerialString;
+    QByteArray emsSerialStringByteArray;
 
     public slots:
         void setEngineConds();
@@ -78,8 +79,7 @@ private:
 
     private slots:
         void onAlarmFlash() {emit alarmFlashing();
-                             button2.setVisible(true);
-                            qDebug() << "An alarm is flashing!";}
+                             button2.setVisible(true);}
         void onButton1Press() {
             emit switchScene(2);
         }
@@ -89,6 +89,7 @@ private:
         void alarmFlashing();
         void ackAlarm();
         void switchScene(int);
+        void sendSerialData(QByteArray data);
 
 };
 

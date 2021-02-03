@@ -73,32 +73,32 @@ private:
     void setupuserSettings();
 
 	QGraphicsScene graphicsScene;
-    RpmIndicator rpmIndicator;
-	BarGraph oilTemperature;
-	BarGraph oilPressure;
-	BarGraph voltMeter;
-	BarGraph ampereMeter;
-	BarGraph fuelFlow;
-    TextBox insideAirTemperature;
-    TextBox outsideAirTemperature;
-	QGraphicsTextItem statusItem;
-	QGraphicsTextItem timeToDestinationItem;
-    FuelManagement fuelManagement;
-    ManifoldPressure manifoldPressure;
+    //RpmIndicator rpmIndicator;
+    //BarGraph oilTemperature;
+    //BarGraph oilPressure;
+    //BarGraph voltMeter;
+    //BarGraph ampereMeter;
+    //BarGraph fuelFlow;
+    //TextBox insideAirTemperature;
+    //TextBox outsideAirTemperature;
+    QGraphicsTextItem statusItem;
+    //QGraphicsTextItem timeToDestinationItem;
+    //FuelManagement fuelManagement;
+    //ManifoldPressure manifoldPressure;
 	QFile *logFile;
     QSettings settings;
     QSettings gaugeSettings;
     QString sensorInterfaceType;
-    AlarmBox alarmWindow;
-    int warmupTemp;
+    //AlarmBox alarmWindow;
+    //int warmupTemp;
     QTimer flashTimer;
-    ChtEgt chtEgt;
+    //ChtEgt chtEgt;
     ButtonBar buttonBar;
     QCustomPlot *customPlot;
     QCPGraph *graphic;
     QTimer dataTimer;
     //QUdpSocket *socket;
-    WindVector windVector;
+    //WindVector windVector;
     QTimer clockTimer;
     HourMeter hobbs;
     userSettings uSettings;
@@ -111,10 +111,10 @@ private:
     QString currentScene = "";
 
 private slots:
-	void demoFunction();
+    //void demoFunction();
     void writeLogFile();
     void realtimeDataSlot();
-    void setEngineConds();
+    //void setEngineConds();
 
 public slots:
     //void setTimeToDestination(double time);
@@ -125,13 +125,15 @@ public slots:
     }
     //void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
-    void onUpdateWindInfo(float spd, float dir, float mHdg);
+    //void onUpdateWindInfo(float spd, float dir, float mHdg);
     void onSwitchScene(int scene);
-    void onZeroCurrent();
+    //void onZeroCurrent();
+    void onSendSerialData(QByteArray emsSerial) { emit sendSerialData(emsSerial); };
 
 signals:
     void zeroCurrent();
     void updateEngineValues(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelPress);
+    void sendSerialData(QByteArray emsSerial);
 };
 
 #endif // ENGINEMONITOR_H

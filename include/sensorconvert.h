@@ -44,7 +44,8 @@ private:
 
     qreal tempVoltage;
     qreal tempCurrent;
-    qreal current;
+    qreal current1;
+    qreal current2;
 
     qreal tempCHT[4];
 
@@ -72,11 +73,11 @@ private:
 
     void convertRpm(double pulses);
 
-    qreal convertTemperature(qreal temp);
+    qreal convertTemperature(qreal temp, char convertToUnits);
 
     void setKFactor(qreal kFac);
 
-    void convertCurrent(qreal adc);
+    void convertCurrent(qreal adc, int sensorNum);
 
     void convertMAP(qreal adc);
 
@@ -84,9 +85,13 @@ private:
 
     void convertFuelP(qreal adc);
 
+    qreal filterReading(qreal inputVal, qreal preVal, qreal dt, qreal tau);
+
     bool popPulses;
 
     QTimer timerPulses;
+
+    //QElapsedTimer timer;
 signals:
     void userMessage(QString,QString,bool);
     void updateMonitor(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelPress);
