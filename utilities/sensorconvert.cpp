@@ -197,9 +197,9 @@ void SensorConvert::convertCurrent(qreal adc, int sensorNum)
 //    currentAdc = adc;
 //    current = 0.0244 * currentAdc - 50.024; // MGL Current Sensor
     if (sensorNum==1) {
-        current1 = 73.3 * (adc / (4096/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
+        current1 = 73.3 * (adc / (4095/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
     } else {
-        current2 = 73.3 * (adc / (4096/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
+        current2 = 73.3 * (adc / (4095/5)) / 5 - 36.7 + 0.53; // Pololu sensor acs711ex (+0.53 is correction factor for install.
     }
 
 }
@@ -209,7 +209,7 @@ void SensorConvert::onZeroCurrent() {
 }
 
 void SensorConvert::convertMAP(qreal adc) {
-    manP = 39.958 * (adc / (4096/4.93)) + 13.26;
+    manP = 39.958 * (adc / (4095/5)) + 13.26;
 
     manP = manP * 0.2953; // COnvert from kPa to in Hg
 }
