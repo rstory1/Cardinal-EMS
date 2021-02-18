@@ -185,7 +185,7 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOAT(coolantT);
     convertFuelP(fuelP);
 
-    emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current1, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
+    emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current1, current2, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {

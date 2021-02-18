@@ -36,6 +36,7 @@ HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), setting
     hobbs.sec = (((savedHobbs - floor(savedHobbs)) * 60.0) - hobbs.min) * 60;
 
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(onShutdown()));
+
 }
 
 QRectF HourMeter::boundingRect() const

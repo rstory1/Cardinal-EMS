@@ -11,7 +11,6 @@ emsFull::emsFull(QObject *parent)
     setupManifoldPressure();
     setupChtEgt();
     setupFuelManagement();
-    //setupWindVector();
     setupHourMeter();
 
     setSceneRect(0,0,800,480);
@@ -20,7 +19,7 @@ emsFull::emsFull(QObject *parent)
 
     connectSignals();
 
-    // Initialize the timer to flash values on alarm
+//    // Initialize the timer to flash values on alarm
     flashTimer.start(1000);
 
     clockTimer.start(1000);
@@ -139,6 +138,13 @@ void emsFull::setupBarGraphs()
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
     this->addItem(&ampereMeter);
+
+    ampereMeter2.setPos(760, 205);
+    ampereMeter2.setTitle("LOAD");
+    ampereMeter2.setUnit("A");
+    ampereMeter2.addBetweenValue(0.0);
+    ampereMeter2.setGaugeType("Amp");
+    //this->addItem(&ampereMeter2);
 
     fuelFlow.setPos(690, 205);
     fuelFlow.setTitle("FF");
@@ -315,13 +321,14 @@ void emsFull::setEngineConds() {
     }
 }
 
-void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal oilPress, qreal amps, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP) {
+void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP) {
     rpmIndicator.setValue(rpm);
     fuelDisplay.setFuelFlow(fuelF);
     fuelFlow.setValue(fuelF);
     oilTemperature.setValue(oilTemp);
     oilPressure.setValue(oilPress);
     ampereMeter.setValue(amps);
+    ampereMeter2.setValue(amps2);
     voltMeter.setValue(volts);
     chtEgt.setEgtValues(egt1, egt2, egt3, egt4);
     chtEgt.setChtValues(cht1, cht2, cht3, cht4);
@@ -330,16 +337,6 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal 
     manifoldPressure.setValue(map);
     fuelPressure.setValue(fuelP);
 
-//    if (oilTemp < warmupTemp ) {
-//        rpmIndicator.isWarmup = true;
-//    } else {
-//        rpmIndicator.isWarmup = false;
-//    }
-
-//    if (rpm > 0) {
-//        hobbs.setEngineOn(true);
-//    }
-
     emsSerialString = QString::number(rpmIndicator.getValue()) + "," + QString::number(fuelFlow.getValue()) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(oilPress) + "," + QString::number(ampereMeter.getValue()) + "," +
             QString::number(ampereMeter.getValue()) + "," + QString::number(voltMeter.getValue()) + "," + QString::number(fuelPressure.getValue()) + "," + QString::number(chtEgt.getCurrentChtValues().at(0)) + "," + QString::number(chtEgt.getCurrentChtValues().at(1))+ "," + QString::number(oat);
     emsSerialStringByteArray = emsSerialString.toLocal8Bit();
@@ -347,7 +344,6 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal 
     emit sendSerialData(emsSerialStringByteArray);
 }
 
-////
 void emsFull::demoFunction()
 {
     qsrand(QDateTime::currentDateTime().toTime_t());

@@ -40,13 +40,9 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     this->scene()->setSceneRect(0,0,800,480);
     buttonBar.setPos(0,this->scene()->height());
-    //this->scene()->addItem(&buttonBar);
 
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
-
-    // Get the temp for when the engine is warmed up
-//    warmupTemp=gaugeSettings.value("OilTemp/warmupTemp").toInt();
 
 //    // Plot stuff
 //    customPlot = new QCustomPlot();
@@ -107,15 +103,15 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     // Initialize the timer to flash values on alarm
     // QTimer *flashTimer = new QTimer(this);
-    flashTimer.start(1000);
+    //flashTimer.start(1000);
 
     // Initialize the timer for the Hobbs and Flight time
     //clockTimer = new QTimer(this);
-    clockTimer.start(1000);
+    //clockTimer.start(1000);
 
-    qDebug()<<"Enter connectSignals()";
+    qDebug()<<"Enter connectSignals(): enginemonitor.cpp";
     connectSignals();
-    qDebug() << "Returned from connectSignals()";
+    qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 }
 
 EngineMonitor::~EngineMonitor()
@@ -151,7 +147,7 @@ void EngineMonitor::setupLogFile()
 	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
     logFile->write(QString("All temperatures in degree %1\r\n oil pressure in %2\r\n fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
 	logFile->write("[data]\r\n");
-    logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR;RPM;MAP;FF;FUELP;HOBBS;FLIGHT\r\n");
+    logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR1;CUR2;RPM;MAP;FF;FUELP;HOBBS;FLIGHT\r\n");
 }
 
 void EngineMonitor::writeLogFile()
@@ -175,6 +171,7 @@ void EngineMonitor::writeLogFile()
     logFile->write(QString::number(ems_full.insideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.voltMeter.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.ampereMeter.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.ampereMeter2.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.rpmIndicator.getValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.manifoldPressure.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.fuelFlow.getValue(), 'f', 1).append(';').toLatin1());
@@ -282,9 +279,9 @@ void EngineMonitor::connectSignals() {
     // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
     connect(&ems_full, SIGNAL(alarmFlashing()), &buttonBar, SLOT(onAlarmFlash()));
 
-    qDebug()<<"Connecting hobb/flight time Signals";
+    //qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time
-    connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
+    //connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
 
     //connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
 
@@ -297,7 +294,7 @@ void EngineMonitor::connectSignals() {
 
     connect(&settings_scene, SIGNAL(hobbsUpdated()), &ems_full.hobbs, SLOT(onHobbsINIChanged()));
 
-    connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
 
     connect(&settings_scene, SIGNAL(fuelUpdated()), &ems_full.fuelDisplay, SLOT(onFuelAmountChange()));
 
@@ -311,26 +308,6 @@ void EngineMonitor::setupuserSettings()
     graphicsScene.addItem(&uSettings);
     uSettings.setVisible(false);
 }
-
-//void EngineMonitor::setEngineConds() {
-//    if (oilPressure.getValue() > 10.0) {
-//        hobbs.setEngineOn(true);
-//    } else {
-//        hobbs.setEngineOn(false);
-//    }
-
-//    if (oilTemperature.getValue() < warmupTemp) {
-//        timeOilTBelowWarmup += 1;
-//        if (timeOilTAboveWarmup < 5 * 60) {
-//            timeOilTAboveWarmup = 0;
-//            rpmIndicator.isWarmup = true;
-//        }
-//    } else {
-//        timeOilTAboveWarmup += 1;
-//        timeOilTBelowWarmup = 0;
-//        rpmIndicator.isWarmup = false;
-//    }
-//}
 
 void EngineMonitor::onSwitchScene(int scene) {
     switch (scene) {
@@ -351,7 +328,3 @@ void EngineMonitor::onSwitchScene(int scene) {
 //    qDebug() << "Is Settings Scene Active?: " + QString::number(settings_scene.isActive());
 
 }
-
-//void EngineMonitor::onZeroCurrent() {
-//    emit zeroCurrent();
-//}
