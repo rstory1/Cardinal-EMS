@@ -103,6 +103,7 @@ public slots:
 
 private slots:
     void showPulses();
+    void debugSend();
 };
 
 #endif // SENSORCONVERT_H

@@ -78,7 +78,8 @@ private:
     int numOfCht = 2; //This needs to be made to be able to be configured by the user
     int numOfEgt = 0; //This needs to be made to be able to be configured by the user
 
-    DataSmoothing smoothData;
+    DataSmoothing smoothDataCht1;
+    DataSmoothing smoothDataCht2;
     bool smooth = true;
 signals:
     void sendAlarm(QString, QColor, bool);

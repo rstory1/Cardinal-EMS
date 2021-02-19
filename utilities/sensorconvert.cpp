@@ -30,9 +30,10 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
     setTemperatureScale(settings.value("Units/temp", "F").toString());
     setKFactor(gaugeSettings.value("FuelFlow/kfactor", "F").toString().toDouble());
 
-//    QTimer *timerPulses = new QTimer(this);
-//    connect(timerPulses, SIGNAL(timeout()), this, SLOT(showPulses()));
-//    timerPulses->start(30000); //time specified in ms
+//    qDebug() << temperatureScale;
+
+//    connect(&timerPulses, SIGNAL(timeout()), this, SLOT(debugSend()));
+//    timerPulses.start(10); //time specified in ms
 
 }
 
@@ -169,15 +170,15 @@ void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 
 }
 
-void SensorConvert::convertEgt(double volt1, double volt2, double volt3, double volt4)
-{
+//void SensorConvert::convertEgt(double volt1, double volt2, double volt3, double volt4)
+//{
 
-}
+//}
 
 void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts) {
     convertFuelFlow(fuelFlow1);
     convertOilPress(oilP);
-    convertCht(ax1, ax2, tc3, tc4);
+    convertCht(150, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr,1);
     convertCurrent(fuelL2,2);
@@ -230,3 +231,6 @@ qreal SensorConvert::filterReading(qreal inputVal, qreal preVal, qreal dt, qreal
     return ((preVal - inputVal) * tau) / (tau + dt) + inputVal;
 }
 
+void SensorConvert::debugSend() {
+    emit updateMonitor(5200, 5.0, 130, 65, 10, 10, 14.0, 0, 0, 0, 0, 100, 0, 0, 0, 20, 10, 8.6, 5.3);
+}
