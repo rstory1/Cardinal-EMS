@@ -121,7 +121,7 @@ void HourMeter::onTic() {
         }
     }
 
-    hobbsString = QString::number(hobbs.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(hobbs.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(hobbs.sec, 'f',0).rightJustified(2,'0')));
+    hobbsString = QString::number(hobbs.hour, 'f', 0).append(QString(".").append(QString::number((hobbs.min/6.0)+(hobbs.sec/360.0), 'f',0)));
     flightString = QString::number(flight.hour, 'f', 0).rightJustified(2,'0').append(QString(":").append(QString::number(flight.min, 'f',0).rightJustified(2,'0'))).append(QString(":").append(QString::number(flight.sec, 'f',0).rightJustified(2,'0')));
 
     update();

@@ -80,7 +80,7 @@ void emsFull::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
     }
 
     if(isActive()) {
-        update();
+        //update();
     }
 
 
@@ -137,6 +137,7 @@ void emsFull::setupBarGraphs()
     ampereMeter.setUnit("A");
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
+    voltMeter.setSmoothBool(true);
     this->addItem(&ampereMeter);
 
     ampereMeter2.setPos(760, 205);
@@ -337,11 +338,11 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal 
     manifoldPressure.setValue(map);
     fuelPressure.setValue(fuelP);
 
-    emsSerialString = QString::number(rpmIndicator.getValue()) + "," + QString::number(fuelFlow.getValue()) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(oilPress) + "," + QString::number(ampereMeter.getValue()) + "," +
-            QString::number(ampereMeter.getValue()) + "," + QString::number(voltMeter.getValue()) + "," + QString::number(fuelPressure.getValue()) + "," + QString::number(chtEgt.getCurrentChtValues().at(0)) + "," + QString::number(chtEgt.getCurrentChtValues().at(1))+ "," + QString::number(oat);
-    emsSerialStringByteArray = emsSerialString.toLocal8Bit();
+//    emsSerialString = QString::number(rpmIndicator.getValue()) + "," + QString::number(fuelFlow.getValue()) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(oilPress) + "," + QString::number(ampereMeter.getValue()) + "," +
+//            QString::number(ampereMeter.getValue()) + "," + QString::number(voltMeter.getValue()) + "," + QString::number(fuelPressure.getValue()) + "," + QString::number(chtEgt.getCurrentChtValues().at(0)) + "," + QString::number(chtEgt.getCurrentChtValues().at(1))+ "," + QString::number(oat);
+//    emsSerialStringByteArray = emsSerialString.toLocal8Bit();
 
-    emit sendSerialData(emsSerialStringByteArray);
+//    emit sendSerialData(emsSerialStringByteArray);
 }
 
 void emsFull::demoFunction()

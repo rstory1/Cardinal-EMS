@@ -266,16 +266,13 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
 
     lastMessage1 = QDateTime::currentDateTimeUtc();
 
-    qreal ax1 = message.aux1 ;
-    qreal ax2 = message.aux2 ;
-
-    qreal fuelFlow1 = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
-    qreal fuelFlow2 = (message.flow2 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+    fuelFlow1 = (message.flow1 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
+    fuelFlow2 = (message.flow2 / 4) * 60.0 * 60.0; // This converts the pulse data from the RDAC (# of pulses per 4 second period) into pulses/hour
 
     qDebug() << "RDAC Message Update Sent" + lastMessage1.toString("hh:mm:ss.zzz");
 
 
-    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, ax1, ax2, message.fuelPress, message.coolant, message.fuelLevel1, message.fuelLevel1, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
+    emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, message.aux1, message.aux2, message.fuelPress, message.coolant, message.fuelLevel1, message.fuelLevel1, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
 }
 
 void RDACconnect::handleMessage2(QByteArray *data)

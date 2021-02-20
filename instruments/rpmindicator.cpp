@@ -233,8 +233,6 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	painter->setFont(QFont("Arial", 20, 1));
     painter->drawText(unitRect, Qt::AlignLeft | Qt::AlignVCenter, "RPM");
 
-    update();
-
 }
 
 void RpmIndicator::setStartSpan(double start, double span)
@@ -262,7 +260,7 @@ void RpmIndicator::addBetweenValue(double value)
 void RpmIndicator::setValue(double value)
 {
 	currentValue = value;
-    //update();
+    update();
 }
 
 void RpmIndicator::changeFlashState()
@@ -272,4 +270,6 @@ void RpmIndicator::changeFlashState()
     } else {
         flashState = false;
     }
+
+    update();
 }

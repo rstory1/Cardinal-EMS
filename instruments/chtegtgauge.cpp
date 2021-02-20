@@ -302,8 +302,6 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         isAlarmedYellow = false;
     }
 
-    update();
-
 }
 
 double ChtEgt::calculateLocalChtValue(double value) const
@@ -336,6 +334,7 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
         currentChtValues.replace(3, val4);
     }
 
+    update();
 
 }
 
@@ -366,6 +365,8 @@ void ChtEgt::changeFlashState()
     } else {
         flashState = false;
     }
+
+    update();
 }
 
 void ChtEgt::onAlarmAck() {

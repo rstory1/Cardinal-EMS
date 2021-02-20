@@ -148,6 +148,8 @@ private:
     float numTries = 0.0;
     float numSuccess = 0.0;
     qreal volts;
+    qreal fuelFlow1;
+    qreal fuelFlow2;
 
 public slots:
     void openSerialPort();
