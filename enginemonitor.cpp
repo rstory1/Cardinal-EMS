@@ -26,13 +26,14 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
   , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
-	//Initializing the window behaviour and it's scene
+
+    //Initializing the window behaviour and it's scene
     setWindowFlags(Qt::FramelessWindowHint);
     setScene(&ems_full);
     currentScene = "emsFull";
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-	//Setting up the items to be displayed
+    //Setting up the items to be displayed
     setupuserSettings();
 
     this->mapToScene(this->rect());
@@ -46,6 +47,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
     setupLogFile();
 
+    qDebug()<<"Enter connectSignals(): enginemonitor.cpp";
+    connectSignals();
+    qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
+
     //Create the RDAC connector
     rdac.moveToThread(&rdacWorkerThread);
 
@@ -56,18 +61,16 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
     connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
     connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
+    connect(this, SIGNAL(startRdacConnect()), &rdac, SLOT(openSerialPort()));
 
     sensorConvertWorkerThread.start();
     rdacWorkerThread.start();
-
-    qDebug()<<"Enter connectSignals(): enginemonitor.cpp";
-    connectSignals();
-    qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
+    emit startRdacConnect();
 }
 
 EngineMonitor::~EngineMonitor()
 {
-	logFile->close();
+    logFile->close();
 
     sensorConvertWorkerThread.quit();
     sensorConvertWorkerThread.wait();
@@ -80,47 +83,47 @@ void EngineMonitor::setupLogFile()
     QDir dir(QApplication::applicationDirPath() + "/ems/engineLogs");
     if (!dir.exists())
         dir.mkpath(".");
-    logFile = new QFile(QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
-	if(logFile->open(QIODevice::WriteOnly))
-	{
-		QTimer *writeLogFileTimer = new QTimer(this);
-		connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
-		writeLogFileTimer->setSingleShot(false);
-		writeLogFileTimer->start(settings.value("Logging/SampleRate", 1).toInt() * 1000);
-	}
-	else
-	{
+    logFile = new QFile(QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm")).append(".csv"), this);
+    if(logFile->open(QIODevice::WriteOnly))
+    {
+        QTimer *writeLogFileTimer = new QTimer(this);
+        connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
+        writeLogFileTimer->setSingleShot(false);
+        writeLogFileTimer->start(settings.value("Logging/SampleRate", 1).toInt() * 1000);
+    }
+    else
+    {
         qDebug() << QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ");
-		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
-	}
+        userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
+    }
 
-	logFile->write("[Header]\r\n");
-	logFile->write("Created with Cardinal EMS - Build BETA\r\n");
-	logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
-	logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
-	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
-	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
-	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
+    logFile->write("[Header]\r\n");
+    logFile->write("Created with Cardinal EMS - Build BETA\r\n");
+    logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
+    logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
+    logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
+    logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
+    logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
     logFile->write(QString("All temperatures in degree %1\r\n oil pressure in %2\r\n fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
-	logFile->write("[data]\r\n");
+    logFile->write("[data]\r\n");
     logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR1;CUR2;RPM;MAP;FF;FUELP;HOBBS;FLIGHT\r\n");
 }
 
 void EngineMonitor::writeLogFile()
 {
-	static quint64 sample = 0;
-	logFile->write(QString::number(sample).append(';').toLatin1());
-	logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
+    static quint64 sample = 0;
+    logFile->write(QString::number(sample).append(';').toLatin1());
+    logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
     QList<double> egtValues = ems_full.chtEgt.getCurrentEgtValues();
-	logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     QList<double> chtValues = ems_full.chtEgt.getCurrentChtValues();
-	logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilTemperature.getValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilPressure.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.outsideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
@@ -135,24 +138,24 @@ void EngineMonitor::writeLogFile()
     logFile->write(QString(ems_full.hobbs.getHobbsTime().append(';')).toLatin1());
     logFile->write(QString(ems_full.hobbs.getFlightTime().append(';')).toLatin1());
     logFile->write("\r\n");
-	logFile->flush();
-	++sample;
+    logFile->flush();
+    ++sample;
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
 {
-	QMessageBox::warning(this, title, content);
-	if(endApplication)
-	{
-		qApp->quit();
-	}
+    QMessageBox::warning(this, title, content);
+    if(endApplication)
+    {
+        qApp->quit();
+    }
 }
 
 void EngineMonitor::showStatusMessage(QString text, QColor color)
 {
     //qDebug() << Q_FUNC_INFO;
-	statusItem.setPlainText(text);
-	statusItem.setDefaultTextColor(color);
+    statusItem.setPlainText(text);
+    statusItem.setDefaultTextColor(color);
 }
 
 //void EngineMonitor::saveSceneToSvg(const QString fileName)

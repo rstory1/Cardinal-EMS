@@ -37,7 +37,7 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
 
     if(QSqlDatabase::isDriverAvailable(DRIVER))
     {
-        qDebug() << "TRying to open DB";
+        //qDebug() << "TRying to open DB";
         databaseLogging = QSqlDatabase::addDatabase(DRIVER, "sensorConvert");
 
         databaseLogging.setDatabaseName(QCoreApplication::applicationDirPath() + "/ems/engineLogs/emsData");
@@ -45,7 +45,7 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
         if(!databaseLogging.open())
             qWarning() << "SensorConvert::SensorConvert - ERROR: " << databaseLogging.lastError().text();
 
-        qDebug() << "DB SHould be open" << databaseLogging.isOpen();
+        //qDebug() << "DB SHould be open" << databaseLogging.isOpen();
 
         sqlQuery = QSqlQuery(databaseLogging);
     }

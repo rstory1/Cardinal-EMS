@@ -92,7 +92,7 @@ RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
 
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 
-    openSerialPort();
+    //openSerialPort();
 }
 
 void RDACconnect::readData()

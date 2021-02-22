@@ -33,7 +33,7 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
     //qInfo() << dir.path();
     if (!dir.exists())
         dir.mkpath(".");
-    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon" + QDateTime::currentDateTime().toString("dd.MM.yyyy") + ".log");
+    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon_" + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
     if (!dir.exists())
         dir.mkpath(".");
-    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon_" + QDateTime::currentDateTime().toString("dd-MM-yyyy") + ".log");
+    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon_" + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
@@ -120,13 +120,13 @@ int main(int argc, char *argv[])
 
 	//Create the engine monitor and show after splashscreen delay
     EngineMonitor engineMonitor;
-    engineMonitor.show();
     engineMonitor.move(0, 0);
     engineMonitor.resize(800, 480);
     engineMonitor.setMaximumWidth(800);
     engineMonitor.setMaximumHeight(480);
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    engineMonitor.show();
 
 //	NMEAconnect nmeaConnect;
 //	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
