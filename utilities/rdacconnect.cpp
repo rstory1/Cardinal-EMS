@@ -262,7 +262,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
         message.pulseRatio2 = 0;
     }
 
-    qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
+    //qDebug() << Q_FUNC_INFO << "Pulses" << message.flow1;
 
     volts = round(message.volts/5.73758)*0.1;
 
