@@ -33,7 +33,7 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
 //    qDebug() << temperatureScale;
 
     connect(&timerPulses, SIGNAL(timeout()), this, SLOT(debugSend()));
-    timerPulses.start(10); //time specified in ms
+    //timerPulses.start(10); //time specified in ms
 
     if(QSqlDatabase::isDriverAvailable(DRIVER))
     {
