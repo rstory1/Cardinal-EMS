@@ -97,6 +97,8 @@ private:
 
     DataSmoothing smoothData;
     bool smooth = false;
+
+    QTimer updateTimer;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{
@@ -106,6 +108,9 @@ signals:
     void hasBeenClicked();
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
+
+private slots:
+    void onUpdate();
 };
 
 #endif // BARGRAPH_H

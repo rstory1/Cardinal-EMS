@@ -18,6 +18,11 @@
 #include <gaugesettings.h>
 #include "alarmBox.h"
 
+#include <QSqlDatabase>
+#include <QSqlDriver>
+#include <QSqlError>
+#include <QSqlQuery>
+
 class emsFull : public QGraphicsScene
 {
     Q_OBJECT
@@ -44,6 +49,10 @@ public:
     HourMeter hobbs;
     AlarmBox alarmWindow;
 
+    QSqlDatabase sensorValueDB;
+    QString sqlStatement;
+    //QSqlQuery sqlQuery;
+
 private:
     QSettings gaugeSettings;
     QSettings settings;
@@ -66,6 +75,7 @@ private:
 
     QTimer flashTimer;
     QTimer clockTimer;
+    QTimer sensorReadTimer;
 
     QPushButton button1;
     QPushButton button2;
@@ -77,6 +87,7 @@ private:
         void setEngineConds();
         void onAckAlarm() {button2.setVisible(false);}
         void onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP);
+        void onTic() {emit sendTimeData(hobbs.getHobbsTime().toDouble(), hobbs.getFlightTime());}
 
     private slots:
         void onAlarmFlash() {emit alarmFlashing();
@@ -91,6 +102,7 @@ private:
         void ackAlarm();
         void switchScene(int);
         void sendSerialData(QByteArray data);
+        void sendTimeData(qreal hobbs, QString flight);
 
 };
 

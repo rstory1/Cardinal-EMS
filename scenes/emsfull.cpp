@@ -19,9 +19,6 @@ emsFull::emsFull(QObject *parent)
 
     connectSignals();
 
-//    // Initialize the timer to flash values on alarm
-    flashTimer.start(1000);
-
     clockTimer.start(1000);
 
     button1.setText("Settings");
@@ -42,6 +39,8 @@ emsFull::emsFull(QObject *parent)
                                 border:1px solid white;}");
     addWidget(&button2);
     button2.setVisible(false);
+
+    const QString DRIVER("QSQLITE");
 
     //Demo timer, for testing purposes only
 #ifdef QT_DEBUG
@@ -221,79 +220,18 @@ void emsFull::setupWindVector() {
 
 void emsFull::connectSignals() {
 
-    qDebug()<<"Connecting flashing alarm signals";
-    // Connect signals for alarm flashing
-    connect(&flashTimer, SIGNAL(timeout()), &alarmWindow, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &rpmIndicator, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &chtEgt, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &oilPressure, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &oilTemperature, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &voltMeter, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &ampereMeter, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &fuelFlow, SLOT(changeFlashState()));
-    connect(&flashTimer, SIGNAL(timeout()), &fuelPressure, SLOT(changeFlashState()));
-
-    qDebug()<<"Connecting RPM signals";
-    //  Connect signal for alarm from rpm indicator
-    connect(&rpmIndicator, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&rpmIndicator, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    qDebug()<<"Connecting CHT/EGT Signals";
-    //  Connect signal for alarm from CHT/EGT
-    connect(&chtEgt, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&chtEgt, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from Volt Meter
-    connect(&voltMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&voltMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from OILT
-    connect(&oilTemperature, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&oilTemperature, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from OILP
-    connect(&oilPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&oilPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    //  Connect signal for alarm from ampere meter
-    connect(&ampereMeter, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&ampereMeter, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    qDebug()<<"Connecting Fuel Flow Signals";
-    //  Connect signal for alarm from CHT/EGT
-    connect(&fuelFlow, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&fuelFlow, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
-    qDebug()<<"Connecting Fuel Pressure Signals";
-    //  Connect signal for alarm from CHT/EGT
-    connect(&fuelPressure, SIGNAL(sendAlarm(QString,QColor,bool)), &alarmWindow, SLOT(onAlarm(QString,QColor,bool)));
-    connect(&fuelPressure, SIGNAL(cancelAlarm(QString)), &alarmWindow, SLOT(onRemoveAlarm(QString)));
-
     // Connect buttonBar to the alarm window for alarm acknowledgement
     connect(&button2, SIGNAL(clicked(bool)), &alarmWindow, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), this, SLOT(onAckAlarm()));
+    //connect(&alarmWindow, SIGNAL(stopAlarmFlash()), this, SLOT(onAckAlarm()));
     connect(&button1, SIGNAL(clicked(bool)), this, SLOT(onButton1Press()));
-
-//    // Connect buttonBar to the fuelDisplay window to increment fuel amount
-//    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
-
-    // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
-    connect(&alarmWindow, SIGNAL(flashingAlarm()), this, SLOT(onAlarmFlash()));
-
-    // Connect signal to stop flashing alarm after it has been acknowledged
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &chtEgt, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &voltMeter, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilTemperature, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &oilPressure, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &ampereMeter, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &rpmIndicator, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &fuelPressure, SLOT(onAlarmAck()));
-    connect(&alarmWindow, SIGNAL(stopAlarmFlash()), &fuelFlow, SLOT(onAlarmAck()));
 
     qDebug()<<"Connecting hobb/flight time Signals";
     // Connect a timer for handling hobbs/flight time
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
+    connect(&clockTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+
+    //connect(&sensorReadTimer, SIGNAL(timeout()), this, SLOT(onReadDBValues()));
 }
 
 void emsFull::setupHourMeter() {
@@ -336,7 +274,6 @@ void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal 
     outsideAirTemperature.setValue(oat);
     insideAirTemperature.setValue(iat);
     manifoldPressure.setValue(map);
-    fuelPressure.setValue(fuelP);
 
 //    emsSerialString = QString::number(rpmIndicator.getValue()) + "," + QString::number(fuelFlow.getValue()) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(oilPress) + "," + QString::number(ampereMeter.getValue()) + "," +
 //            QString::number(ampereMeter.getValue()) + "," + QString::number(voltMeter.getValue()) + "," + QString::number(fuelPressure.getValue()) + "," + QString::number(chtEgt.getCurrentChtValues().at(0)) + "," + QString::number(chtEgt.getCurrentChtValues().at(1))+ "," + QString::number(oat);
@@ -458,3 +395,29 @@ void emsFull::demoFunction()
     insideAirTemperature.setValue(airTemp);
 
 }
+
+//void emsFull::onReadDBValues() {
+//    QSqlQuery sqlQuery = QSqlQuery(sensorValueDB);
+
+//    sqlStatement = "SELECT rpm, oilTemp, oilPressure, cht1, cht2, fuelPressure, fuelFLow, manPressure, current1, current2, batteryVoltage, oat, iat, hobbs, flightTime, timeStamp FROM rawSensorData ORDER BY dataIndex DESC LIMIT 1;";
+
+//    if(!sqlQuery.exec(sqlStatement))
+//        qWarning() << "emsFull::onEngineValuesUpdate - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
+
+//    sqlQuery.next();
+
+//    rpmIndicator.setValue(sqlQuery.value(0).toReal());
+//    fuelDisplay.setFuelFlow(sqlQuery.value(6).toReal());
+//    fuelFlow.setValue(sqlQuery.value(6).toReal());
+//    oilTemperature.setValue(sqlQuery.value(1).toReal());
+//    oilPressure.setValue(sqlQuery.value(2).toReal());
+//    ampereMeter.setValue(sqlQuery.value(8).toReal());
+//    ampereMeter2.setValue(sqlQuery.value(9).toReal());
+//    voltMeter.setValue(sqlQuery.value(10).toReal());
+//    chtEgt.setEgtValues(-999, -999, -999, -999);
+//    chtEgt.setChtValues(sqlQuery.value(3).toReal(), sqlQuery.value(4).toReal(), -999, -999);
+//    outsideAirTemperature.setValue(sqlQuery.value(11).toReal());
+//    insideAirTemperature.setValue(sqlQuery.value(12).toReal());
+//    manifoldPressure.setValue(sqlQuery.value(7).toReal());
+//    fuelPressure.setValue(sqlQuery.value(5).toReal());
+//}

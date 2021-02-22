@@ -23,6 +23,9 @@
 
 #include <QtGui>
 
+#include "rdacconnect.h"
+#include "sensorconvert.h"
+
 #include "instruments/rpmindicator.h"
 #include "instruments/bargraph.h"
 #include "instruments/fuelmanagement.h"
@@ -99,6 +102,12 @@ private:
     emsFull ems_full;
 
     QString currentScene = "";
+
+    QThread rdacWorkerThread;
+    RDACconnect rdac;
+
+    QThread sensorConvertWorkerThread;
+    SensorConvert sensorConvert;
 
 private slots:
     void writeLogFile();

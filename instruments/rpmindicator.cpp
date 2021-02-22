@@ -32,6 +32,10 @@ RpmIndicator::RpmIndicator(QGraphicsObject *parent) : QGraphicsObject(parent)
     isWarmup=true;
 
     gauge.setGauge("RPM");
+
+    updateTimer.start(100);
+
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
 
 
@@ -56,6 +60,8 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setPen(QPen(Qt::green, 0));
     painter->setBrush(Qt::green);
     painter->drawPie(circle, startAngle*16.0, -spanAngle*16.0);
+
+    changeFlashState();
 
     if (isWarmup) {
         i=0;
@@ -260,16 +266,15 @@ void RpmIndicator::addBetweenValue(double value)
 void RpmIndicator::setValue(double value)
 {
 	currentValue = value;
-    update();
+
 }
 
 void RpmIndicator::changeFlashState()
 {
-    if (flashState == false) {
+    if (QTime::currentTime().second() % 2 == 0) {
         flashState  = true;
     } else {
         flashState = false;
     }
 
-    update();
 }

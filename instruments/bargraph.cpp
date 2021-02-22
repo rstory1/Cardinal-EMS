@@ -31,6 +31,10 @@ BarGraph::BarGraph(QGraphicsObject *parent)
 	, readoutPrecision(0)
 {
     smoothData.setSampleSize(20);
+
+    updateTimer.start(100);
+
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
 
 QRectF BarGraph::boundingRect() const
@@ -51,6 +55,8 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+
+    changeFlashState();
 
 	//Draw ticks with values
 //	painter->setPen(Qt::white);
@@ -300,7 +306,6 @@ void BarGraph::setValue(qreal value)
 
     //qDebug() << "Current " + titleText + ": " + QString::number(value);
 
-    update();
 }
 
 void BarGraph::addColorStop(ColorStop stop)
@@ -310,13 +315,11 @@ void BarGraph::addColorStop(ColorStop stop)
 
 void BarGraph::changeFlashState()
 {
-    if (flashState == false) {
+    if (QTime::currentTime().second() % 2 == 0) {
         flashState  = true;
     } else {
         flashState = false;
     }
-
-    update();
 }
 
 void BarGraph::setIndicatorSide(QString side)
@@ -330,4 +333,6 @@ void BarGraph::onAlarmAck() {
     }
 }
 
-
+void BarGraph::onUpdate() {
+    update();
+}

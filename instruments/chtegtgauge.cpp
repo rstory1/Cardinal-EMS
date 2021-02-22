@@ -47,6 +47,10 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
 
     smoothDataCht1.setSampleSize(10);
     smoothDataCht2.setSampleSize(10);
+
+    updateTimer.start(100);
+
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
 
 QRectF ChtEgt::boundingRect() const
@@ -66,6 +70,8 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
     //Set painter for texts
     //painter->setPen(QPen(Qt::white, 1));
     painter->setFont(QFont("Arial", 16));
+
+    changeFlashState();
 
     //Draw the static texts
     QRectF chtTitleRect = QRectF(50.0, calculateLocalChtValue(maxChtValue)-25, 60.0, 20.0);
@@ -334,8 +340,6 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
         currentChtValues.replace(3, val4);
     }
 
-    update();
-
 }
 
 void ChtEgt::setEgtValues(double val1, double val2, double val3, double val4)
@@ -360,13 +364,11 @@ void ChtEgt::setBorders(double minimum, double maximum, double yellowBorder, dou
 
 void ChtEgt::changeFlashState()
 {
-    if (flashState == false) {
+    if (QTime::currentTime().second() % 2 == 0) {
         flashState  = true;
     } else {
         flashState = false;
     }
-
-    update();
 }
 
 void ChtEgt::onAlarmAck() {

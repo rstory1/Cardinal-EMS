@@ -81,7 +81,7 @@ RDACmessage4::RDACmessage4()
 {
 }
 
-RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
+RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
   , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
     serial = new QSerialPort(this);
@@ -91,6 +91,8 @@ RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
 
 
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+
+    openSerialPort();
 }
 
 void RDACconnect::readData()
@@ -385,6 +387,7 @@ void RDACconnect::closeSerialPort()
 void RDACconnect::writeData(const QByteArray &data)
 {
     serial->write(data);
+    qDebug() << "Writing data out";
 }
 
 void RDACconnect::handleError(QSerialPort::SerialPortError error)

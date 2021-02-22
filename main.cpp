@@ -21,9 +21,7 @@
 #include <QtWidgets>
 #include <QApplication>
 #include "enginemonitor.h"
-#include "rdacconnect.h"
 #include "nmeaconnect.h"
-#include "sensorconvert.h"
 #include "udpsocket.h"
 #include "flightcalculator.h"
 #include "spatial.h"
@@ -35,7 +33,7 @@ void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QStr
     //qInfo() << dir.path();
     if (!dir.exists())
         dir.mkpath(".");
-    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon.log");
+    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon" + QDateTime::currentDateTime().toString("dd.MM.yyyy") + ".log");
 	if(debugfile.open(QIODevice::Append | QIODevice::Text))
 	{
 		QString debugString = QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz").append(' ');
@@ -90,7 +88,7 @@ int main(int argc, char *argv[])
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
     if (!dir.exists())
         dir.mkpath(".");
-    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon.log");
+    QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon_" + QDateTime::currentDateTime().toString("dd-MM-yyyy") + ".log");
 	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
     {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
@@ -130,9 +128,6 @@ int main(int argc, char *argv[])
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    //Create the RDAC connector
-    RDACconnect rdac;
-
 //	NMEAconnect nmeaConnect;
 //	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
 //    a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
@@ -140,16 +135,11 @@ int main(int argc, char *argv[])
 //	nmeaConnect.start();
 //#endif
 
-    SensorConvert sensorConvert;
     //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
 //SLOT(userMessageHandler(QString,QString,bool)));
-    a.connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal, qreal)), &engineMonitor, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
-    a.connect(&engineMonitor, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
-    a.connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
+
     //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
 //SLOT(setFuelData(double,double)));
-    a.connect(&rdac, SIGNAL(statusMessage(QString,QColor)), &engineMonitor, SLOT(showStatusMessage(QString,QColor)));
-    a.connect(&engineMonitor, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
 
     //QString portName = QLatin1String("ttyACM0");              // update this to use your 
 //port of choice
@@ -157,9 +147,7 @@ int main(int argc, char *argv[])
     //a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, 
 //SLOT(processData(QString)));
 
-    rdac.openSerialPort();
-
-    flightCalculator flightCalc;
+    //flightCalculator flightCalc;
     //QTimer *flightTimer = new QTimer();
     //flightTimer->start(5000);
     //a.connect(flightTimer, SIGNAL(timeout()), &flightCalc, SLOT(onSpeedAndHeadingUpdate(/*float, float, float, float*/)));

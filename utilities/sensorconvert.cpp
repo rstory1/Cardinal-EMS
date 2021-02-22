@@ -32,8 +32,25 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
 
 //    qDebug() << temperatureScale;
 
-//    connect(&timerPulses, SIGNAL(timeout()), this, SLOT(debugSend()));
-//    timerPulses.start(10); //time specified in ms
+    connect(&timerPulses, SIGNAL(timeout()), this, SLOT(debugSend()));
+    timerPulses.start(10); //time specified in ms
+
+    if(QSqlDatabase::isDriverAvailable(DRIVER))
+    {
+        qDebug() << "TRying to open DB";
+        databaseLogging = QSqlDatabase::addDatabase(DRIVER, "sensorConvert");
+
+        databaseLogging.setDatabaseName(QCoreApplication::applicationDirPath() + "/ems/engineLogs/emsData");
+
+        if(!databaseLogging.open())
+            qWarning() << "SensorConvert::SensorConvert - ERROR: " << databaseLogging.lastError().text();
+
+        qDebug() << "DB SHould be open" << databaseLogging.isOpen();
+
+        sqlQuery = QSqlQuery(databaseLogging);
+    }
+    else
+        qWarning() << "SensorConvert::SensorConvert - ERROR: no driver " << DRIVER << " available";
 
 }
 
@@ -178,13 +195,29 @@ void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts) {
     convertFuelFlow(fuelFlow1);
     convertOilPress(oilP);
-    convertCht(150, ax2, tc3, tc4);
+    convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr,1);
     convertCurrent(fuelL2,2);
     convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensor integral to the RDAC
     convertOAT(coolantT);
     convertFuelP(fuelP);
+
+    sqlStatement = "INSERT INTO rawSensorData ( raw_iat, raw_oat, raw_batteryVoltage, raw_current2, raw_current1, raw_manPressure, raw_fuelFlow, raw_fuelPressure, raw_cht2, raw_cht1, raw_oilPressure, \
+                    raw_oilTemp, raw_rpm, iat, oat, batteryVoltage, current2, current1, manPressure, fuelFlow, fuelPressure, cht2, cht1, oilPressure, oilTemp, rpm, flightTime, hobbs, timeStamp) \
+        VALUES (" + QString::number(intTemp) + "," + QString::number(coolantT) + "," + QString::number(volts) + "," + QString::number(fuelL2) + "," + QString::number(curr) \
+                + "," + QString::number(fuelL1) + "," + QString::number(fuelFlow1) + "," + QString::number(fuelP) + "," + QString::number(ax2) + "," + QString::number(ax1) \
+                + "," + QString::number(oilP) + "," + QString::number(oilT) + "," + QString::number(rpm1) + "," + QString::number(intTemp) + "," + QString::number(oat) \
+                + "," + QString::number(volts) + "," + QString::number(current2) + "," + QString::number(current1) + "," + QString::number(manP) + "," + QString::number(fuelFlow) \
+                + "," + QString::number(fuelPress) + "," + QString::number(cht[1]) + "," + QString::number(cht[0]) + "," + QString::number(oilPress) + "," + QString::number(oilTemp) \
+                + "," + QString::number(rpm1) + ",'" + currentFlightTime+ "'," + QString::number(currentHobbs) + ",'" + QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss.zzz") + "');";
+
+    databaseLogging.transaction();
+
+    if(!sqlQuery.exec(sqlStatement))
+        qWarning() << "SensorConvert::onRdacUpdate - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
+
+    databaseLogging.commit();
 
     emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current1, current2, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
 }
@@ -232,5 +265,11 @@ qreal SensorConvert::filterReading(qreal inputVal, qreal preVal, qreal dt, qreal
 }
 
 void SensorConvert::debugSend() {
-    emit updateMonitor(5200, 5.0, 130, 65, 10, 10, 14.0, 0, 0, 0, 0, 100, 0, 0, 0, 20, 10, 8.6, 5.3);
+    onRdacUpdate(4400, 1200, 0, 0, 0, 0, 0, 0, 0, 0, 4, 450, 4, 2.5, 2.5, 3.0, 2.3, 2.9, 2500, 0, 2.7, 2.8, 25, 14.2);
+    //emit updateMonitor(5200, 5.0, 130, 65, 10, 10, 14.0, 0, 0, 0, 0, 100, 0, 0, 0, 20, 10, 8.6, 5.3);
+}
+
+void SensorConvert::onUpdateFlightTime(qreal hobbs, QString flightTime) {
+    currentHobbs = hobbs;
+    currentFlightTime = flightTime;
 }

@@ -119,7 +119,7 @@ public:
 };
 #pragma pack()
 
-class RDACconnect : public QObject
+class RDACconnect : public QThread
 {
 	Q_OBJECT
 public:

@@ -44,70 +44,21 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
 
-//    // Plot stuff
-//    customPlot = new QCustomPlot();
-//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
-
-//    QGraphicsProxyWidget *test;
-//    test = new QGraphicsProxyWidget();
-//    test->setWidget(customPlot);
-//    test->setPos(0, 200);
-
-//    //this->scene()->addItem(test);
-
-//    customPlot->setFixedHeight(150);
-//    customPlot->setFixedWidth(300);
-//    customPlot->addGraph(); // blue line
-//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(1)->setPen(QPen(Qt::green));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
-
-//    QVector<double> ticks;
-//    QVector<QString> labels;
-//    ticks << 1 << 2 << 3 << 4 << 5;
-//    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
-//    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-//    //timeTicker->setTimeFormat("%m:%s");
-//    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-//    textTicker->addTicks(ticks, labels);
-//    customPlot->xAxis->setTicker(textTicker);
-//    customPlot->axisRect()->setupFullAxesBox();
-//    customPlot->yAxis->setRange(0, 300);
-//    customPlot->setBackground(Qt::black);
-//    customPlot->yAxis->setTickLabelColor(Qt::white);
-//    customPlot->xAxis->setTickLabelColor(Qt::white);
-//    customPlot->xAxis->setTicks(false);
-//    customPlot->xAxis->grid()->setVisible(false);
-
-
-    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
-
-    // End plot stuff
-
     setupLogFile();
 
-    //socket = new QUdpSocket(this);
+    //Create the RDAC connector
+    rdac.moveToThread(&rdacWorkerThread);
 
-    //qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
+    sensorConvert.moveToThread(&sensorConvertWorkerThread);
 
-    //connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
+    connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal, qreal)), this, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
+    connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
+    connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
+    connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
+    connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
 
-    //qDebug()<<"Creating";
-    //qDebug()<<socket->BoundState;
-
-    // Initialize the timer to flash values on alarm
-    // QTimer *flashTimer = new QTimer(this);
-    //flashTimer.start(1000);
-
-    // Initialize the timer for the Hobbs and Flight time
-    //clockTimer = new QTimer(this);
-    //clockTimer.start(1000);
+    sensorConvertWorkerThread.start();
+    rdacWorkerThread.start();
 
     qDebug()<<"Enter connectSignals(): enginemonitor.cpp";
     connectSignals();
@@ -117,6 +68,11 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 EngineMonitor::~EngineMonitor()
 {
 	logFile->close();
+
+    sensorConvertWorkerThread.quit();
+    sensorConvertWorkerThread.wait();
+    rdacWorkerThread.quit();
+    rdacWorkerThread.wait();
 }
 
 void EngineMonitor::setupLogFile()
@@ -299,6 +255,8 @@ void EngineMonitor::connectSignals() {
     connect(&settings_scene, SIGNAL(fuelUpdated()), &ems_full.fuelDisplay, SLOT(onFuelAmountChange()));
 
     connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
+
+    connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &sensorConvert, SLOT(onUpdateFlightTime(qreal, QString)));
 
 }
 

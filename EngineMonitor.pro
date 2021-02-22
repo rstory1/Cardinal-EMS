@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets serialport
+QT       += core gui widgets serialport sql
 
 INCLUDEPATH += \
     include \
@@ -68,7 +68,7 @@ SOURCES += main.cpp\
     utilities/userSettings.cpp \
     scenes/settings_scene.cpp \
     scenes/emsfull.cpp \
-    utilities/instrumentsettings.cpp
+    utilities/instrumentsettings.cpp \
     instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
@@ -97,7 +97,7 @@ HEADERS  += include/enginemonitor.h \
     include/userSettings.h \
     include/scenes/settings_scene.h \
     include/scenes/emsfull.h \
-    include/instrumentsettings.h
+    include/instrumentsettings.h \
     include/diagnosticwidget.h
 
 RESOURCES += \

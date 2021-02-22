@@ -69,6 +69,8 @@ private:
 
     bool isAcknowledged;
 
+    QTimer updateTimer;
+
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
@@ -78,6 +80,9 @@ public slots:
     void onAlarmAck() {
         isAcknowledged = true;
     }
+
+private slots:
+    void onUpdate() {update();}
 
 };
 

@@ -14,6 +14,11 @@
 #include <math.h>
 #include <QMessageBox>
 
+#include <QSqlDatabase>
+#include <QSqlDriver>
+#include <QSqlError>
+#include <QSqlQuery>
+
 //! Sensor Convert Class
 /*!
  * This class converts raw sensor values to meaningful numbers.
@@ -91,6 +96,14 @@ private:
 
     QTimer timerPulses;
 
+    QSqlDatabase databaseLogging;
+    QString sqlStatement;
+    QSqlQuery sqlQuery;
+    const QString DRIVER = "QSQLITE";
+
+    qreal currentHobbs;
+    QString currentFlightTime;
+
     //QElapsedTimer timer;
 signals:
     void userMessage(QString,QString,bool);
@@ -100,6 +113,7 @@ signals:
 public slots:
     void onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts);
     void onZeroCurrent();
+    void onUpdateFlightTime(qreal hobbs, QString flightTime);
 
 private slots:
     void showPulses();
