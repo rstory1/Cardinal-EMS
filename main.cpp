@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
     if (!dir.exists())
         dir.mkpath(".");
     QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon_" + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log");
-	if(debugfile.open(QIODevice::WriteOnly | QIODevice::Text))
+    if(debugfile.open(QIODevice::Append | QIODevice::Text))
     {
 		debugfile.write(QString("EngineMonitor started at: ").append(QDateTime::currentDateTime().toString("dd.MM.yyyy hh:mm:ss.zzz")).append('\n').toLatin1());
         debugfile.close();

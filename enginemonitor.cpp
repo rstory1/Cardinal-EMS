@@ -51,31 +51,35 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connectSignals();
     qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 
-    //Create the RDAC connector
-    rdac.moveToThread(&rdacWorkerThread);
+    #ifndef USEDATABASE
+        //Create the RDAC connector
+        rdac.moveToThread(&rdacWorkerThread);
 
-    sensorConvert.moveToThread(&sensorConvertWorkerThread);
+        sensorConvert.moveToThread(&sensorConvertWorkerThread);
 
-    connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal, qreal)), this, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
-    connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
-    connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
-    connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
-    connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
-    connect(this, SIGNAL(startRdacConnect()), &rdac, SLOT(openSerialPort()));
+        connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal, qreal)), this, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
+        connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
+        connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
+        connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
+        connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
+        connect(this, SIGNAL(startRdacConnect()), &rdac, SLOT(openSerialPort()));
 
-    sensorConvertWorkerThread.start();
-    rdacWorkerThread.start();
-    emit startRdacConnect();
+        sensorConvertWorkerThread.start();
+        rdacWorkerThread.start();
+        emit startRdacConnect();
+    #endif
+
 }
 
 EngineMonitor::~EngineMonitor()
 {
     logFile->close();
-
+#ifndef USEDATABASE
     sensorConvertWorkerThread.quit();
     sensorConvertWorkerThread.wait();
     rdacWorkerThread.quit();
     rdacWorkerThread.wait();
+#endif
 }
 
 void EngineMonitor::setupLogFile()
@@ -259,7 +263,9 @@ void EngineMonitor::connectSignals() {
 
     connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
 
+#ifndef USEDATABASE
     connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &sensorConvert, SLOT(onUpdateFlightTime(qreal, QString)));
+#endif
 
 }
 

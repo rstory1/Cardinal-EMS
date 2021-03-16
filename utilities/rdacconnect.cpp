@@ -84,6 +84,7 @@ RDACmessage4::RDACmessage4()
 RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
   , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
 {
+    qDebug() << "Hey2";
     serial = new QSerialPort(this);
 
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
@@ -365,7 +366,7 @@ void RDACconnect::openSerialPort()
     serial->setStopBits(QSerialPort::OneStop);
     serial->setFlowControl(QSerialPort::NoFlowControl);
     if (serial->open(QIODevice::ReadWrite)) {
-        qDebug() << "Connected to" << portToUse.description() << "on" << portToUse.portName();
+        qDebug() << "Connected to /dev/ttyO4";
     } else {
         qCritical() << "Serial Port error:" << serial->errorString();
 

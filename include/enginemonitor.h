@@ -44,6 +44,8 @@
 
 #include <QMessageBox>
 
+#define USEDATABASE
+
 //! Engine Monitor Class
 /*!
  * This class is the main class and handles the overall function of the app. The grpahics scene is setup here and multiple signal/slots are connected here as well.
@@ -103,11 +105,14 @@ private:
 
     QString currentScene = "";
 
+#ifndef USEDATABASE
     QThread rdacWorkerThread;
     RDACconnect rdac;
-
     QThread sensorConvertWorkerThread;
     SensorConvert sensorConvert;
+#endif
+
+    bool useDatabase = true;
 
 private slots:
     void writeLogFile();

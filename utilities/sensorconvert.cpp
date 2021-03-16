@@ -24,6 +24,7 @@ SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
   ,settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
   ,gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
+    qDebug() << "Hey1";
     //Let's set what type of thermocouple we are using
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "NTC").toString());
     setThermocoupleTypeEgt(settings.value("Sensors/egtThermocoupleType", "K").toString());

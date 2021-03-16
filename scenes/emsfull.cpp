@@ -12,6 +12,7 @@ emsFull::emsFull(QObject *parent)
     setupChtEgt();
     setupFuelManagement();
     setupHourMeter();
+    setupStatusItem();
 
     setSceneRect(0,0,800,480);
 
@@ -40,7 +41,13 @@ emsFull::emsFull(QObject *parent)
     addWidget(&button2);
     button2.setVisible(false);
 
-    const QString DRIVER("QSQLITE");
+#ifdef USEDATABASE
+    dbHandler.moveToThread(&databaseReadWorkerThread);
+    connect(this, SIGNAL(readDB()), &dbHandler, SLOT(executeSensorValueSqlQuery()));
+    connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), this, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
+    databaseReadWorkerThread.start();
+    beginningOfTime = dateTime.currentMSecsSinceEpoch();
+#endif
 
     //Demo timer, for testing purposes only
 #ifdef QT_DEBUG
@@ -77,9 +84,16 @@ void emsFull::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget
     } else {
         button2.setVisible(false);
     }
+    qDebug() << beginningOfTime << "; " << timeOfLastRead << "; " << beginningOfTime - timeOfLastRead;
+    if (beginningOfTime - timeOfLastRead > 500) {
+        emit readDB();
+        timeOfLastRead = dateTime.currentMSecsSinceEpoch();
+    }
+
+    beginningOfTime = dateTime.currentMSecsSinceEpoch();
 
     if(isActive()) {
-        //update();
+        update();
     }
 
 
@@ -231,7 +245,6 @@ void emsFull::connectSignals() {
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(onTic()));
 
-    //connect(&sensorReadTimer, SIGNAL(timeout()), this, SLOT(onReadDBValues()));
 }
 
 void emsFull::setupHourMeter() {
@@ -260,10 +273,19 @@ void emsFull::setEngineConds() {
     }
 }
 
+void emsFull::setupStatusItem()
+{
+    statusItem.setPos(85, 300);
+    this->addItem(&statusItem);
+    statusItem.setDefaultTextColor(Qt::white);
+    statusItem.setVisible(true);
+}
+
 void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP) {
     rpmIndicator.setValue(rpm);
     fuelDisplay.setFuelFlow(fuelF);
     fuelFlow.setValue(fuelF);
+    fuelPressure.setValue(fuelP);
     oilTemperature.setValue(oilTemp);
     oilPressure.setValue(oilPress);
     ampereMeter.setValue(amps);
@@ -396,28 +418,53 @@ void emsFull::demoFunction()
 
 }
 
-//void emsFull::onReadDBValues() {
-//    QSqlQuery sqlQuery = QSqlQuery(sensorValueDB);
+void emsFull::onReadDBValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
+                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, QDateTime recordTime) {
 
-//    sqlStatement = "SELECT rpm, oilTemp, oilPressure, cht1, cht2, fuelPressure, fuelFLow, manPressure, current1, current2, batteryVoltage, oat, iat, hobbs, flightTime, timeStamp FROM rawSensorData ORDER BY dataIndex DESC LIMIT 1;";
+    rpmIndicator.setValue(val0);
+    fuelDisplay.setFuelFlow(val1);
+    fuelFlow.setValue(val2);
+    oilTemperature.setValue(val3);
+    oilPressure.setValue(val4);
+    ampereMeter.setValue(val5);
+    ampereMeter2.setValue(val6);
+    voltMeter.setValue(val7);
+    chtEgt.setEgtValues(val8, val9, val10, val11);
+    chtEgt.setChtValues(val12, val13, val14, val15);
+    outsideAirTemperature.setValue(val16);
+    insideAirTemperature.setValue(val17);
+    manifoldPressure.setValue(val18);
+    fuelPressure.setValue(val19);
+    recordDateTime = recordTime;
+    statusItem.setPlainText("Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz"));
+    qDebug() << elapsed();
+    statusItem.update();
 
-//    if(!sqlQuery.exec(sqlStatement))
-//        qWarning() << "emsFull::onEngineValuesUpdate - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
+}
 
-//    sqlQuery.next();
+void emsFull::readSensorDB() {
+    qDebug() << beginningOfTime << "; " << timeOfLastRead << "; " << beginningOfTime - timeOfLastRead;
+    if (beginningOfTime - timeOfLastRead > 500) {
+        emit readDB();
+        timeOfLastRead = dateTime.currentMSecsSinceEpoch();
+    }
 
-//    rpmIndicator.setValue(sqlQuery.value(0).toReal());
-//    fuelDisplay.setFuelFlow(sqlQuery.value(6).toReal());
-//    fuelFlow.setValue(sqlQuery.value(6).toReal());
-//    oilTemperature.setValue(sqlQuery.value(1).toReal());
-//    oilPressure.setValue(sqlQuery.value(2).toReal());
-//    ampereMeter.setValue(sqlQuery.value(8).toReal());
-//    ampereMeter2.setValue(sqlQuery.value(9).toReal());
-//    voltMeter.setValue(sqlQuery.value(10).toReal());
-//    chtEgt.setEgtValues(-999, -999, -999, -999);
-//    chtEgt.setChtValues(sqlQuery.value(3).toReal(), sqlQuery.value(4).toReal(), -999, -999);
-//    outsideAirTemperature.setValue(sqlQuery.value(11).toReal());
-//    insideAirTemperature.setValue(sqlQuery.value(12).toReal());
-//    manifoldPressure.setValue(sqlQuery.value(7).toReal());
-//    fuelPressure.setValue(sqlQuery.value(5).toReal());
-//}
+    beginningOfTime = dateTime.currentMSecsSinceEpoch();
+}
+
+emsFull::~emsFull() {
+    databaseReadWorkerThread.quit();
+    databaseReadWorkerThread.wait();
+}
+
+quint64 emsFull::elapsed()
+{
+quint64 elapsed = qAbs(recordDateTime.date().daysTo(QDateTime::currentDateTime().date()));
+elapsed *= static_cast<quint64>(24); // days to hours
+elapsed *= static_cast<quint64>(60); // hours to minutes
+elapsed *= static_cast<quint64>(60); // minutes to seconds
+elapsed *= static_cast<quint64>(1000); // seconds to milliseconds
+elapsed += qAbs(recordDateTime.time().msecsTo(QDateTime::currentDateTime().time()));
+return elapsed;
+}
+
