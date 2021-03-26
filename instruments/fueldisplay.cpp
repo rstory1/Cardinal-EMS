@@ -36,7 +36,7 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     fuelUnits = settings.value("Units/fuel", "gal").toString();
 
     connect(&fuelBurnTimer, SIGNAL(timeout()), this, SLOT(updateFuelBurn()));
-    fuelBurnTimer.start(fuelBurnUpdateInterval);
+    //fuelBurnTimer.start(fuelBurnUpdateInterval);
 }
 
 QRectF FuelDisplay::boundingRect() const
