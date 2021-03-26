@@ -135,18 +135,6 @@ int main(int argc, char *argv[])
 //	nmeaConnect.start();
 //#endif
 
-    //a.connect(&sensorConvert, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, 
-//SLOT(userMessageHandler(QString,QString,bool)));
-
-    //a.connect(&sensorConvert, SIGNAL(updateFuelData(double,double)), &engineMonitor,
-//SLOT(setFuelData(double,double)));
-
-    //QString portName = QLatin1String("ttyACM0");              // update this to use your 
-//port of choice
-    //PortListener listener(portName);        // signals get hooked up internally
-    //a.connect(&listener, SIGNAL(sendData(QString)), &sensorConvert, 
-//SLOT(processData(QString)));
-
     //flightCalculator flightCalc;
     //QTimer *flightTimer = new QTimer();
     //flightTimer->start(5000);
