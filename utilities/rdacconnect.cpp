@@ -42,49 +42,8 @@ RDACXFmessage::RDACXFmessage() : flow1(0),
 {
 }
 
-RDACmessage1::RDACmessage1() : flow1(0)
-  , pulseRatio1(0)
-  , flow2(0)
-  , pulseRatio2(0)
-  , oilTemp(0)
-  , oilPress(0)
-  , aux1(0)
-  , aux2(0)
-  , fuelPress(0)
-  , coolant(0)
-  , fuelLevel1(0)
-  , fuelLevel2(0)
-  , rpm1(0)
-  , rpm2(0)
-  , internalTemp(0)
-  , volts(0)
+RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
 {
-}
-
-RDACmessage2::RDACmessage2() : oilTemperature(0)
-  , oilPressure(0)
-  , fuelLevel1(0)
-  , fuelLevel2(0)
-  , voltage(0)
-  , internalTemperature(0)
-  , cht1(0)
-  , cht2(0)
-  , manifoldPressure(0)
-{
-}
-
-RDACmessage3::RDACmessage3() : timeBetweenPulses(0)
-{
-}
-
-RDACmessage4::RDACmessage4()
-{
-}
-
-RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
-  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
-{
-    qDebug() << "Hey2";
     serial = new QSerialPort(this);
 
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
@@ -93,12 +52,12 @@ RDACconnect::RDACconnect(QObject *parent) : QThread(parent)
 
     connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
 
-    //openSerialPort();
+    openSerialPort();
 }
 
 void RDACconnect::readData()
 {
-	bool startPatternFound = false;
+    bool startPatternFound = false;
 
     data.append(serial->readAll());
 
@@ -115,21 +74,12 @@ void RDACconnect::readData()
         case rdacResultMessageComplete:
             //  Move the data to a buffer so we can process it while letting the next message get checked.
 
-            emit statusMessage("Everything OK - Last update: " + lastMessageReception.toString("hh:mm:ss.zzz"), Qt::white);
+            qDebug() << "Everything OK - Last update: " << lastMessageReception.toString("hh:mm:ss.zzz");
 
             switch(messageType)
             {
                 case 0x01:
                     handleMessageRDACXF(&data);
-                    break;
-                case 0x02:
-                    handleMessage2(&data);
-                    break;
-                case 0x03:
-                    handleMessage3(&data);
-                    break;
-                case 0x04:
-                    handleMessage4(&data);
                     break;
                 default:
                     data.remove(0, 1);
@@ -139,13 +89,13 @@ void RDACconnect::readData()
         case rdacResultMessageIncomplete:
             break;
         default:
-            emit statusMessage("Found pattern not valid", Qt::yellow);
+            qDebug() << "Found pattern not valid";
             break;
         }
     }
     if(!startPatternFound)
     {
-        emit statusMessage("No start pattern found yet", Qt::red);
+        qDebug() << "No start pattern found yet";
     }
 }
 
@@ -154,93 +104,93 @@ quint8 RDACconnect::calculateChecksum1(QByteArray data)
     quint8 checksum = 0x55;
     //qDebug() << checksum;
     for(int i = 2; i < data.size()-2; ++i)
-	{
+    {
         checksum += quint8(data.at(i));
-	}
-	return checksum;
+    }
+    return checksum;
 }
 
 quint8 RDACconnect::calculateChecksum2(QByteArray data)
 {
     quint8 checksum = 0xAA;
     for(int i = 2; i < data.size()-2; ++i)
-	{
+    {
         checksum += quint8(data.at(i));
-	}
-	return checksum;
+    }
+    return checksum;
 }
 
 bool RDACconnect::searchStart(QByteArray *data)
 {
-	while(data->size() >= 3)
+    while(data->size() >= 3)
     {
         if(data->at(0) == 0x05)
         {
             if(data->at(1) == 0x02)
-			{
+            {
                 if((data->at(2) == 0x01))
                 {
                     numTries += 1;
-					return true;
-				}
-			}
-		}
-		data->remove(0, 1);
-	}
-	return false;
+                    return true;
+                }
+            }
+        }
+        data->remove(0, 1);
+    }
+    return false;
 }
 
 RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, quint8 &messageType)
 {
-	// Determine and check neccessary size of data
-	quint8 requiredSize = 0;
+    // Determine and check neccessary size of data
+    quint8 requiredSize = 0;
     messageType = data->at(2);
-	switch(messageType)
-	{
-		case 0x01:
+    switch(messageType)
+    {
+        case 0x01:
             requiredSize = 66;
-			break;
-		case 0x02:
-			requiredSize = 23;
-			break;
-		case 0x03:
-			requiredSize = 7;
-			break;
-		case 0x04:
-			requiredSize = 29;
-			break;
-		default:
-			data->remove(0, 1);
-			return rdacResultMessageIllegalDatatype;
-	}
-	if(data->size() < requiredSize)
-	{
+            break;
+        case 0x02:
+            requiredSize = 23;
+            break;
+        case 0x03:
+            requiredSize = 7;
+            break;
+        case 0x04:
+            requiredSize = 29;
+            break;
+        default:
+            data->remove(0, 1);
+            return rdacResultMessageIllegalDatatype;
+    }
+    if(data->size() < requiredSize)
+    {
         qDebug() << "Message incomplete";
-		return rdacResultMessageIncomplete;
-	}
+        return rdacResultMessageIncomplete;
+    }
 
-	// Calculate and check checksums
+    // Calculate and check checksums
     if(quint8(data->at(requiredSize - 2)) == calculateChecksum1(data->mid(0, requiredSize)))
-	{
+    {
         if(quint8(data->at(requiredSize - 1)) == calculateChecksum2(data->mid(0, requiredSize)))
-		{
+        {
             //numSuccess += 1;
             //qDebug() << "Sucesses:" << numSuccess << "; Tries:" << numTries << "; " << numSuccess/numTries << "%";
-			return rdacResultMessageComplete;
-		}
-		else
-		{
-			qWarning() << "Checksum 2 incorrect" << quint8(data->at(requiredSize - 1));
-			data->remove(0, 1);
-			return rdacResultMessageInvalidChecksum2;
-		}
-	}
-	else
-	{
-		qWarning() << "Checksum 1 incorrect" << quint8(data->at(requiredSize - 2));
-		data->remove(0, 1);
-		return rdacResultMessageInvalidChecksum1;
-	}
+            return rdacResultMessageComplete;
+        }
+        else
+        {
+            qWarning() << "Checksum 2 incorrect" << quint8(data->at(requiredSize - 1));
+            data->remove(0, 1);
+            return rdacResultMessageInvalidChecksum2;
+        }
+    }
+    else
+    {
+        qWarning() << "Checksum 1 incorrect" << quint8(data->at(requiredSize - 2));
+        data->remove(0, 1);
+        return rdacResultMessageInvalidChecksum1;
+    }
 }
 
 void RDACconnect::handleMessageRDACXF(QByteArray *data)
@@ -278,59 +228,8 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
     emit rdacUpdateMessage(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, message.aux1, message.aux2, message.fuelPress, message.coolant, message.fuelLevel1, message.fuelLevel1, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts);
 }
 
-void RDACconnect::handleMessage2(QByteArray *data)
-{
-    lastMessageReception = QDateTime::currentDateTimeUtc();
-	RDACmessage2 message;
-	memcpy(&message, data->mid(3, 18).constData(), 18);
-	data->remove(0, 23);
-
-	double voltage = (static_cast<double>(message.voltage) + 115.0) * 0.0069693802;
-	double oilPressure = 0.3320318366 * message.oilPressure - 31.2628022226;
-	if(oilPressure < 0.0)
-	{
-		oilPressure = 0.0;
-	}
-
-	qreal insideAirTemperature = qreal(message.internalTemperature) / 100.0;
-	qreal outsideAirTemperature = qreal(message.cht1) / 100.0;
-
-	emit updateDataMessage2(insideAirTemperature, outsideAirTemperature, message.cht2, message.oilTemperature, oilPressure, voltage, message.manifoldPressure);
-}
-
-void RDACconnect::handleMessage3(QByteArray *data)
-{
-    lastMessageReception = QDateTime::currentDateTimeUtc();
-	RDACmessage3 message;
-	memcpy(&message, data->mid(3, 2).constData(), 2);
-	data->remove(0, 7);
-
-	double revFudge = (6000.0 / 19.6) * 15586.0;
-	double rpm = revFudge / message.timeBetweenPulses;
-	if(message.timeBetweenPulses > 30000)
-	{
-		rpm = 0.0;
-	}
-
-	emit updateDataMessage3(rpm);
-	qDebug() << Q_FUNC_INFO << rpm;
-}
-
-void RDACconnect::handleMessage4(QByteArray *data)
-{
-    lastMessageReception = QDateTime::currentDateTimeUtc();
-	RDACmessage4 message;
-	memcpy(&message, data->mid(3, 24).constData(), 24);
-
-	data->remove(0, 29);
-
-	emit updateDataMessage4egt(message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3]);
-	emit updateDataMessage4cht(message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7]);
-}
-
 void RDACconnect::openSerialPort()
 {
-    emit statusMessage("Attempting to open port", Qt::green);
     QSerialPortInfo portToUse;
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
@@ -371,9 +270,6 @@ void RDACconnect::openSerialPort()
         qCritical() << "Serial Port error:" << serial->errorString();
 
         qDebug() << tr("Open error");
-        QMessageBox msgBox;
-        msgBox.setText("Could not open port");
-        msgBox.exec();
     }
 }
 

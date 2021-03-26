@@ -92,7 +92,6 @@ private:
     ButtonBar buttonBar;
     QCustomPlot *customPlot;
     QCPGraph *graphic;
-    QTimer dataTimer;
     //QUdpSocket *socket;
     //WindVector windVector;
     QTimer clockTimer;
@@ -105,14 +104,10 @@ private:
 
     QString currentScene = "";
 
-#ifndef USEDATABASE
-    QThread rdacWorkerThread;
+    QThread dbWorkerThread;
     RDACconnect rdac;
-    QThread sensorConvertWorkerThread;
     SensorConvert sensorConvert;
-#endif
-
-    bool useDatabase = true;
+    DatabaseHandler dbHandler;
 
 private slots:
     void writeLogFile();
@@ -136,7 +131,6 @@ signals:
     void zeroCurrent();
     void updateEngineValues(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelPress);
     void sendSerialData(QByteArray emsSerial);
-    void startRdacConnect();
 };
 
 #endif // ENGINEMONITOR_H

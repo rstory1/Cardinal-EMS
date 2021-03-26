@@ -86,12 +86,6 @@ private:
     qreal beginningOfTime;
     qreal timeOfLastRead=0;
 
-    bool useDatabase = true;
-#ifdef USEDATABASE
-    DatabaseHandler dbHandler;
-    QThread databaseReadWorkerThread;
-#endif
-
     void executeSqlQuery();
 
     public slots:
@@ -109,7 +103,7 @@ private:
             emit switchScene(2);
         }
         void demoFunction();
-        void readSensorDB();
+//        void readSensorDB();
 
     signals:
         void alarmFlashing();
@@ -117,7 +111,7 @@ private:
         void switchScene(int);
         void sendSerialData(QByteArray data);
         void sendTimeData(qreal hobbs, QString flight);
-        void readDB();
+//        void readDB();
 
 };
 

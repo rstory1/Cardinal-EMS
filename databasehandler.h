@@ -8,6 +8,9 @@
 #include <QSqlQuery>
 #include <QtCore>
 
+#include <include/rdacconnect.h>
+#include <include/sensorconvert.h>
+
 class DatabaseHandler : public QThread
 {
     Q_OBJECT
@@ -23,13 +26,20 @@ private:
 
     QDateTime dateTime;
 
+    double currentHobbs;
+    QString currentFlightTime;
+
 signals:
     void updateSensorValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, QDateTime recordEnteredTime);
 
 public slots:
     void executeSensorValueSqlQuery();
-
+    void executeInsertSensorValues(qreal intTempRaw, qreal coolantT, qreal voltsRaw, qreal fuelL2, qreal curr, qreal fuelL1, qreal fuelFlow1, qreal fuelP, qreal ax2, qreal ax1, qreal oilP, qreal oilT, qreal rpm1Raw, qreal intTemp, qreal oat, qreal volts, qreal current2, qreal current1, qreal manP, qreal fuelFlow, qreal fuelPress, qreal cht2, qreal cht1, qreal oilPress, qreal oilTemp, qreal rpm1);
+    void onReceiveTimeData(double hobbs, QString flightTime) {
+        currentFlightTime = flightTime;
+        currentHobbs = hobbs;
+    }
 };
 
 #endif // DATABASEHANDLER_H

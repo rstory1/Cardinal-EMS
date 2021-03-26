@@ -51,35 +51,26 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connectSignals();
     qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 
-    #ifndef USEDATABASE
-        //Create the RDAC connector
-        rdac.moveToThread(&rdacWorkerThread);
+    dbHandler.moveToThread(&dbWorkerThread);
 
-        sensorConvert.moveToThread(&sensorConvertWorkerThread);
+    connect(&sensorConvert, SIGNAL(insertValuesIntoDB(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &dbHandler, SLOT(executeInsertSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
+    connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
+    connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
+    connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
 
-        connect(&sensorConvert, SIGNAL(updateMonitor(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal, qreal)), this, SLOT(setValuesBulkUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal, qreal)));
-        connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
-        connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
-        connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
-        connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
-        connect(this, SIGNAL(startRdacConnect()), &rdac, SLOT(openSerialPort()));
+    connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
 
-        sensorConvertWorkerThread.start();
-        rdacWorkerThread.start();
-        emit startRdacConnect();
-    #endif
+    dbWorkerThread.start();
 
 }
 
 EngineMonitor::~EngineMonitor()
 {
     logFile->close();
-#ifndef USEDATABASE
-    sensorConvertWorkerThread.quit();
-    sensorConvertWorkerThread.wait();
-    rdacWorkerThread.quit();
-    rdacWorkerThread.wait();
-#endif
+
+    dbWorkerThread.quit();
+    dbWorkerThread.wait();
 }
 
 void EngineMonitor::setupLogFile()
@@ -236,36 +227,23 @@ void EngineMonitor::connectSignals() {
     // Connect buttonBar to the alarm window for alarm acknowledgement
     connect(&buttonBar, SIGNAL(sendAlarmAck()), &ems_full, SLOT(onAckAlarm()));
 
-    // Connect buttonBar to the fuelDisplay window to increment fuel amount
-//    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
-
     // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
     connect(&ems_full, SIGNAL(alarmFlashing()), &buttonBar, SLOT(onAlarmFlash()));
 
-    //qDebug()<<"Connecting hobb/flight time Signals";
-    // Connect a timer for handling hobbs/flight time
-    //connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
-
-    //connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
-
     connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
-
-    //connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
 
     connect(&ems_full, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
     connect(&settings_scene, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
 
     connect(&settings_scene, SIGNAL(hobbsUpdated()), &ems_full.hobbs, SLOT(onHobbsINIChanged()));
 
-    connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    //connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
 
     connect(&settings_scene, SIGNAL(fuelUpdated()), &ems_full.fuelDisplay, SLOT(onFuelAmountChange()));
 
     connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
 
-#ifndef USEDATABASE
-    connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &sensorConvert, SLOT(onUpdateFlightTime(qreal, QString)));
-#endif
+    connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &dbHandler, SLOT(onReceiveTimeData(qreal, QString)));
 
 }
 
