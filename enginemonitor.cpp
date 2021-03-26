@@ -56,7 +56,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connect(&sensorConvert, SIGNAL(insertValuesIntoDB(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &dbHandler, SLOT(executeInsertSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
     connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
     connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
-    connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
+    //connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
     connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
 
     connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));

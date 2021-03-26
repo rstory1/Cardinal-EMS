@@ -87,7 +87,6 @@ void DatabaseHandler::executeInsertSensorValues(qreal intTempRaw, qreal coolantT
     //qDebug() << sqlQuery.lastQuery();
     //qDebug() << "The slow operation took" << timer.elapsed() << "milliseconds";
 //    timer2.start();
-    sqlQuery.next();
 
     //qDebug() << "2: The slow operation took" << timer2.elapsed() << "milliseconds";
 }
