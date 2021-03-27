@@ -265,6 +265,12 @@ void RpmIndicator::addBetweenValue(double value)
 
 void RpmIndicator::setValue(double value)
 {
+    if (value == -999) {
+        dataIsValid = false;
+    } else {
+        dataIsValid = true;
+    }
+
 	currentValue = value;
 
 }

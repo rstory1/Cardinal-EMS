@@ -83,6 +83,11 @@ private:
     bool smooth = true;
 
     QTimer updateTimer;
+
+    bool cht1IsValid = false;
+    bool cht2IsValid = false;
+    bool cht3IsValid = false;
+    bool cht4IsValid = false;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);

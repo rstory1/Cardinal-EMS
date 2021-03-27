@@ -71,6 +71,8 @@ private:
 
     QTimer updateTimer;
 
+    bool dataIsValid = false;
+
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);

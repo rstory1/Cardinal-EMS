@@ -48,7 +48,6 @@ emsFull::emsFull(QObject *parent)
     demoTimer->setSingleShot(false);
     demoTimer->start(200);
 #endif
-
 }
 
 QRectF emsFull::boundingRect() const
@@ -200,6 +199,7 @@ void emsFull::setupManifoldPressure()
     manifoldPressure.addBetweenValue(25.0);
     manifoldPressure.addBetweenValue(30.0);
     manifoldPressure.addBetweenValue(35.0);
+    manifoldPressure.setVisible(false);
     this->addItem(&manifoldPressure);
 }
 
@@ -229,6 +229,8 @@ void emsFull::connectSignals() {
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(onTic()));
+
+
 
 }
 

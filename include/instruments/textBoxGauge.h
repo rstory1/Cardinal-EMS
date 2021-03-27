@@ -62,6 +62,8 @@ private:
     DataSmoothing smoothData;
     bool smooth;
 
+    bool dataIsValid = false;
+
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{

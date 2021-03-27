@@ -63,6 +63,12 @@ void TextBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->setBrush(Qt::NoBrush);
     painter->drawRect(QRectF(QPointF(-30.0, -30.0), QPointF(30.0, 30.0)));
 
+    if (!dataIsValid) {
+        painter->setPen(Qt::red);
+        painter->drawLine(QPointF(-30.0, -30.0), QPointF(30.0, 30.0));
+        painter->drawLine(QPointF(-30.0, 30.0), QPointF(30.0, -30.0));
+    }
+
 	//Restore the painter with antialising
 	painter->restore();
 
@@ -70,14 +76,17 @@ void TextBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->setPen(Qt::white);
     isPenAlarmColored = false;
     painter->drawText(QRectF(-30, -25, 60, 15), Qt::AlignCenter | Qt::AlignVCenter,titleText);
-    painter->drawText(QRectF(-30, -10, 60, 15), Qt::AlignCenter | Qt::AlignVCenter,unitText);
-    painter->setPen(Qt::white);
 
-    //Draw readout
-    font.setPointSize(14);
-    font.setBold(true);
-    painter->setFont(font);
-    painter->drawText(QRectF(-30, 10, 60, 15), Qt::AlignCenter | Qt::AlignVCenter, QString::number(currentValue, 'f', readoutPrecision));
+    if (dataIsValid) {
+        painter->drawText(QRectF(-30, -10, 60, 15), Qt::AlignCenter | Qt::AlignVCenter,unitText);
+        painter->setPen(Qt::white);
+
+        //Draw readout
+        font.setPointSize(14);
+        font.setBold(true);
+        painter->setFont(font);
+        painter->drawText(QRectF(-30, 10, 60, 15), Qt::AlignCenter | Qt::AlignVCenter, QString::number(currentValue, 'f', readoutPrecision));
+    }
 }
 
 void TextBox::setTitle(QString title)
@@ -104,6 +113,12 @@ void TextBox::setPrecision(quint8 readout, quint8 bar)
 
 void TextBox::setValue(double value)
 {
+    if (value ==-999) {
+        dataIsValid = false;
+    } else {
+        dataIsValid = true;
+    }
+
     if (smooth) {
         currentValue = smoothData.dsp_ema_double(value);
     } else {

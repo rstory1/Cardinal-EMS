@@ -82,17 +82,40 @@ void DatabaseHandler::executeInsertSensorValues(qreal intTempRaw, qreal coolantT
         qWarning() << "DatabaseHandler::executeInsertSensorValues - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
 
     databaseLogging.commit();
+}
 
-    bool queryResult = sqlQuery.exec(sqlStatement);
+void DatabaseHandler::onReceiveFuelLevel(qreal level) {
+    fuelLevel = level;
 
-    //qDebug() << queryResult;
+    QSqlQuery sqlQuery = QSqlQuery(databaseLogging);
 
-    if(!queryResult)
-        qWarning() << "emsFull::onEngineValuesUpdate - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
+    sqlStatement = "UPDATE aircraftData SET value = '" + QString::number(fuelLevel) + "' WHERE valueName = 'fuelLevel';";
 
-    //qDebug() << sqlQuery.lastQuery();
-    //qDebug() << "The slow operation took" << timer.elapsed() << "milliseconds";
-//    timer2.start();
+    databaseLogging.transaction();
 
-    //qDebug() << "2: The slow operation took" << timer2.elapsed() << "milliseconds";
+    if(!sqlQuery.exec(sqlStatement))
+        qWarning() << "DatabaseHandler::onReceiveFuelLevel - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
+
+    databaseLogging.commit();
+}
+
+void DatabaseHandler::onInitializeFuelLevel() {
+    QSqlQuery sqlQuery = QSqlQuery(databaseLogging);
+
+    sqlStatement = "SELECT value FROM aircraftData WHERE valueName = 'fuelLevel';";
+
+    databaseLogging.transaction();
+
+    if(!sqlQuery.exec(sqlStatement))
+        qWarning() << "DatabaseHandler::onInitializeFuelLevel - ERROR: " << sqlQuery.lastError().text() << "; " << sqlStatement;
+
+    databaseLogging.commit();
+
+    if (sqlQuery.last() != false) {
+        fuelLevel = sqlQuery.value(0).toReal();
+
+        emit sendFuelLevel(fuelLevel);
+    } else {
+        emit sendFuelLevel(-999);
+    }
 }

@@ -29,9 +29,12 @@ private:
     double currentHobbs;
     QString currentFlightTime;
 
+    qreal fuelLevel;
+
 signals:
     void updateSensorValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, QDateTime recordEnteredTime);
+    void sendFuelLevel(qreal level);
 
 public slots:
     void executeSensorValueSqlQuery();
@@ -40,6 +43,9 @@ public slots:
         currentFlightTime = flightTime;
         currentHobbs = hobbs;
     }
+    void onReceiveFuelLevel(qreal level);
+
+    void onInitializeFuelLevel();
 };
 
 #endif // DATABASEHANDLER_H
