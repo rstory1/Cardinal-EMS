@@ -43,7 +43,7 @@ void DatabaseHandler::executeSensorValueSqlQuery() {
 //    timer2.start();
 
     if (sqlQuery.last() != false) {
-        sqlQuery.next();
+        //sqlQuery.next();
 
         //qDebug() << "DB DateTime: " << sqlQuery.value(15).toDateTime() << "; Current DateTime: " << dateTime.currentDateTime();
 

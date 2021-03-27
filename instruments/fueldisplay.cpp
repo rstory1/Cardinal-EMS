@@ -132,6 +132,9 @@ void FuelDisplay::onFuelAmountChange()
 
 void FuelDisplay::updateFuelBurn()
 {
-    fuelAmount = fuelAmount - (fuelFlow * (fuelBurnUpdateInterval * 0.000000277778));
-    emit saveFuelState(fuelAmount);
+    if (fuelFlow != -999) {
+        fuelAmount = fuelAmount - (fuelFlow * (fuelBurnUpdateInterval * 0.000000277778));
+        emit saveFuelState(fuelAmount);
+    }
+
 }
