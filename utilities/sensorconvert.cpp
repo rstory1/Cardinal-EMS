@@ -98,7 +98,7 @@ void SensorConvert::convertOAT(qreal adc)
     resistance=-(10000*adc*5)/((adc*5)-(4095*3.3));
 
     // Convert resistance to temperature of the Littelfuse NTC Thermistor
-    oat = 1/(0.001126931065714+0.000234457244037*log(resistance)+0.000000086590187*pow(log(resistance),3));
+    oat = 1/(0.001126931065714+0.000234457244037*log(resistance)+0.000000086590187*pow(log(resistance),3)) - 273.13;
 
     // If our desired scale is not Celsius, then we need to convert it
     if (temperatureScale != "C")
