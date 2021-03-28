@@ -139,17 +139,13 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         painter->drawLine(i*60-((60*(numOfCht-1))-20), -110, i*60-((60*(numOfCht-1))-20), -10);
     }
 
-    //painter->restore();
+    painter->restore();
 
     isAlarmedRed = false;
     isAlarmedYellow = false;
 
     //Draw the bar graphs
     for(int i=0; i < numOfCht; i++) {
-        painter->setBrush(Qt::green);
-        painter->setPen(Qt::green);
-        cylinderAlarm = 1;
-
         if (i==0 && !cht1IsValid) {
             painter->setPen(Qt::red);
             painter->drawLine(QPointF(i*60-(60*(numOfCht-1)), -10), QPointF(i*60-((60*(numOfCht-1))-40), maxChtLocal));
@@ -161,6 +157,10 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
             painter->drawLine(QPointF(i*60-(60*(numOfCht-1)), -10), QPointF(i*60-((60*(numOfCht-1))-40), maxChtLocal));
             painter->drawLine(QPointF(i*60-(60*(numOfCht-1)-40), -10), QPointF(i*60-((60*(numOfCht-1))), maxChtLocal));
         }
+
+        painter->setBrush(Qt::green);
+        painter->setPen(Qt::green);
+        cylinderAlarm = 1;
 
         if ((i==0 && cht1IsValid) || (i==1 && cht2IsValid)) {
             currentLocal = calculateLocalChtValue(currentChtValues.at(i));
@@ -225,11 +225,12 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
                 }
             }
 
-            //painter->restore();
+            painter->restore();
 
             //Define CHT text position and move to current column
             QRectF textRect(-40, -20, 50, 20);
             textRect.moveCenter(QPointF(i*60-((60*(numOfCht-1))-20), -125));
+            painter->setFont(QFont("Arial", 18, QFont::Bold));
 
             if ((isAlarmedRed == true) && (cylinderAlarm == 3)) {
                 if (flashState || isAcknowledged) {
@@ -244,7 +245,7 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
                     painter->drawText(textRect, Qt::AlignCenter, QString::number(currentChtValues.at(i), 'f', 0));
                 }
 
-            } else if ((cylinderAlarm == 2)) {
+            } else if (cylinderAlarm == 2) {
                 if (flashState || isAcknowledged) {
                     painter->setPen(Qt::yellow);
                     painter->setBrush(Qt::yellow);
@@ -322,7 +323,6 @@ void ChtEgt::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
         }
     }
 
-    painter->restore();
 }
 
 double ChtEgt::calculateLocalChtValue(double value) const

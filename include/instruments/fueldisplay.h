@@ -27,7 +27,7 @@ public:
     bool gpsAvailable = false;
 private:
     QSettings settings;
-    double fuelAmount;
+    qreal fuelAmount;
     QString fuelUnits;
     float fuelFlow;
     double timeToDestination;

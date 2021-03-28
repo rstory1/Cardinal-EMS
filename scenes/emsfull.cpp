@@ -262,8 +262,9 @@ void emsFull::setEngineConds() {
 
 void emsFull::setupStatusItem()
 {
-    statusItem.setPos(85, 300);
+    statusItem.setPos(120, 435);
     this->addItem(&statusItem);
+    statusItem.setFont(QFont("Arial", 18, QFont::Bold));
     statusItem.setDefaultTextColor(Qt::white);
     statusItem.setVisible(true);
 }
@@ -410,7 +411,7 @@ void emsFull::onReadDBValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
 
     recordDateTime = recordTime;
 
-    if (abs(recordTime.msecsTo(QDateTime::currentDateTime())) < 17973121) {
+    if (abs(recordTime.msecsTo(QDateTime::currentDateTime())) > /*5000000000*/ 17973121) {
         statusItem.setDefaultTextColor(Qt::red);
         statusItem.setPlainText("DATA NOT CURRENT");
         rpmIndicator.setValue(-999);
@@ -447,10 +448,6 @@ void emsFull::onReadDBValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
     }
 
     statusItem.update();
-
-
-
-
 }
 
 //void emsFull::readSensorDB() {

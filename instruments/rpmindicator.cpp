@@ -41,7 +41,7 @@ RpmIndicator::RpmIndicator(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 QRectF RpmIndicator::boundingRect() const
 {
-    return QRectF(-180.0, -160.0, 360.0, 320.0);
+    return QRectF(-160.0, -160.0, 320.0, 320.0);
 }
 
 /*! \brief Handles drawing of the object
@@ -232,8 +232,17 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 	//Set position and font for the value and draw it
     QRectF textRect(-100, 35, 170, 65);
-    painter->setFont(QFont("Arial", 30, QFont::Bold));
-	painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
+    if (dataIsValid) {
+        painter->setPen(Qt::white);
+        painter->setFont(QFont("Arial", 30, QFont::Bold));
+        painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
+    } else {
+        painter->setPen(Qt::red);
+        painter->drawLine(boundingRect().topLeft(), boundingRect().bottomRight());
+        painter->drawLine(boundingRect().topRight(), boundingRect().bottomLeft());
+    }
+
+    painter->setPen(Qt::white);
 	//Set position and font for the unit and draw it
 	QRectF unitRect(90, 35, 100, 65);
 	painter->setFont(QFont("Arial", 20, 1));
