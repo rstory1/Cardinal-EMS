@@ -28,7 +28,6 @@ public:
     explicit emsFull(QObject* parent = 0);
     ~emsFull();
     QRectF boundingRect() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     RpmIndicator rpmIndicator;
     BarGraph oilTemperature;

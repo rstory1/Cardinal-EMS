@@ -55,34 +55,6 @@ QRectF emsFull::boundingRect() const
     return QRectF(-400,-240,800,480);
 }
 
-void emsFull::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
-    //Set Clipping Rect
-    painter->setClipRect(boundingRect());
-
-    //Save the painter and deactivate Antialising for rectangle drawing
-    painter->setRenderHint(QPainter::Antialiasing, false);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-
-    painter->setBrush(Qt::black);
-    painter->setPen(QPen(Qt::black, 0));
-    painter->setFont(QFont("Arial", 14));
-
-    painter->drawRect(boundingRect());
-
-    if (alarmWindow.flashState == true) {
-        button2.setVisible(true);
-    } else {
-        button2.setVisible(false);
-    }
-
-    if(isActive()) {
-        update();
-    }
-
-
-}
-
 void emsFull::setupRpmIndicator()
 {
     double minValue, maxValue;

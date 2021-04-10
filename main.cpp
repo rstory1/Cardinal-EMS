@@ -28,9 +28,7 @@
 
 void messageToFileHandler(QtMsgType type, const QMessageLogContext &, const QString &msg)
 {
-    //qInfo() << "Inside messageToFileHandler";
     QDir dir(QApplication::applicationDirPath() + "/ems/appLogs");
-    //qInfo() << dir.path();
     if (!dir.exists())
         dir.mkpath(".");
     QFile debugfile(QApplication::applicationDirPath() + "/ems/appLogs/EngineMon_" + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log");
@@ -102,20 +100,9 @@ int main(int argc, char *argv[])
 
 	a.processEvents();
 
-//    QFontDatabase::addApplicationFont(":/MS33558.ttf");
-//    QFontDatabase database;
-//        foreach (const QString &family, database.families()) {
-//            qDebug() << family;
-//        }
-    qDebug() << QApplication::font();
-
     QFont font;
-//    font.setFamily("MS 33558");
     font.setFamily("Bitstream Vera Sans");
-//    font.setBold(true);
-//    font.setPointSize(12);
     a.setFont(font);
-    qDebug() << QApplication::font();
 
 
 	//Create the engine monitor and show after splashscreen delay
@@ -127,39 +114,6 @@ int main(int argc, char *argv[])
     engineMonitor.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     engineMonitor.show();
-
-//	NMEAconnect nmeaConnect;
-//	a.connect(&nmeaConnect, SIGNAL(userMessage(QString,QString,bool)), &engineMonitor, SLOT(userMessageHandler(QString,QString,bool)));
-//    a.connect(&nmeaConnect, SIGNAL(newTimeToDestination(double)), &engineMonitor, SLOT(setTimeToDestination(double)));
-//#ifndef QT_DEBUG
-//	nmeaConnect.start();
-//#endif
-
-    //flightCalculator flightCalc;
-    //QTimer *flightTimer = new QTimer();
-    //flightTimer->start(5000);
-    //a.connect(flightTimer, SIGNAL(timeout()), &flightCalc, SLOT(onSpeedAndHeadingUpdate(/*float, float, float, float*/)));
-
-    //a.connect(&flightCalc, SIGNAL(updateWindVector(float,float,float)), &engineMonitor, SLOT(onUpdateWindInfo(float,float,float)));
-
-//    uint mhz = 119;
-//    QString mHex = QString("%1").arg(mhz, 0, 16);
-//    qDebug() << mHex;
-//    QString mHextext = QString::fromLocal8Bit(QByteArray::fromHex(mHex.toLatin1())).toUpper();
-//    qDebug() << mHextext;
-
-//    uint khz = 325;
-//    QString kHex = "3" + QString("%1").arg(khz/25, 0, 16);
-//    qDebug() << kHex;
-//    QString kHextext = QString::fromLocal8Bit(QByteArray::fromHex(kHex.toLatin1())).toUpper();
-//    qDebug() << kHextext;
-
-//    QString msg = "$PGRMC15" + mHextext + kHextext + "N0KCID0" + "1310";
-//    qDebug() << msg;
-
-    //QString hexMsg =
-
-    //spatial testDB;
 
 	return a.exec();
 }
