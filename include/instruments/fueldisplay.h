@@ -30,6 +30,7 @@ private:
     qreal fuelAmount;
     QString fuelUnits;
     float fuelFlow;
+    double rawFuelFLowValue;
     double timeToDestination;
     QRectF remainingFuelRect;
     QRectF remainingFuelAtDestinationRect;

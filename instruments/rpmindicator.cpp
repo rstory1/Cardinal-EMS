@@ -32,10 +32,6 @@ RpmIndicator::RpmIndicator(QGraphicsObject *parent) : QGraphicsObject(parent)
     isWarmup=true;
 
     gauge.setGauge("RPM");
-
-    updateTimer.start(100);
-
-    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
 
 
@@ -280,7 +276,9 @@ void RpmIndicator::setValue(double value)
         dataIsValid = true;
     }
 
-	currentValue = value;
+    currentValue = value;
+
+    update();
 
 }
 

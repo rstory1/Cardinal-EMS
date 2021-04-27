@@ -13,8 +13,11 @@
 #include <QtCore>
 #include <math.h>
 
+#define USEDATABASE
+#ifdef USEDATABASE
 #include <databasehandler.h>
 #include <rdacconnect.h>
+#endif
 
 //! Sensor Convert Class
 /*!
@@ -93,13 +96,12 @@ private:
 
     QTimer timerPulses;
 
+#ifdef USEDATABASE
     QSqlDatabase databaseLogging;
     QString sqlStatement;
     QSqlQuery sqlQuery;
     const QString DRIVER = "QSQLITE";
-
-    qreal currentHobbs;
-    QString currentFlightTime;
+#endif
 
     //QElapsedTimer timer;
 signals:

@@ -185,8 +185,13 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOAT(coolantT);
     convertFuelP(fuelP);
 
+#ifdef USEDATABASE
     emit insertValuesIntoDB(intTemp,coolantT,volts,fuelL2,curr,fuelL1,fuelFlow1,fuelP,ax2,ax1,oilP,oilT,rpm1,intTemp,oat,volts,current2,current1,manP,fuelFlow,fuelPress,cht[1],cht[0],oilPress,oilTemp,rpm1);
+#endif
 
+#ifndef USEDATABASE
+    emit insertValuesIntoDB(intTemp,coolantT,volts,fuelL2,curr,fuelL1,fuelFlow1,fuelP,ax2,ax1,oilP,oilT,rpm1,intTemp,oat,volts,current2,current1,manP,fuelFlow,fuelPress,cht[1],cht[0],oilPress,oilTemp,rpm1);
+#endif
 }
 
 void SensorConvert::setKFactor(qreal kFac) {

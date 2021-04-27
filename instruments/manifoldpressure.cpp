@@ -168,6 +168,6 @@ void ManifoldPressure::addBetweenValue(double value)
 
 void ManifoldPressure::setValue(double value)
 {
-	currentValue = value;
+    currentValue = value;
 	update();
 }

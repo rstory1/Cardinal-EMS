@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>splashscreen.png</file>
         <file>MS33558.ttf</file>
         <file>elevator-ding.wav</file>
     </qresource>

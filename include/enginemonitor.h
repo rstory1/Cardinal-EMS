@@ -23,8 +23,11 @@
 
 #include <QtGui>
 
-#include "rdacconnect.h"
+#define USEDATABASE
+#ifdef USEDATABASE
 #include "sensorconvert.h"
+#include "rdacconnect.h"
+#endif
 
 #include "alarmBox.h"
 #include <buttonbar.h>
@@ -34,8 +37,6 @@
 #include <scenes/emsfull.h>
 
 #include <QMessageBox>
-
-#define USEDATABASE
 
 //! Engine Monitor Class
 /*!
@@ -68,9 +69,9 @@ private:
     void setupHourMeter();
     void setupuserSettings();
 
+    QFile *logFile;
     QGraphicsScene graphicsScene;
     QGraphicsTextItem statusItem;
-	QFile *logFile;
     QSettings settings;
     QSettings gaugeSettings;
     QString sensorInterfaceType;
@@ -88,10 +89,17 @@ private:
 
     QString currentScene = "";
 
+#ifdef USEDATABASE
     QThread dbWorkerThread;
     RDACconnect rdac;
     SensorConvert sensorConvert;
     DatabaseHandler dbHandler;
+#endif
+
+#ifndef USEDATABASE
+    QThread sensorThread;
+    SensorConvert sensorConvert;
+#endif
 
 private slots:
     void writeLogFile();

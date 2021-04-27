@@ -379,11 +379,11 @@ void emsFull::demoFunction()
 }
 
 void emsFull::onReadDBValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
-                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, QDateTime recordTime) {
+                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, QDateTime recordTime) {
 
     recordDateTime = recordTime;
 
-    if (abs(recordTime.msecsTo(QDateTime::currentDateTime())) > /*5000000000*/ 17973121) {
+    if (abs(recordTime.msecsTo(QDateTime::currentDateTime())) > 5000000000 /*17973121*/) {
         statusItem.setDefaultTextColor(Qt::red);
         statusItem.setPlainText("DATA NOT CURRENT");
         rpmIndicator.setValue(-999);
@@ -405,45 +405,34 @@ void emsFull::onReadDBValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
         statusItem.setPlainText(""/*"Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz")*/);
         rpmIndicator.setValue(val0);
         fuelDisplay.setFuelFlow(val1);
-        fuelFlow.setValue(val2);
-        oilTemperature.setValue(val3);
-        oilPressure.setValue(val4);
-        ampereMeter.setValue(val5);
-        ampereMeter2.setValue(val6);
-        voltMeter.setValue(val7);
-        chtEgt.setEgtValues(val8, val9, val10, val11);
-        chtEgt.setChtValues(val12, val13, val14, val15);
-        outsideAirTemperature.setValue(val16);
-        insideAirTemperature.setValue(val17);
-        manifoldPressure.setValue(val18);
-        fuelPressure.setValue(val19);
+        fuelFlow.setValue(val1);
+        oilTemperature.setValue(val2);
+        oilPressure.setValue(val3);
+        ampereMeter.setValue(val4);
+        ampereMeter2.setValue(val5);
+        voltMeter.setValue(val6);
+        chtEgt.setEgtValues(val7, val8, val9, val10);
+        chtEgt.setChtValues(val11, val12, val13, val14);
+        outsideAirTemperature.setValue(val15);
+        insideAirTemperature.setValue(val16);
+        manifoldPressure.setValue(val17);
+        fuelPressure.setValue(val18);
     }
 
     statusItem.update();
 }
 
-//void emsFull::readSensorDB() {
-//    qDebug() << beginningOfTime << "; " << timeOfLastRead << "; " << beginningOfTime - timeOfLastRead;
-//    if (beginningOfTime - timeOfLastRead > 500) {
-//        emit readDB();
-//        timeOfLastRead = dateTime.currentMSecsSinceEpoch();
-//    }
-
-//    beginningOfTime = dateTime.currentMSecsSinceEpoch();
-//}
-
 emsFull::~emsFull() {
 
 }
 
-quint64 emsFull::elapsed()
-{
-quint64 elapsed = qAbs(recordDateTime.date().daysTo(QDateTime::currentDateTime().date()));
-elapsed *= static_cast<quint64>(24); // days to hours
-elapsed *= static_cast<quint64>(60); // hours to minutes
-elapsed *= static_cast<quint64>(60); // minutes to seconds
-elapsed *= static_cast<quint64>(1000); // seconds to milliseconds
-elapsed += qAbs(recordDateTime.time().msecsTo(QDateTime::currentDateTime().time()));
-return elapsed;
+quint64 emsFull::elapsed() {
+    quint64 elapsed = qAbs(recordDateTime.date().daysTo(QDateTime::currentDateTime().date()));
+    elapsed *= static_cast<quint64>(24); // days to hours
+    elapsed *= static_cast<quint64>(60); // hours to minutes
+    elapsed *= static_cast<quint64>(60); // minutes to seconds
+    elapsed *= static_cast<quint64>(1000); // seconds to milliseconds
+    elapsed += qAbs(recordDateTime.time().msecsTo(QDateTime::currentDateTime().time()));
+    return elapsed;
 }
 

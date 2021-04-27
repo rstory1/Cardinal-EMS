@@ -51,26 +51,36 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connectSignals();
     qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 
+#ifdef USEDATABASE
     dbHandler.moveToThread(&dbWorkerThread);
-
     connect(&sensorConvert, SIGNAL(insertValuesIntoDB(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &dbHandler, SLOT(executeInsertSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
+    dbWorkerThread.start();
+#endif
+
+#ifndef USEDATABASE
+    sensorConvert.moveToThread(&sensorThread);
+
+    sensorThread.start();
+#endif
+
     connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
     connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
-    //connect(&rdac, SIGNAL(statusMessage(QString,QColor)), this, SLOT(showStatusMessage(QString,QColor)));
-    connect(this, SIGNAL(zeroCurrent()), &sensorConvert, SLOT(onZeroCurrent()));
-
-    connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
-
-    dbWorkerThread.start();
-
 }
 
 EngineMonitor::~EngineMonitor()
 {
     logFile->close();
 
+#ifdef USEDATABASE
     dbWorkerThread.quit();
     dbWorkerThread.wait();
+#endif
+
+#ifndef USEDATABASE
+    sensorThread.quit();
+    sensorThread.wait();
+#endif
 }
 
 void EngineMonitor::setupLogFile()
@@ -243,6 +253,7 @@ void EngineMonitor::connectSignals() {
 
     connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
 
+#ifdef USEDATABASE
     connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &dbHandler, SLOT(onReceiveTimeData(qreal, QString)));
 
     connect(&ems_full.fuelDisplay, SIGNAL(saveFuelState(qreal)), &dbHandler, SLOT(onReceiveFuelLevel(qreal)));
@@ -250,6 +261,7 @@ void EngineMonitor::connectSignals() {
     connect(&dbHandler, SIGNAL(sendFuelLevel(qreal)), &ems_full.fuelDisplay, SLOT(onInitializeFuelLevel(qreal)));
 
     emit ems_full.fuelDisplay.getInitialFuelLevel();
+#endif
 
 }
 

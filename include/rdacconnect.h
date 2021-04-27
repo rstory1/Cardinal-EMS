@@ -25,6 +25,11 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 
+#define USEDATABASE
+#ifndef USEDATABASE
+#include <sensorconvert.h>
+#endif
+
 //! RDAC Connect Class
 /*!
  * This class interprets the messages coming from the MGL RDAC.

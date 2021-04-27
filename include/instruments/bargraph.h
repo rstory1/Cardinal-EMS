@@ -77,6 +77,7 @@ private:
 	QString titleText, unitText;
     double minValue, maxValue;
     qreal currentValue;
+    qreal rawValue;
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
