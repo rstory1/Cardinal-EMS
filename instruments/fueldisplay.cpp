@@ -32,7 +32,7 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     , rangeRect(0, -75, 90, 55)
 {
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
-    fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
+    //fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
     fuelUnits = settings.value("Units/fuel", "gal").toString();
 
     connect(&fuelBurnTimer, SIGNAL(timeout()), this, SLOT(updateFuelBurn()));
@@ -109,6 +109,12 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
 void FuelDisplay::setFuelFlow(double value)
 {
+    if (value == -999) {
+        dataIsValid = false;
+    } else {
+        dataIsValid = true;
+    }
+
     fuelFlow = value;
 
     update();
@@ -126,6 +132,9 @@ void FuelDisplay::onFuelAmountChange()
 
 void FuelDisplay::updateFuelBurn()
 {
-    fuelAmount = fuelAmount - (fuelFlow * (fuelBurnUpdateInterval * 0.000000277778));
-    saveFuelState();
+    if (fuelFlow != -999) {
+        fuelAmount = fuelAmount - (fuelFlow * (fuelBurnUpdateInterval * 0.000000277778));
+        emit saveFuelState(fuelAmount);
+    }
+
 }

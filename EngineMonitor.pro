@@ -18,7 +18,7 @@
 #                                                                      #
 ########################################################################
 
-QT       += core gui widgets serialport
+QT       += core gui widgets serialport sql
 
 INCLUDEPATH += \
     include \
@@ -42,6 +42,7 @@ Debug:UI_DIR = debug/.ui
 RC_FILE = ./res/icon.rc
 
 SOURCES += main.cpp\
+    utilities/databasehandler.cpp \
     enginemonitor.cpp \
     utilities/datasmoothing.cpp \
     instruments/bargraph.cpp \
@@ -68,10 +69,11 @@ SOURCES += main.cpp\
     utilities/userSettings.cpp \
     scenes/settings_scene.cpp \
     scenes/emsfull.cpp \
-    utilities/instrumentsettings.cpp
+    utilities/instrumentsettings.cpp \
     instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
+    include/databasehandler.h \
     include/datasmoothing.h \
     include/instruments/bargraph.h \
     include/instruments/rpmindicator.h \
@@ -97,7 +99,7 @@ HEADERS  += include/enginemonitor.h \
     include/userSettings.h \
     include/scenes/settings_scene.h \
     include/scenes/emsfull.h \
-    include/instrumentsettings.h
+    include/instrumentsettings.h \
     include/diagnosticwidget.h
 
 RESOURCES += \

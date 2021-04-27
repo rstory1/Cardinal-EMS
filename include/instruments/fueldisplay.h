@@ -27,9 +27,10 @@ public:
     bool gpsAvailable = false;
 private:
     QSettings settings;
-    double fuelAmount;
+    qreal fuelAmount;
     QString fuelUnits;
     float fuelFlow;
+    double rawFuelFLowValue;
     double timeToDestination;
     QRectF remainingFuelRect;
     QRectF remainingFuelAtDestinationRect;
@@ -42,15 +43,20 @@ private:
 
     QTimer fuelBurnTimer;
 
+    bool dataIsValid = false;
+
 private slots:
     void updateFuelBurn();
 
 public slots:
     void onFuelAmountChange(); // Direction is + or -
-    void saveFuelState()
-    {
-        settings.setValue("Fueling/LastShutdown", fuelAmount);
-    }
+    void onInitializeFuelLevel(qreal level) {
+        fuelAmount = level;
+    };
+
+signals:
+    void saveFuelState(qreal level);
+    void getInitialFuelLevel();
 };
 
 #endif // FUELDISPLAY_H

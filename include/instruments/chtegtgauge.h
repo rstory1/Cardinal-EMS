@@ -81,6 +81,13 @@ private:
     DataSmoothing smoothDataCht1;
     DataSmoothing smoothDataCht2;
     bool smooth = true;
+
+    QTimer updateTimer;
+
+    bool cht1IsValid = false;
+    bool cht2IsValid = false;
+    bool cht3IsValid = false;
+    bool cht4IsValid = false;
 signals:
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
@@ -88,6 +95,9 @@ signals:
 public slots:
     void changeFlashState();
     void onAlarmAck();
+
+private slots:
+    void onUpdate() {update();}
 };
 
 #endif // CHTEGTGAUGE_H

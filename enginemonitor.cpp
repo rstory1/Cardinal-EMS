@@ -26,13 +26,14 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
   , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
   , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
-	//Initializing the window behaviour and it's scene
+
+    //Initializing the window behaviour and it's scene
     setWindowFlags(Qt::FramelessWindowHint);
     setScene(&ems_full);
     currentScene = "emsFull";
     setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-	//Setting up the items to be displayed
+    //Setting up the items to be displayed
     setupuserSettings();
 
     this->mapToScene(this->rect());
@@ -44,79 +45,42 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     //  Get the interface type, Arduino or RDAC
     sensorInterfaceType = settings.value("Sensors/interface", "arduino").toString();
 
-//    // Plot stuff
-//    customPlot = new QCustomPlot();
-//    customPlot->setStyleSheet("border: 8px solid red;background-color: yellow");
-
-//    QGraphicsProxyWidget *test;
-//    test = new QGraphicsProxyWidget();
-//    test->setWidget(customPlot);
-//    test->setPos(0, 200);
-
-//    //this->scene()->addItem(test);
-
-//    customPlot->setFixedHeight(150);
-//    customPlot->setFixedWidth(300);
-//    customPlot->addGraph(); // blue line
-//    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(1)->setPen(QPen(Qt::green));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(2)->setPen(QPen(QColor(255, 110, 40)));
-//    customPlot->addGraph(); // red line
-//    customPlot->graph(3)->setPen(QPen(Qt::yellow));
-
-//    QVector<double> ticks;
-//    QVector<QString> labels;
-//    ticks << 1 << 2 << 3 << 4 << 5;
-//    labels << "2:00" << "1:30" << "1:00" << "00:30" << "00:00";
-//    //QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
-//    //timeTicker->setTimeFormat("%m:%s");
-//    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-//    textTicker->addTicks(ticks, labels);
-//    customPlot->xAxis->setTicker(textTicker);
-//    customPlot->axisRect()->setupFullAxesBox();
-//    customPlot->yAxis->setRange(0, 300);
-//    customPlot->setBackground(Qt::black);
-//    customPlot->yAxis->setTickLabelColor(Qt::white);
-//    customPlot->xAxis->setTickLabelColor(Qt::white);
-//    customPlot->xAxis->setTicks(false);
-//    customPlot->xAxis->grid()->setVisible(false);
-
-
-    // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//    connect(&dataTimer, SIGNAL(timeout()), this, SLOT(realtimeDataSlot()));
-//    dataTimer.start(1000); // Interval 0 means to refresh as fast as possible
-
-    // End plot stuff
-
     setupLogFile();
-
-    //socket = new QUdpSocket(this);
-
-    //qDebug()<< socket->bind(QHostAddress("192.168.1.120"), 49901);
-
-    //connect(socket,SIGNAL(readyRead()),this,SLOT(processPendingDatagrams()));
-
-    //qDebug()<<"Creating";
-    //qDebug()<<socket->BoundState;
-
-    // Initialize the timer to flash values on alarm
-    // QTimer *flashTimer = new QTimer(this);
-    //flashTimer.start(1000);
-
-    // Initialize the timer for the Hobbs and Flight time
-    //clockTimer = new QTimer(this);
-    //clockTimer.start(1000);
 
     qDebug()<<"Enter connectSignals(): enginemonitor.cpp";
     connectSignals();
     qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
+
+#ifdef USEDATABASE
+    dbHandler.moveToThread(&dbWorkerThread);
+    connect(&sensorConvert, SIGNAL(insertValuesIntoDB(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &dbHandler, SLOT(executeInsertSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
+    dbWorkerThread.start();
+#endif
+
+#ifndef USEDATABASE
+    sensorConvert.moveToThread(&sensorThread);
+
+    sensorThread.start();
+#endif
+
+    connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
+    connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
 }
 
 EngineMonitor::~EngineMonitor()
 {
-	logFile->close();
+    logFile->close();
+
+#ifdef USEDATABASE
+    dbWorkerThread.quit();
+    dbWorkerThread.wait();
+#endif
+
+#ifndef USEDATABASE
+    sensorThread.quit();
+    sensorThread.wait();
+#endif
 }
 
 void EngineMonitor::setupLogFile()
@@ -124,47 +88,47 @@ void EngineMonitor::setupLogFile()
     QDir dir(QApplication::applicationDirPath() + "/ems/engineLogs");
     if (!dir.exists())
         dir.mkpath(".");
-    logFile = new QFile(QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm.ss")).append(".csv"), this);
-	if(logFile->open(QIODevice::WriteOnly))
-	{
-		QTimer *writeLogFileTimer = new QTimer(this);
-		connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
-		writeLogFileTimer->setSingleShot(false);
-		writeLogFileTimer->start(settings.value("Logging/SampleRate", 1).toInt() * 1000);
-	}
-	else
-	{
+    logFile = new QFile(QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm")).append(".csv"), this);
+    if(logFile->open(QIODevice::WriteOnly))
+    {
+        QTimer *writeLogFileTimer = new QTimer(this);
+        connect(writeLogFileTimer, SIGNAL(timeout()), this, SLOT(writeLogFile()));
+        writeLogFileTimer->setSingleShot(false);
+        writeLogFileTimer->start(settings.value("Logging/SampleRate", 1).toInt() * 1000);
+    }
+    else
+    {
         qDebug() << QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ");
-		userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
-	}
+        userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
+    }
 
-	logFile->write("[Header]\r\n");
-	logFile->write("Created with Cardinal EMS - Build BETA\r\n");
-	logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
-	logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
-	logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
-	logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
-	logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
+    logFile->write("[Header]\r\n");
+    logFile->write("Created with Cardinal EMS - Build BETA\r\n");
+    logFile->write(QString("Call Sign: %1\r\n").arg(settings.value("Aircraft/CALL_SIGN").toString()).toLatin1());
+    logFile->write(QString("Aircraft Model: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_MODEL").toString()).toLatin1());
+    logFile->write(QString("Aircraft S/N: %1\r\n").arg(settings.value("Aircraft/AIRCRAFT_SN").toString()).toLatin1());
+    logFile->write(QString("Engine Type: %1\r\n").arg(settings.value("Aircraft/ENGINE_TYPE").toString()).toLatin1());
+    logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
     logFile->write(QString("All temperatures in degree %1\r\n oil pressure in %2\r\n fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
-	logFile->write("[data]\r\n");
+    logFile->write("[data]\r\n");
     logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR1;CUR2;RPM;MAP;FF;FUELP;HOBBS;FLIGHT\r\n");
 }
 
 void EngineMonitor::writeLogFile()
 {
-	static quint64 sample = 0;
-	logFile->write(QString::number(sample).append(';').toLatin1());
-	logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
+    static quint64 sample = 0;
+    logFile->write(QString::number(sample).append(';').toLatin1());
+    logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
     QList<double> egtValues = ems_full.chtEgt.getCurrentEgtValues();
-	logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     QList<double> chtValues = ems_full.chtEgt.getCurrentChtValues();
-	logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
-	logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilTemperature.getValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilPressure.getValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.outsideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
@@ -179,24 +143,24 @@ void EngineMonitor::writeLogFile()
     logFile->write(QString(ems_full.hobbs.getHobbsTime().append(';')).toLatin1());
     logFile->write(QString(ems_full.hobbs.getFlightTime().append(';')).toLatin1());
     logFile->write("\r\n");
-	logFile->flush();
-	++sample;
+    logFile->flush();
+    ++sample;
 }
 
 void EngineMonitor::userMessageHandler(QString title, QString content, bool endApplication)
 {
-	QMessageBox::warning(this, title, content);
-	if(endApplication)
-	{
-		qApp->quit();
-	}
+    QMessageBox::warning(this, title, content);
+    if(endApplication)
+    {
+        qApp->quit();
+    }
 }
 
 void EngineMonitor::showStatusMessage(QString text, QColor color)
 {
     //qDebug() << Q_FUNC_INFO;
-	statusItem.setPlainText(text);
-	statusItem.setDefaultTextColor(color);
+    statusItem.setPlainText(text);
+    statusItem.setDefaultTextColor(color);
 }
 
 //void EngineMonitor::saveSceneToSvg(const QString fileName)
@@ -273,32 +237,31 @@ void EngineMonitor::connectSignals() {
     // Connect buttonBar to the alarm window for alarm acknowledgement
     connect(&buttonBar, SIGNAL(sendAlarmAck()), &ems_full, SLOT(onAckAlarm()));
 
-    // Connect buttonBar to the fuelDisplay window to increment fuel amount
-//    connect(&buttonBar, SIGNAL(sendFuelChange(QString)), &fuelDisplay, SLOT(onFuelAmountChange(QString)));
-
     // Connect signal for a flashing alarm to the button bar to be able to show the 'Ack' button
     connect(&ems_full, SIGNAL(alarmFlashing()), &buttonBar, SLOT(onAlarmFlash()));
 
-    //qDebug()<<"Connecting hobb/flight time Signals";
-    // Connect a timer for handling hobbs/flight time
-    //connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
-
-    //connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
-
     connect(&buttonBar, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
-
-    //connect(&settings_scene, SIGNAL(zeroCurrent()), this, SLOT(onZeroCurrent()));
 
     connect(&ems_full, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
     connect(&settings_scene, SIGNAL(switchScene(int)), this, SLOT(onSwitchScene(int)));
 
     connect(&settings_scene, SIGNAL(hobbsUpdated()), &ems_full.hobbs, SLOT(onHobbsINIChanged()));
 
-    connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
+    //connect(this, SIGNAL(updateEngineValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &ems_full, SLOT(onEngineValuesUpdate(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
 
     connect(&settings_scene, SIGNAL(fuelUpdated()), &ems_full.fuelDisplay, SLOT(onFuelAmountChange()));
 
     connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
+
+#ifdef USEDATABASE
+    connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &dbHandler, SLOT(onReceiveTimeData(qreal, QString)));
+
+    connect(&ems_full.fuelDisplay, SIGNAL(saveFuelState(qreal)), &dbHandler, SLOT(onReceiveFuelLevel(qreal)));
+    connect(&ems_full.fuelDisplay, SIGNAL(getInitialFuelLevel()), &dbHandler, SLOT(onInitializeFuelLevel()));
+    connect(&dbHandler, SIGNAL(sendFuelLevel(qreal)), &ems_full.fuelDisplay, SLOT(onInitializeFuelLevel(qreal)));
+
+    emit ems_full.fuelDisplay.getInitialFuelLevel();
+#endif
 
 }
 

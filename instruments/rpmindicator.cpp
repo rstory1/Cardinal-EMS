@@ -37,7 +37,7 @@ RpmIndicator::RpmIndicator(QGraphicsObject *parent) : QGraphicsObject(parent)
 
 QRectF RpmIndicator::boundingRect() const
 {
-    return QRectF(-180.0, -160.0, 360.0, 320.0);
+    return QRectF(-160.0, -160.0, 320.0, 320.0);
 }
 
 /*! \brief Handles drawing of the object
@@ -56,6 +56,8 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setPen(QPen(Qt::green, 0));
     painter->setBrush(Qt::green);
     painter->drawPie(circle, startAngle*16.0, -spanAngle*16.0);
+
+    changeFlashState();
 
     if (isWarmup) {
         i=0;
@@ -226,8 +228,17 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 	//Set position and font for the value and draw it
     QRectF textRect(-100, 35, 170, 65);
-    painter->setFont(QFont("Arial", 30, QFont::Bold));
-	painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
+    if (dataIsValid) {
+        painter->setPen(Qt::white);
+        painter->setFont(QFont("Arial", 30, QFont::Bold));
+        painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, rpm);
+    } else {
+        painter->setPen(Qt::red);
+        painter->drawLine(boundingRect().topLeft(), boundingRect().bottomRight());
+        painter->drawLine(boundingRect().topRight(), boundingRect().bottomLeft());
+    }
+
+    painter->setPen(Qt::white);
 	//Set position and font for the unit and draw it
 	QRectF unitRect(90, 35, 100, 65);
 	painter->setFont(QFont("Arial", 20, 1));
@@ -259,17 +270,24 @@ void RpmIndicator::addBetweenValue(double value)
 
 void RpmIndicator::setValue(double value)
 {
-	currentValue = value;
+    if (value == -999) {
+        dataIsValid = false;
+    } else {
+        dataIsValid = true;
+    }
+
+    currentValue = value;
+
     update();
+
 }
 
 void RpmIndicator::changeFlashState()
 {
-    if (flashState == false) {
+    if (QTime::currentTime().second() % 2 == 0) {
         flashState  = true;
     } else {
         flashState = false;
     }
 
-    update();
 }

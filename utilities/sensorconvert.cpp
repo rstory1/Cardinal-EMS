@@ -20,7 +20,7 @@
 
 #include "sensorconvert.h"
 
-SensorConvert::SensorConvert(QObject *parent) : QThread(parent)
+SensorConvert::SensorConvert(QObject *parent) : QObject(parent)
   ,settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
   ,gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
 {
@@ -95,11 +95,10 @@ void SensorConvert::convertOAT(qreal adc)
 {
 
     //  Convert ADC Voltage value to resistance
-    resistance = 10000.0/((4095.0/adc)-1.0);
+    resistance=-(10000*adc*5)/((adc*5)-(4095*3.3));
 
     // Convert resistance to temperature of the Littelfuse NTC Thermistor
-    oat = -20.14*log10(resistance)+211.7;
-    oat = 0.0031*(oat*oat)+0.9713*oat-2.3687; // Celsius
+    oat = 1/(0.001126931065714+0.000234457244037*log(resistance)+0.000000086590187*pow(log(resistance),3)) - 273.13;
 
     // If our desired scale is not Celsius, then we need to convert it
     if (temperatureScale != "C")
@@ -178,7 +177,7 @@ void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts) {
     convertFuelFlow(fuelFlow1);
     convertOilPress(oilP);
-    convertCht(150, ax2, tc3, tc4);
+    convertCht(ax1, ax2, tc3, tc4);
     convertOilTemp(oilT);
     convertCurrent(curr,1);
     convertCurrent(fuelL2,2);
@@ -186,7 +185,13 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOAT(coolantT);
     convertFuelP(fuelP);
 
-    emit updateMonitor(rpm1, fuelFlow, oilTemp, oilPress, current1, current2, volts, tc1, tc2, tc3, tc4, cht[0], cht[1], cht[2], cht[3], oat, intTemp, manP, fuelPress);
+#ifdef USEDATABASE
+    emit insertValuesIntoDB(intTemp,coolantT,volts,fuelL2,curr,fuelL1,fuelFlow1,fuelP,ax2,ax1,oilP,oilT,rpm1,intTemp,oat,volts,current2,current1,manP,fuelFlow,fuelPress,cht[1],cht[0],oilPress,oilTemp,rpm1);
+#endif
+
+#ifndef USEDATABASE
+    emit insertValuesIntoDB(intTemp,coolantT,volts,fuelL2,curr,fuelL1,fuelFlow1,fuelP,ax2,ax1,oilP,oilT,rpm1,intTemp,oat,volts,current2,current1,manP,fuelFlow,fuelPress,cht[1],cht[0],oilPress,oilTemp,rpm1);
+#endif
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
@@ -232,5 +237,6 @@ qreal SensorConvert::filterReading(qreal inputVal, qreal preVal, qreal dt, qreal
 }
 
 void SensorConvert::debugSend() {
-    emit updateMonitor(5200, 5.0, 130, 65, 10, 10, 14.0, 0, 0, 0, 0, 100, 0, 0, 0, 20, 10, 8.6, 5.3);
+    onRdacUpdate(4400, 1200, 0, 0, 0, 0, 0, 0, 0, 0, 4, 450, 4, 2.5, 2.5, 3.0, 2.3, 2.9, 2500, 0, 2.7, 2.8, 25, 14.2);
+    //emit updateMonitor(5200, 5.0, 130, 65, 10, 10, 14.0, 0, 0, 0, 0, 100, 0, 0, 0, 20, 10, 8.6, 5.3);
 }

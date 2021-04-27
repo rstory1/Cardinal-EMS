@@ -43,14 +43,14 @@ public:
 	void setStartSpan(double start, double span);
     void setBorders(double minimum, double maximum);
 	void addBetweenValue(double value);
-	void setValue(double value);
+    void setValue(double value);
     double getValue() {return currentValue;};
     bool isWarmup;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;
 private:
 	double calculateLocalValue(double value) const;
-	double minValue, maxValue, currentValue;
+    double minValue, maxValue, currentValue, rawValue;
     double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
     double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
     double startAngle, spanAngle;
@@ -68,6 +68,10 @@ private:
     int numOfRanges;
 
     bool isAcknowledged;
+
+    QTimer updateTimer;
+
+    bool dataIsValid = false;
 
 signals:
     void sendAlarm(QString, QColor, bool);

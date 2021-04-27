@@ -64,6 +64,9 @@ public:
         smooth=tf;
     }
 
+    void checkDataIsValid(qreal value);
+    bool dataIsValid = false;
+
 public slots:
 	void makeVisible() {setVisible(true);};
     void makeInvisible() {setVisible(false);};
@@ -74,6 +77,7 @@ private:
 	QString titleText, unitText;
     double minValue, maxValue;
     qreal currentValue;
+    qreal rawValue;
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
@@ -97,6 +101,8 @@ private:
 
     DataSmoothing smoothData;
     bool smooth = false;
+
+    QTimer updateTimer;
 protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *)
 	{
@@ -106,6 +112,9 @@ signals:
     void hasBeenClicked();
     void sendAlarm(QString, QColor, bool);
     void cancelAlarm(QString);
+
+private slots:
+    void onUpdate();
 };
 
 #endif // BARGRAPH_H

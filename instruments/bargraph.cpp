@@ -31,6 +31,10 @@ BarGraph::BarGraph(QGraphicsObject *parent)
 	, readoutPrecision(0)
 {
     smoothData.setSampleSize(20);
+
+    updateTimer.start(100);
+
+    connect(&updateTimer, SIGNAL(timeout()), this, SLOT(onUpdate()));
 }
 
 QRectF BarGraph::boundingRect() const
@@ -52,6 +56,8 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 	painter->setRenderHint(QPainter::Antialiasing, false);
 	painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
 
+    changeFlashState();
+
 	//Draw ticks with values
 //	painter->setPen(Qt::white);
 //	foreach(double value, beetweenValues)
@@ -68,16 +74,30 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     painter->setPen(Qt::green);
     painter->setBrush(Qt::green);
     if (horizontal) {
-        painter->drawRect(QRectF(QPointF(-50.0, -10.0), QPointF(50.0, 10.0)));
+        if (dataIsValid) {
+            painter->drawRect(QRectF(QPointF(-50.0, -10.0), QPointF(50.0, 10.0)));
+        } else {
+            painter->setPen(Qt::red);
+            painter->setBrush(Qt::red);
+            painter->drawLine(QPointF(-50.0, -10.0), QPointF(50.0, 10.0));
+            painter->drawLine(QPointF(50.0, -10.0), QPointF(-50.0, 10.0));
+        }
     } else {
-        painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(maxValue)), QPointF(10.0, calculateLocalValue(minValue))));
+        if (dataIsValid) {
+            painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(maxValue)), QPointF(10.0, calculateLocalValue(minValue))));
 
-        //Draw the white line to define top of bar
-        painter->setPen(Qt::white);
-        painter->drawLine(-15, calculateLocalValue(maxValue)-2, 15, calculateLocalValue(maxValue)-2);
+            //Draw the white line to define top of bar
+            painter->setPen(Qt::white);
+            painter->drawLine(-15, calculateLocalValue(maxValue)-2, 15, calculateLocalValue(maxValue)-2);
 
-        //Draw the white line to define base of bar
-        painter->drawLine(-15, calculateLocalValue(minValue)+2, 15, calculateLocalValue(minValue)+2);
+            //Draw the white line to define base of bar
+            painter->drawLine(-15, calculateLocalValue(minValue)+2, 15, calculateLocalValue(minValue)+2);
+        } else {
+            painter->setPen(Qt::red);
+            painter->setBrush(Qt::red);
+            painter->drawLine(QPointF(-10.0, calculateLocalValue(maxValue)), QPointF(10.0, calculateLocalValue(minValue)));
+            painter->drawLine(QPointF(10.0, calculateLocalValue(maxValue)), QPointF(-10.0, calculateLocalValue(minValue)));
+        }
     }
 
     //Restore the painter with antialising
@@ -85,99 +105,101 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     isPenAlarmColored = false;
 
-    if (gauge.getName() != "") {
-        i=0;
-        numOfRanges = gauge.getNRange();
+    if (dataIsValid) {
+        if (gauge.getName() != "") {
+            i=0;
+            numOfRanges = gauge.getNRange();
 
-        for (i=0; i<numOfRanges; i++) {
-            start = gauge.definitions[i].start;
-            end = gauge.definitions[i].end;
-            color = gauge.definitions[i].color;
+            for (i=0; i<numOfRanges; i++) {
+                start = gauge.definitions[i].start;
+                end = gauge.definitions[i].end;
+                color = gauge.definitions[i].color;
 
-            //Set pen and brush to color and draw the bar
-            painter->setPen(color);
-            painter->setBrush(color);
+                //Set pen and brush to color and draw the bar
+                painter->setPen(color);
+                painter->setBrush(color);
 
-            //Save the painter and deactivate Antialising for rectangle drawing
-            painter->save();
-            painter->setRenderHint(QPainter::Antialiasing, false);
-            painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
+                //Save the painter and deactivate Antialising for rectangle drawing
+                painter->save();
+                painter->setRenderHint(QPainter::Antialiasing, false);
+                painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
 
-            if (horizontal) {
-                painter->drawRect(QRectF(QPointF(calculateLocalValue(end),-10), QPointF(calculateLocalValue(start),10)));
-            } else {
-                painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(end)), QPointF(10.0, calculateLocalValue(start))));
-            }
+                if (horizontal) {
+                    painter->drawRect(QRectF(QPointF(calculateLocalValue(end),-10), QPointF(calculateLocalValue(start),10)));
+                } else {
+                    painter->drawRect(QRectF(QPointF(-10.0, calculateLocalValue(end)), QPointF(10.0, calculateLocalValue(start))));
+                }
 
-            //Restore the painter with antialising
-            painter->restore();
+                //Restore the painter with antialising
+                painter->restore();
 
-            if (currentValue >= start && currentValue < end) {
-                if (color == Qt::red) {
-                    if (isAlarmedRed == false) {
-                        emit sendAlarm(titleText, color, true);
-                        isAcknowledged = false;
+                if (currentValue >= start && currentValue < end) {
+                    if (color == Qt::red) {
+                        if (isAlarmedRed == false) {
+                            emit sendAlarm(titleText, color, true);
+                            isAcknowledged = false;
+                        }
+
+                        isAlarmedRed = true;
+                        isAlarmedYellow = false;
+                        isPenAlarmColored = true;
+
+                    } else if (color == Qt::yellow) {
+                        if (isAlarmedYellow == false) {
+                            emit sendAlarm(titleText, color, true);
+                            isAcknowledged = false;
+                        }
+
+                        isAlarmedRed = false;
+                        isAlarmedYellow = true;
+                        isPenAlarmColored = true;
+
                     }
-
-                    isAlarmedRed = true;
-                    isAlarmedYellow = false;
-                    isPenAlarmColored = true;
-
-                } else if (color == Qt::yellow) {
-                    if (isAlarmedYellow == false) {
-                        emit sendAlarm(titleText, color, true);
-                        isAcknowledged = false;
-                    }
-
-                    isAlarmedRed = false;
-                    isAlarmedYellow = true;
-                    isPenAlarmColored = true;
-
                 }
             }
         }
-    }
 
-    if (currentValue < minValue) {
-        if (minValue == gauge.definitions[0].start) {
-            color = gauge.definitions[0].color;
-
-            if (color == Qt::yellow) {
-                isPenAlarmColored = true;
-                isAlarmedYellow = true;
-                isAlarmedRed = false;
-            } else if (color == Qt::red) {
-                isPenAlarmColored = true;
-                isAlarmedRed = true;
-                isAlarmedYellow = false;
-            }
-        }
-    } else if (currentValue > maxValue) {
-        if (numOfRanges > 0) {
-            if (maxValue == gauge.definitions[numOfRanges-1].end) {
-                color = gauge.definitions[numOfRanges-1].color;
+        if (currentValue < minValue) {
+            if (minValue == gauge.definitions[0].start) {
+                color = gauge.definitions[0].color;
 
                 if (color == Qt::yellow) {
-                    if(isAlarmedYellow == false) {
-                        emit sendAlarm(titleText, Qt::yellow, true);
-                        isAcknowledged = false;
-                    }
                     isPenAlarmColored = true;
                     isAlarmedYellow = true;
                     isAlarmedRed = false;
-
                 } else if (color == Qt::red) {
-                    if(isAlarmedRed == false) {
-                        emit sendAlarm(titleText, Qt::red, true);
-                        isAcknowledged = false;
-                    }
                     isPenAlarmColored = true;
                     isAlarmedRed = true;
                     isAlarmedYellow = false;
                 }
             }
-        }
+        } else if (currentValue > maxValue) {
+            if (numOfRanges > 0) {
+                if (maxValue == gauge.definitions[numOfRanges-1].end) {
+                    color = gauge.definitions[numOfRanges-1].color;
 
+                    if (color == Qt::yellow) {
+                        if(isAlarmedYellow == false) {
+                            emit sendAlarm(titleText, Qt::yellow, true);
+                            isAcknowledged = false;
+                        }
+                        isPenAlarmColored = true;
+                        isAlarmedYellow = true;
+                        isAlarmedRed = false;
+
+                    } else if (color == Qt::red) {
+                        if(isAlarmedRed == false) {
+                            emit sendAlarm(titleText, Qt::red, true);
+                            isAcknowledged = false;
+                        }
+                        isPenAlarmColored = true;
+                        isAlarmedRed = true;
+                        isAlarmedYellow = false;
+                    }
+                }
+            }
+
+        }
     }
 
     //Draw Texts around (title, min and max value)
@@ -190,70 +212,72 @@ void BarGraph::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     font.setPointSize(18);
     painter->setFont(font);
 
-    if (isAlarmedRed) {
-        if (flashState || isAcknowledged) {
-            painter->setPen(Qt::red);
-            painter->setBrush(Qt::red);
-            painter->drawRect(QRectF(-30, 55, 60, 22));
-            painter->setPen(Qt::white);
-            painter->drawText(QRectF(-30, 55, 60, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+    if (dataIsValid) {
+        if (isAlarmedRed) {
+            if (flashState || isAcknowledged) {
+                painter->setPen(Qt::red);
+                painter->setBrush(Qt::red);
+                painter->drawRect(QRectF(-30, 55, 60, 22));
+                painter->setPen(Qt::white);
+                painter->drawText(QRectF(-30, 55, 60, 20), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
 
-         } else {
-            painter->setPen(Qt::red);
-            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
-        }
-    } else if (isAlarmedYellow) {
-        if (flashState || isAcknowledged) {
-            painter->setPen(Qt::yellow);
-            painter->setBrush(Qt::yellow);
-            painter->drawRect(QRectF(-30, 55, 60, 22));
-            painter->setPen(Qt::black);
-            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
-
-         } else {
-            painter->setPen(Qt::yellow);
-            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
-        }
-    } else {
-        painter->setPen(Qt::white);
-        painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
-    }
-
-    if (isPenAlarmColored == false) {
-        if (isAlarmedRed == true || isAlarmedYellow == true) {
-            emit cancelAlarm(titleText);
-            isAlarmedRed = false;
-            isAlarmedYellow = false;
-            isAcknowledged = false;
-        }
-    }
-
-	//Draw marker
-	if((currentValue>minValue) && (currentValue<maxValue))
-	{
-		painter->setPen(Qt::black);
-		painter->setBrush(Qt::white);
-		QPolygonF marker;
-        if (horizontal) {
-            marker.append(QPointF(0.0,-10));
-            marker.append(QPointF(-7.0,-20));
-            marker.append(QPointF(7.0,-20));
-            painter->translate(QPointF(calculateLocalValue(currentValue),0.0));
-        } else {
-            if (indicatorSide=="right") {
-                marker.append(QPointF(-10,0.0));
-                marker.append(QPointF(20,-7.0));
-                marker.append(QPointF(20,7.0));
-            } else {
-                marker.append(QPointF(10,0.0));
-                marker.append(QPointF(-20,-7.0));
-                marker.append(QPointF(-20,7.0));
+             } else {
+                painter->setPen(Qt::red);
+                painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
             }
-            painter->translate(QPointF(0.0,calculateLocalValue(currentValue)));
+        } else if (isAlarmedYellow) {
+            if (flashState || isAcknowledged) {
+                painter->setPen(Qt::yellow);
+                painter->setBrush(Qt::yellow);
+                painter->drawRect(QRectF(-30, 55, 60, 22));
+                painter->setPen(Qt::black);
+                painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+
+             } else {
+                painter->setPen(Qt::yellow);
+                painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
+            }
+        } else {
+            painter->setPen(Qt::white);
+            painter->drawText(QRectF(-30, 55, 60, 22), Qt::AlignCenter, QString::number(currentValue, 'f', readoutPrecision));
         }
 
-		painter->drawPolygon(marker);
-	}
+        if (isPenAlarmColored == false) {
+            if (isAlarmedRed == true || isAlarmedYellow == true) {
+                emit cancelAlarm(titleText);
+                isAlarmedRed = false;
+                isAlarmedYellow = false;
+                isAcknowledged = false;
+            }
+        }
+
+        //Draw marker
+        if((currentValue>minValue) && (currentValue<maxValue))
+        {
+            painter->setPen(Qt::black);
+            painter->setBrush(Qt::white);
+            QPolygonF marker;
+            if (horizontal) {
+                marker.append(QPointF(0.0,-10));
+                marker.append(QPointF(-7.0,-20));
+                marker.append(QPointF(7.0,-20));
+                painter->translate(QPointF(calculateLocalValue(currentValue),0.0));
+            } else {
+                if (indicatorSide=="right") {
+                    marker.append(QPointF(-10,0.0));
+                    marker.append(QPointF(20,-7.0));
+                    marker.append(QPointF(20,7.0));
+                } else {
+                    marker.append(QPointF(10,0.0));
+                    marker.append(QPointF(-20,-7.0));
+                    marker.append(QPointF(-20,7.0));
+                }
+                painter->translate(QPointF(0.0,calculateLocalValue(currentValue)));
+            }
+
+            painter->drawPolygon(marker);
+        }
+    }
 
 }
 
@@ -291,6 +315,8 @@ double BarGraph::calculateLocalValue(double value) const
 
 void BarGraph::setValue(qreal value)
 {
+    checkDataIsValid(value);
+
     if (smooth) {
         currentValue = smoothData.dsp_ema_double(value);
         //qDebug() << QString::number(value) + "; " + QString::number(currentValue);
@@ -300,7 +326,6 @@ void BarGraph::setValue(qreal value)
 
     //qDebug() << "Current " + titleText + ": " + QString::number(value);
 
-    update();
 }
 
 void BarGraph::addColorStop(ColorStop stop)
@@ -310,13 +335,11 @@ void BarGraph::addColorStop(ColorStop stop)
 
 void BarGraph::changeFlashState()
 {
-    if (flashState == false) {
+    if (QTime::currentTime().second() % 2 == 0) {
         flashState  = true;
     } else {
         flashState = false;
     }
-
-    update();
 }
 
 void BarGraph::setIndicatorSide(QString side)
@@ -330,4 +353,14 @@ void BarGraph::onAlarmAck() {
     }
 }
 
+void BarGraph::onUpdate() {
+    update();
+}
 
+void BarGraph::checkDataIsValid(qreal value) {
+    if (value == -999) {
+        dataIsValid = false;
+    } else {
+        dataIsValid = true;
+    }
+}

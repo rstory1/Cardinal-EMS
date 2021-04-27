@@ -23,19 +23,16 @@
 
 #include <QtGui>
 
-#include "instruments/rpmindicator.h"
-#include "instruments/bargraph.h"
-#include "instruments/fuelmanagement.h"
-#include "instruments/manifoldpressure.h"
+#define USEDATABASE
+#ifdef USEDATABASE
+#include "sensorconvert.h"
+#include "rdacconnect.h"
+#endif
+
 #include "alarmBox.h"
-#include "instruments/textBoxGauge.h"
-#include "instruments/fueldisplay.h"
-#include "instruments/chtegtgauge.h"
 #include <buttonbar.h>
 #include <qcustomplot.h>
 #include <udpsocket.h>
-#include <instruments/windvector.h>
-#include <instruments/hourmeter.h>
 #include <scenes/settings_scene.h>
 #include <scenes/emsfull.h>
 
@@ -72,24 +69,16 @@ private:
     void setupHourMeter();
     void setupuserSettings();
 
+    QFile *logFile;
     QGraphicsScene graphicsScene;
-    //TextBox insideAirTemperature;
     QGraphicsTextItem statusItem;
-    //QGraphicsTextItem timeToDestinationItem;
-	QFile *logFile;
     QSettings settings;
     QSettings gaugeSettings;
     QString sensorInterfaceType;
-    //AlarmBox alarmWindow;
-    //int warmupTemp;
     QTimer flashTimer;
-    //ChtEgt chtEgt;
     ButtonBar buttonBar;
-    QCustomPlot *customPlot;
-    QCPGraph *graphic;
-    QTimer dataTimer;
-    //QUdpSocket *socket;
-    //WindVector windVector;
+    //QCustomPlot *customPlot;
+    //QCPGraph *graphic;
     QTimer clockTimer;
     userSettings uSettings;
     int timeOilTAboveWarmup=0;
@@ -100,26 +89,33 @@ private:
 
     QString currentScene = "";
 
+#ifdef USEDATABASE
+    QThread dbWorkerThread;
+    RDACconnect rdac;
+    SensorConvert sensorConvert;
+    DatabaseHandler dbHandler;
+#endif
+
+#ifndef USEDATABASE
+    QThread sensorThread;
+    SensorConvert sensorConvert;
+#endif
+
 private slots:
     void writeLogFile();
     void realtimeDataSlot();
 
 public slots:
-    //void setTimeToDestination(double time);
 	void userMessageHandler(QString title, QString content, bool endApplication);
     void showStatusMessage(QString text, QColor color);
     void setValuesBulkUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelPress) {
         emit updateEngineValues(rpm, fuelFlow, oilTemp, oilPress, amps, amps2, volts, egt1, egt2, egt3, egt4, cht1, cht2, cht3, cht4, oat, iat, map, fuelPress);
     }
-    //void setFuelData(double fuelFlowValue, double fuelAbsoluteValue);
     void processPendingDatagrams();
-    //void onUpdateWindInfo(float spd, float dir, float mHdg);
     void onSwitchScene(int scene);
-    //void onZeroCurrent();
     void onSendSerialData(QByteArray emsSerial) { emit sendSerialData(emsSerial); };
 
 signals:
-    void zeroCurrent();
     void updateEngineValues(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelPress);
     void sendSerialData(QByteArray emsSerial);
 };
