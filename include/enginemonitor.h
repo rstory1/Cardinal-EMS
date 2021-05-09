@@ -23,11 +23,7 @@
 
 #include <QtGui>
 
-#define USEDATABASE
-#ifdef USEDATABASE
-#include "sensorconvert.h"
 #include "rdacconnect.h"
-#endif
 
 #include "alarmBox.h"
 #include <buttonbar.h>
@@ -89,17 +85,8 @@ private:
 
     QString currentScene = "";
 
-#ifdef USEDATABASE
-    QThread dbWorkerThread;
+    QThread rdacWorkerThread;
     RDACconnect rdac;
-    SensorConvert sensorConvert;
-    DatabaseHandler dbHandler;
-#endif
-
-#ifndef USEDATABASE
-    QThread sensorThread;
-    SensorConvert sensorConvert;
-#endif
 
 private slots:
     void writeLogFile();

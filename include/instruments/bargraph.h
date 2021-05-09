@@ -51,8 +51,9 @@ public:
 	void setPrecision(quint8 readout = 0, quint8 bar = 0);
 	void addBetweenValue(double value);
 	void addColorStop(ColorStop stop);
-    void setValue(qreal value);
+    void setValue(qreal value, qreal rawValue);
     double getValue() {return currentValue;}
+    double getRawValue() {return currentRawValue;}
     QString gaugeName;
     void setIndicatorSide(QString side);
     void setGaugeType(QString type) {
@@ -77,7 +78,7 @@ private:
 	QString titleText, unitText;
     double minValue, maxValue;
     qreal currentValue;
-    qreal rawValue;
+    qreal currentRawValue;
 	QList<double> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;

@@ -268,7 +268,7 @@ void RpmIndicator::addBetweenValue(double value)
 	beetweenValues.append(value);
 }
 
-void RpmIndicator::setValue(double value)
+void RpmIndicator::setValue(qreal value, qreal rawValue)
 {
     if (value == -999) {
         dataIsValid = false;
@@ -276,6 +276,7 @@ void RpmIndicator::setValue(double value)
         dataIsValid = true;
     }
 
+    currentRawValue = rawValue;
     currentValue = value;
 
     update();

@@ -340,7 +340,7 @@ void ChtEgt::addBetweenValue(double value)
 	betweenValues.append(value);
 }
 
-void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
+void ChtEgt::setChtValues(double val1, double rawVal1, double val2, double rawVal2, double val3, double rawVal3, double val4, double rawVal4)
 {
     if (val1 == -999) {
         cht1IsValid = false;
@@ -366,12 +366,16 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
         cht4IsValid = true;
     }
 
+    currentRawChtValues.replace(0, rawVal1);
+    currentRawChtValues.replace(1, rawVal2);
+    currentRawChtValues.replace(2, rawVal3);
+    currentRawChtValues.replace(3, rawVal4);
+
     if (smooth) {
         currentChtValues.replace(0, smoothDataCht1.dsp_ema_double(val1));
         currentChtValues.replace(1, smoothDataCht2.dsp_ema_double(val2));
         currentChtValues.replace(2, val3);
         currentChtValues.replace(3, val4);
-        //qDebug() << QString::number(value) + "; " + QString::number(currentValue);
     } else {
         currentChtValues.replace(0, val1);
         currentChtValues.replace(1, val2);
@@ -381,8 +385,12 @@ void ChtEgt::setChtValues(double val1, double val2, double val3, double val4)
 
 }
 
-void ChtEgt::setEgtValues(double val1, double val2, double val3, double val4)
+void ChtEgt::setEgtValues(double val1, double rawVal1, double val2, double rawVal2, double val3, double rawVal3, double val4, double rawVal4)
 {
+    currentRawEgtValues.replace(0, rawVal1);
+    currentRawEgtValues.replace(1, rawVal2);
+    currentRawEgtValues.replace(2, rawVal3);
+    currentRawEgtValues.replace(3, rawVal4);
 
     currentEgtValues.replace(0, val1);
     currentEgtValues.replace(1, val2);

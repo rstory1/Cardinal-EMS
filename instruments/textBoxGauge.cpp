@@ -111,13 +111,15 @@ void TextBox::setPrecision(quint8 readout, quint8 bar)
 	barPrecision = bar;
 }
 
-void TextBox::setValue(double value)
+void TextBox::setValue(double value, double rawValue)
 {
     if (value ==-999) {
         dataIsValid = false;
     } else {
         dataIsValid = true;
     }
+
+    currentRawValue = rawValue;
 
     if (smooth) {
         currentValue = smoothData.dsp_ema_double(value);

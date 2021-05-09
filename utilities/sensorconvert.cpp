@@ -174,7 +174,7 @@ void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 
 //}
 
-void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts) {
+void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts, QDateTime lastMessageTime) {
     convertFuelFlow(fuelFlow1);
     convertOilPress(oilP);
     convertCht(ax1, ax2, tc3, tc4);
@@ -185,13 +185,7 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertOAT(coolantT);
     convertFuelP(fuelP);
 
-#ifdef USEDATABASE
-    emit insertValuesIntoDB(intTemp,coolantT,volts,fuelL2,curr,fuelL1,fuelFlow1,fuelP,ax2,ax1,oilP,oilT,rpm1,intTemp,oat,volts,current2,current1,manP,fuelFlow,fuelPress,cht[1],cht[0],oilPress,oilTemp,rpm1);
-#endif
-
-#ifndef USEDATABASE
-    emit insertValuesIntoDB(intTemp,coolantT,volts,fuelL2,curr,fuelL1,fuelFlow1,fuelP,ax2,ax1,oilP,oilT,rpm1,intTemp,oat,volts,current2,current1,manP,fuelFlow,fuelPress,cht[1],cht[0],oilPress,oilTemp,rpm1);
-#endif
+    emit updateValues(intTemp /*0*/,coolantT /*1*/,volts /*2*/,fuelL2 /*3*/,curr /*4*/,fuelL1 /*5*/,fuelFlow1 /*6*/,fuelP /*7*/,ax2 /*8*/,ax1 /*9*/,oilP /*10*/,oilT /*11*/,rpm1 /*12*/,intTemp /*13*/,oat /*14*/,volts /*15*/,current2 /*16*/,current1 /*17*/,manP /*18*/,fuelFlow /*19*/,fuelPress /*20*/,cht[1] /*21*/,cht[0] /*22*/,oilPress /*23*/,oilTemp /*24*/,rpm1 /*25*/,lastMessageTime);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {
@@ -237,6 +231,5 @@ qreal SensorConvert::filterReading(qreal inputVal, qreal preVal, qreal dt, qreal
 }
 
 void SensorConvert::debugSend() {
-    onRdacUpdate(4400, 1200, 0, 0, 0, 0, 0, 0, 0, 0, 4, 450, 4, 2.5, 2.5, 3.0, 2.3, 2.9, 2500, 0, 2.7, 2.8, 25, 14.2);
-    //emit updateMonitor(5200, 5.0, 130, 65, 10, 10, 14.0, 0, 0, 0, 0, 100, 0, 0, 0, 20, 10, 8.6, 5.3);
+    onRdacUpdate(4400, 1200, 0, 0, 0, 0, 0, 0, 0, 0, 4, 450, 4, 2.5, 2.5, 3.0, 2.3, 2.9, 2500, 0, 2.7, 2.8, 25, 14.2, QDateTime::currentDateTime());
 }

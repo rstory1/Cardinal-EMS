@@ -51,36 +51,18 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connectSignals();
     qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 
-#ifdef USEDATABASE
-    dbHandler.moveToThread(&dbWorkerThread);
-    connect(&sensorConvert, SIGNAL(insertValuesIntoDB(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)), &dbHandler, SLOT(executeInsertSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal)));
-    connect(&dbHandler, SIGNAL(updateSensorValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onReadDBValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
-    dbWorkerThread.start();
-#endif
-
-#ifndef USEDATABASE
-    sensorConvert.moveToThread(&sensorThread);
-
-    sensorThread.start();
-#endif
+    connect(&rdac.sensorConvert, SIGNAL(updateValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onUpdateValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
+    rdacWorkerThread.start();
 
     connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));
-    connect(&rdac, SIGNAL(rdacUpdateMessage(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)), &sensorConvert, SLOT(onRdacUpdate(qreal, qreal, quint16, quint16, quint16, quint16, quint16, quint16, quint16, quint16, qreal, qreal, qreal, qreal, qreal, qreal, qreal, qreal, quint16, qreal, qreal, qreal, quint16, qreal)));
 }
 
 EngineMonitor::~EngineMonitor()
 {
     logFile->close();
 
-#ifdef USEDATABASE
-    dbWorkerThread.quit();
-    dbWorkerThread.wait();
-#endif
-
-#ifndef USEDATABASE
-    sensorThread.quit();
-    sensorThread.wait();
-#endif
+    rdacWorkerThread.quit();
+    rdacWorkerThread.wait();
 }
 
 void EngineMonitor::setupLogFile()
@@ -111,7 +93,7 @@ void EngineMonitor::setupLogFile()
     logFile->write(QString("Engine S/N: %1\r\n").arg(settings.value("Aircraft/ENGINE_SN").toString()).toLatin1());
     logFile->write(QString("All temperatures in degree %1\r\n oil pressure in %2\r\n fuel flow in %3.\r\n").arg(settings.value("Units/temp/", "F").toString(),settings.value("Units/pressure","psi").toString(),settings.value("Units/fuelFlow","gph").toString()).toLatin1());
     logFile->write("[data]\r\n");
-    logFile->write("INDEX;TIME;EGT1;EGT2;EGT3;EGT4;CHT1;CHT2;CHT3;CHT4;OILT;OILP;OAT;IAT;BAT;CUR1;CUR2;RPM;MAP;FF;FUELP;HOBBS;FLIGHT\r\n");
+    logFile->write("INDEX;TIME;EGT1;EGT1_RAW;EGT2;EGT2_RAW;EGT3;EGT3_RAW;EGT4;EGT4_RAW;CHT1;CHT1_RAW;CHT2;CHT2_RAW;CHT3;CHT3_RAW;CHT4;CHT4_RAW;OILT;OILT_RAW;OILP;OILP_RAW;OAT;OAT_RAW;IAT;IAT_RAW;BAT;BAT_RAW;CUR1;CUR1_RAW;CUR2;CUR2_RAW;RPM;RPM_RAW;MAP;MAP_RAW;FF;FF_RAW;FUELP;FUELP_RAW;HOBBS;FLIGHT\r\n");
 }
 
 void EngineMonitor::writeLogFile()
@@ -119,27 +101,48 @@ void EngineMonitor::writeLogFile()
     static quint64 sample = 0;
     logFile->write(QString::number(sample).append(';').toLatin1());
     logFile->write(QDateTime::currentDateTimeUtc().toString("yyyy-dd-MM hh:mm:ss").append(';').toLatin1());
-    QList<double> egtValues = ems_full.chtEgt.getCurrentEgtValues();
+    QList<double> egtValues = ems_full.chtEgt.getCurrentRawEgtValues();
+    QList<double> egtRawValues = ems_full.chtEgt.getCurrentRawEgtValues();
     logFile->write(QString::number(egtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtRawValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(egtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtRawValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(egtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtRawValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(egtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(egtRawValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     QList<double> chtValues = ems_full.chtEgt.getCurrentChtValues();
+    QList<double> chtRawValues = ems_full.chtEgt.getCurrentChtValues();
     logFile->write(QString::number(chtValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtRawValues.value(0, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(chtValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtRawValues.value(1, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(chtValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtRawValues.value(2, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(chtValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(chtRawValues.value(3, 0.0), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilTemperature.getValue(), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.oilTemperature.getRawValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.oilPressure.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.oilTemperature.getRawValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.outsideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.outsideAirTemperature.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.insideAirTemperature.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.insideAirTemperature.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.voltMeter.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.voltMeter.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.ampereMeter.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.ampereMeter.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.ampereMeter2.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.ampereMeter2.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.rpmIndicator.getValue(), 'f', 0).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.rpmIndicator.getRawValue(), 'f', 0).append(';').toLatin1());
     logFile->write(QString::number(ems_full.manifoldPressure.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.manifoldPressure.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.fuelFlow.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.fuelFlow.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString::number(ems_full.fuelPressure.getValue(), 'f', 1).append(';').toLatin1());
+    logFile->write(QString::number(ems_full.fuelPressure.getRawValue(), 'f', 1).append(';').toLatin1());
     logFile->write(QString(ems_full.hobbs.getHobbsTime().append(';')).toLatin1());
     logFile->write(QString(ems_full.hobbs.getFlightTime().append(';')).toLatin1());
     logFile->write("\r\n");

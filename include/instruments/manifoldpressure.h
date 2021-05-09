@@ -38,11 +38,12 @@ public:
 	void setStartSpan(double start, double span);
 	void setBorders(double minimum, double maximum, double greenBorder, double redBorder);
 	void addBetweenValue(double value);
-    void setValue(double value);
-	double getValue() {return currentValue;};
+    void setValue(qreal value, qreal rawValue);
+    qreal getValue() {return currentValue;};
+    qreal getRawValue() {return currentRawValue;};
 private:
 	double calculateLocalValue(double value) const;
-    double minValue, maxValue, currentValue;
+    qreal minValue, maxValue, currentValue, currentRawValue;
 	double whiteGreenBorder, greenRedBorder;
 	double startAngle, spanAngle;
 	QList<double> beetweenValues;

@@ -41,15 +41,16 @@ public:
 	void setBorders(double minimum, double maximum);
 	void setPrecision(quint8 readout = 0, quint8 bar = 0);
     void addBetweenValue(double value);
-    void setValue(double value);
+    void setValue(double value, double rawValue);
     double getValue() {return currentValue;};
+    double getRawValue() {return currentRawValue;};
     void setSmoothBool(bool value) {smooth = value;};
 public slots:
 	void makeVisible() {setVisible(true);};
 	void makeInvisible() {setVisible(false);};
 private:
 	QString titleText, unitText;
-	double minValue, maxValue, currentValue;
+    double minValue, maxValue, currentValue, currentRawValue;
 	QList<double> beetweenValues;
     quint8 barPrecision, readoutPrecision;
     bool isAlarmedRed = false;

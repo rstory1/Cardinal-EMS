@@ -43,14 +43,15 @@ public:
 	void setStartSpan(double start, double span);
     void setBorders(double minimum, double maximum);
 	void addBetweenValue(double value);
-    void setValue(double value);
-    double getValue() {return currentValue;};
+    void setValue(qreal value, qreal rawValue);
+    qreal getValue() {return currentValue;};
+    qreal getRawValue() {return currentRawValue;};
     bool isWarmup;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;
 private:
 	double calculateLocalValue(double value) const;
-    double minValue, maxValue, currentValue, rawValue;
+    qreal minValue, maxValue, currentValue, currentRawValue;
     double whiteGreenBorder, greenRedBorder, yellowRedBorder, greenYellowBorder, redYellowBorder, yellowGreenBorder;
     double yellowRedBorderWarmup, greenYellowBorderWarmup, redYellowBorderWarmup, yellowGreenBorderWarmup;
     double startAngle, spanAngle;

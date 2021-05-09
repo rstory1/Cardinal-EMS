@@ -32,7 +32,7 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     , rangeRect(0, -75, 90, 55)
 {
     connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
-    //fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
+    fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
     fuelUnits = settings.value("Units/fuel", "gal").toString();
 
     connect(&fuelBurnTimer, SIGNAL(timeout()), this, SLOT(updateFuelBurn()));

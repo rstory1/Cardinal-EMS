@@ -39,10 +39,12 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
     void setBorders(double minimum, double maximum, double yellowBorder, double redBorder, double minEgt, double maxEgt);
 	void addBetweenValue(double value);
-    void setChtValues(double val1, double val2, double val3, double val4);
-    void setEgtValues(double val1, double val2, double val3, double val4);
+    void setChtValues(double val1, double rawVal1, double val2, double rawVal2, double val3, double rawVal3, double val4, double rawVal4);
+    void setEgtValues(double val1, double rawVal1, double val2, double rawVal2, double val3, double rawVal3, double val4, double rawVal4);
     const QList<double> &getCurrentChtValues() {return currentChtValues;}
     const QList<double> &getCurrentEgtValues() {return currentEgtValues;}
+    const QList<double> &getCurrentRawChtValues() {return currentRawChtValues;}
+    const QList<double> &getCurrentRawEgtValues() {return currentRawEgtValues;}
     void setGaugeType(QString type);
 
 private:
@@ -51,9 +53,11 @@ private:
     double minChtValue, maxChtValue;
     double greenYellowChtValue, yellowRedChtValue;
     QList<double> currentChtValues;
+    QList<double> currentRawChtValues;
     double minEgtValue, maxEgtValue;
     double greenYellowEgtValue, yellowRedEgtValue;
     QList<double> currentEgtValues;
+    QList<double> currentRawEgtValues;
 	QList<double> betweenValues;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;

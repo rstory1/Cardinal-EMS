@@ -313,19 +313,17 @@ double BarGraph::calculateLocalValue(double value) const
     return -(value-minValue)/(maxValue-minValue)*75.0+50.0;
 }
 
-void BarGraph::setValue(qreal value)
+void BarGraph::setValue(qreal value, qreal rawValue)
 {
     checkDataIsValid(value);
 
     if (smooth) {
         currentValue = smoothData.dsp_ema_double(value);
-        //qDebug() << QString::number(value) + "; " + QString::number(currentValue);
     } else {
         currentValue = value;
     }
 
-    //qDebug() << "Current " + titleText + ": " + QString::number(value);
-
+    currentRawValue = rawValue;
 }
 
 void BarGraph::addColorStop(ColorStop stop)

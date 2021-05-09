@@ -41,8 +41,7 @@ Debug:UI_DIR = debug/.ui
 
 RC_FILE = ./res/icon.rc
 
-SOURCES += main.cpp\
-    utilities/databasehandler.cpp \
+SOURCES += main.cpp \
     enginemonitor.cpp \
     utilities/datasmoothing.cpp \
     instruments/bargraph.cpp \
@@ -73,7 +72,6 @@ SOURCES += main.cpp\
     instruments/diagnosticwidget.cpp
 
 HEADERS  += include/enginemonitor.h \
-    include/databasehandler.h \
     include/datasmoothing.h \
     include/instruments/bargraph.h \
     include/instruments/rpmindicator.h \

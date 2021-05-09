@@ -166,8 +166,9 @@ void ManifoldPressure::addBetweenValue(double value)
 	beetweenValues.append(value);
 }
 
-void ManifoldPressure::setValue(double value)
+void ManifoldPressure::setValue(qreal value, qreal rawValue)
 {
     currentValue = value;
+    currentRawValue = rawValue;
 	update();
 }

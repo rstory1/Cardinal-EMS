@@ -175,9 +175,9 @@ void emsFull::setupManifoldPressure()
     this->addItem(&manifoldPressure);
 }
 
-void emsFull::setFuelData(double fuelFlowValue, double fuelAbsoluteValue)
+void emsFull::setFuelData(qreal fuelFlowValue, qreal fuelFlowRawValue, qreal fuelAbsoluteValue)
 {
-    fuelFlow.setValue(fuelFlowValue);
+    fuelFlow.setValue(fuelFlowValue, fuelFlowRawValue);
     fuelManagement.setFuelFlow(fuelFlowValue);
     fuelDisplay.setFuelFlow(fuelFlowValue);
     fuelManagement.reduceFuelAmount(fuelAbsoluteValue);
@@ -242,20 +242,20 @@ void emsFull::setupStatusItem()
 }
 
 void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP) {
-    rpmIndicator.setValue(rpm);
-    fuelDisplay.setFuelFlow(fuelF);
-    fuelFlow.setValue(fuelF);
-    fuelPressure.setValue(fuelP);
-    oilTemperature.setValue(oilTemp);
-    oilPressure.setValue(oilPress);
-    ampereMeter.setValue(amps);
-    ampereMeter2.setValue(amps2);
-    voltMeter.setValue(volts);
-    chtEgt.setEgtValues(egt1, egt2, egt3, egt4);
-    chtEgt.setChtValues(cht1, cht2, cht3, cht4);
-    outsideAirTemperature.setValue(oat);
-    insideAirTemperature.setValue(iat);
-    manifoldPressure.setValue(map);
+    //rpmIndicator.setValue(rpm);
+    //fuelDisplay.setFuelFlow(fuelF);
+    //fuelFlow.setValue(fuelF);
+    //fuelPressure.setValue(fuelP);
+    //oilTemperature.setValue(oilTemp);
+    //oilPressure.setValue(oilPress);
+    //ampereMeter.setValue(amps);
+    //ampereMeter2.setValue(amps2);
+    //voltMeter.setValue(volts);
+    //chtEgt.setEgtValues(egt1, egt2, egt3, egt4);
+    //chtEgt.setChtValues(cht1, cht2, cht3, cht4);
+    //outsideAirTemperature.setValue(oat);
+    //insideAirTemperature.setValue(iat);
+    //manifoldPressure.setValue(map);
 
 //    emsSerialString = QString::number(rpmIndicator.getValue()) + "," + QString::number(fuelFlow.getValue()) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(oilPress) + "," + QString::number(ampereMeter.getValue()) + "," +
 //            QString::number(ampereMeter.getValue()) + "," + QString::number(voltMeter.getValue()) + "," + QString::number(fuelPressure.getValue()) + "," + QString::number(chtEgt.getCurrentChtValues().at(0)) + "," + QString::number(chtEgt.getCurrentChtValues().at(1))+ "," + QString::number(oat);
@@ -270,8 +270,8 @@ void emsFull::demoFunction()
     static double rpm = 1100.0;
     rpm += 5.0;
 
-    rpmIndicator.setValue(rpm);
-    manifoldPressure.setValue(10);
+    //rpmIndicator.setValue(rpm);
+    //manifoldPressure.setValue(10);
 
     static double basicEGT = 750.0;
     static bool egtUp = true;
@@ -303,7 +303,7 @@ void emsFull::demoFunction()
         leaned = true;
         egtUp = true;
     }
-    chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
+    //chtEgt.setEgtValues(basicEGT+51.0+off13, basicEGT+10.0-off24, basicEGT+5.0-off13, basicEGT+30.0+off24);
 
     static double basicCHT = 60.0;
 
@@ -317,10 +317,10 @@ void emsFull::demoFunction()
     static double offset2 = double(qrand())/double(RAND_MAX)*7.0;
     static double offset3 = double(qrand())/double(RAND_MAX)*15.0;
     static double offset4 = double(qrand())/double(RAND_MAX)*9.0;
-    chtEgt.setChtValues(basicCHT+offset1,
-                        basicCHT-offset2,
-                        basicCHT+offset3,
-                        basicCHT-offset4);
+//    chtEgt.setChtValues(basicCHT+offset1,
+//                        basicCHT-offset2,
+//                        basicCHT+offset3,
+//                        basicCHT-offset4);
 
     static double oilTemp = 100.0;
     if(oilTemp < 80.0)
@@ -329,7 +329,7 @@ void emsFull::demoFunction()
     }
     oilTemp += 0.25;
 
-    oilTemperature.setValue(oilTemp);
+    //oilTemperature.setValue(oilTemp);
 
     static double oilPress = 0.0;
     oilPress += 0.05;
@@ -337,7 +337,7 @@ void emsFull::demoFunction()
     {
         oilPress = 0.0;
     }
-    oilPressure.setValue(oilPress);
+    //oilPressure.setValue(oilPress);
 
     static double volts = 11.5;
     volts += 0.01;
@@ -345,7 +345,7 @@ void emsFull::demoFunction()
     {
         volts = 11.5;
     }
-    voltMeter.setValue(volts);
+    //voltMeter.setValue(volts);
 
     static double amperes = 35.0;
     amperes -= 0.1;
@@ -353,7 +353,7 @@ void emsFull::demoFunction()
     {
         amperes = 30.0;
     }
-    ampereMeter.setValue(amperes);
+    //ampereMeter.setValue(amperes);
 
     static double flow = 7.0;
     flow -= 0.05;
@@ -361,7 +361,7 @@ void emsFull::demoFunction()
     {
         flow = 7.0;
     }
-    fuelFlow.setValue(flow);
+    //fuelFlow.setValue(flow);
     fuelManagement.setFuelFlow(flow);
     fuelManagement.reduceFuelAmount(flow*200.0/1000.0/60.0/60.0);
     fuelDisplay.setFuelFlow(flow);
@@ -373,50 +373,51 @@ void emsFull::demoFunction()
     {
         airTemp = -10.0;
     }
-    outsideAirTemperature.setValue(airTemp);
-    insideAirTemperature.setValue(airTemp);
+    //outsideAirTemperature.setValue(airTemp);
+    //insideAirTemperature.setValue(airTemp);
 
 }
 
-void emsFull::onReadDBValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
-                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, QDateTime recordTime) {
+void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
+                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21
+                             , qreal val22, qreal val23, qreal val24, qreal val25, QDateTime messageTime) {
 
-    recordDateTime = recordTime;
+    recordDateTime = messageTime;
 
-    if (abs(recordTime.msecsTo(QDateTime::currentDateTime())) > 5000000000 /*17973121*/) {
+    if (abs(messageTime.msecsTo(QDateTime::currentDateTime())) > 5000000000 /*17973121*/) {
         statusItem.setDefaultTextColor(Qt::red);
         statusItem.setPlainText("DATA NOT CURRENT");
-        rpmIndicator.setValue(-999);
+        rpmIndicator.setValue(-999, -999);
         fuelDisplay.setFuelFlow(-999);
-        fuelFlow.setValue(-999);
-        oilTemperature.setValue(-999);
-        oilPressure.setValue(-999);
-        ampereMeter.setValue(-999);
-        ampereMeter2.setValue(-999);
-        voltMeter.setValue(-999);
-        chtEgt.setEgtValues(-999, -999, -999, -999);
-        chtEgt.setChtValues(-999, -999, -999, -999);
-        outsideAirTemperature.setValue(-999);
-        insideAirTemperature.setValue(-999);
-        manifoldPressure.setValue(-999);
-        fuelPressure.setValue(-999);
+        fuelFlow.setValue(-999, -999);
+        oilTemperature.setValue(-999, -999);
+        oilPressure.setValue(-999, -999);
+        ampereMeter.setValue(-999, -999);
+        ampereMeter2.setValue(-999, -999);
+        voltMeter.setValue(-999, -999);
+        chtEgt.setEgtValues(-999, -999, -999, -999,-999, -999, -999, -999);
+        chtEgt.setChtValues(-999, -999, -999, -999,-999, -999, -999, -999);
+        outsideAirTemperature.setValue(-999, -999);
+        insideAirTemperature.setValue(-999, -999);
+        manifoldPressure.setValue(-999, -999);
+        fuelPressure.setValue(-999, -999);
     } else {
         statusItem.setDefaultTextColor(Qt::white);
-        statusItem.setPlainText(""/*"Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz")*/);
-        rpmIndicator.setValue(val0);
+        statusItem.setPlainText("Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz"));
+        rpmIndicator.setValue(val25, val12);
         fuelDisplay.setFuelFlow(val1);
-        fuelFlow.setValue(val1);
-        oilTemperature.setValue(val2);
-        oilPressure.setValue(val3);
-        ampereMeter.setValue(val4);
-        ampereMeter2.setValue(val5);
-        voltMeter.setValue(val6);
-        chtEgt.setEgtValues(val7, val8, val9, val10);
-        chtEgt.setChtValues(val11, val12, val13, val14);
-        outsideAirTemperature.setValue(val15);
-        insideAirTemperature.setValue(val16);
-        manifoldPressure.setValue(val17);
-        fuelPressure.setValue(val18);
+        fuelFlow.setValue(val19, val6);
+        oilTemperature.setValue(val24, val11);
+        oilPressure.setValue(val23, val10);
+        ampereMeter.setValue(val17, val4);
+        ampereMeter2.setValue(val16, val3);
+        voltMeter.setValue(val15, val2);
+        chtEgt.setEgtValues(-999, -999, -999, -999,-999, -999, -999, -999);
+        chtEgt.setChtValues(val22, val9, val21, val8, -999, -999, -999, -999);
+        outsideAirTemperature.setValue(val14, val1);
+        insideAirTemperature.setValue(val13, val0);
+        manifoldPressure.setValue(val18, val5);
+        fuelPressure.setValue(val20, val7);
     }
 
     statusItem.update();
