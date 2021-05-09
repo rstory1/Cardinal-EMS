@@ -403,7 +403,7 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
         statusItem.setDefaultTextColor(Qt::white);
         statusItem.setPlainText("Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz"));
         rpmIndicator.setValue(val25, val12);
-        fuelDisplay.setFuelFlow(val1);
+        fuelDisplay.setFuelFlow(val19);
         fuelFlow.setValue(val19, val6);
         oilTemperature.setValue(val24, val11);
         oilPressure.setValue(val23, val10);

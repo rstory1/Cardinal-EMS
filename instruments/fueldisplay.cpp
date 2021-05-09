@@ -107,7 +107,7 @@ void FuelDisplay::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
 }
 
-void FuelDisplay::setFuelFlow(double value)
+void FuelDisplay::setFuelFlow(qreal value)
 {
     if (value == -999) {
         dataIsValid = false;

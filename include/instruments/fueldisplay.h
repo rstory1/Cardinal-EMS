@@ -16,7 +16,7 @@ public:
     explicit FuelDisplay(QGraphicsObject* parent = 0);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-    void setFuelFlow(double value);
+    void setFuelFlow(qreal value);
     void setTimeToDestination(double time);
     void reduceFuelAmount(double fuel)
     {
