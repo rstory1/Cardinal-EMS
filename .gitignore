@@ -8,3 +8,7 @@ Cardinal-EMS-release/
 *.9-pre1
 
 EngineMonitor.pro.user.4.10-pre1
+
+*.log
+
+Cardinal-EMS-debug/

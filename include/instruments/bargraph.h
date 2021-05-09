@@ -47,13 +47,13 @@ public:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 	void setTitle(QString title);
 	void setUnit(QString unit);
-	void setBorders(double minimum, double maximum);
+    void setBorders(qreal minimum, qreal maximum);
 	void setPrecision(quint8 readout = 0, quint8 bar = 0);
-	void addBetweenValue(double value);
+    void addBetweenValue(qreal value);
 	void addColorStop(ColorStop stop);
     void setValue(qreal value, qreal rawValue);
-    double getValue() {return currentValue;}
-    double getRawValue() {return currentRawValue;}
+    qreal getValue() {return currentValue;}
+    qreal getRawValue() {return currentRawValue;}
     QString gaugeName;
     void setIndicatorSide(QString side);
     void setGaugeType(QString type) {
@@ -74,12 +74,12 @@ public slots:
     void changeFlashState();
     void onAlarmAck();
 private:
-	double calculateLocalValue(double value) const;
+    qreal calculateLocalValue(qreal value) const;
 	QString titleText, unitText;
-    double minValue, maxValue;
+    qreal minValue, maxValue;
     qreal currentValue;
     qreal currentRawValue;
-	QList<double> beetweenValues;
+    QList<qreal> beetweenValues;
 	quint8 barPrecision, readoutPrecision;
 	QList<ColorStop> colorStops;
     bool isAlarmedRed = false;

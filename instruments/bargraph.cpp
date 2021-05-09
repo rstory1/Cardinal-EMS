@@ -291,7 +291,7 @@ void BarGraph::setUnit(QString unit)
 	unitText = unit;
 }
 
-void BarGraph::setBorders(double minimum, double maximum)
+void BarGraph::setBorders(qreal minimum, qreal maximum)
 {
 	minValue = minimum;
 	maxValue = maximum;
@@ -303,7 +303,7 @@ void BarGraph::setPrecision(quint8 readout, quint8 bar)
 	barPrecision = bar;
 }
 
-void BarGraph::addBetweenValue(double value)
+void BarGraph::addBetweenValue(qreal value)
 {
 	beetweenValues.append(value);
 }

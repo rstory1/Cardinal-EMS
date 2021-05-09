@@ -41,10 +41,10 @@ public:
 	void addBetweenValue(double value);
     void setChtValues(double val1, double rawVal1, double val2, double rawVal2, double val3, double rawVal3, double val4, double rawVal4);
     void setEgtValues(double val1, double rawVal1, double val2, double rawVal2, double val3, double rawVal3, double val4, double rawVal4);
-    const QList<double> &getCurrentChtValues() {return currentChtValues;}
-    const QList<double> &getCurrentEgtValues() {return currentEgtValues;}
-    const QList<double> &getCurrentRawChtValues() {return currentRawChtValues;}
-    const QList<double> &getCurrentRawEgtValues() {return currentRawEgtValues;}
+    const QList<qreal> &getCurrentChtValues() {return currentChtValues;}
+    const QList<qreal> &getCurrentEgtValues() {return currentEgtValues;}
+    const QList<qreal> &getCurrentRawChtValues() {return currentRawChtValues;}
+    const QList<qreal> &getCurrentRawEgtValues() {return currentRawEgtValues;}
     void setGaugeType(QString type);
 
 private:
@@ -52,12 +52,12 @@ private:
     double calculateLocalEgtValue(double value) const;
     double minChtValue, maxChtValue;
     double greenYellowChtValue, yellowRedChtValue;
-    QList<double> currentChtValues;
-    QList<double> currentRawChtValues;
+    QList<qreal> currentChtValues;
+    QList<qreal> currentRawChtValues;
     double minEgtValue, maxEgtValue;
     double greenYellowEgtValue, yellowRedEgtValue;
-    QList<double> currentEgtValues;
-    QList<double> currentRawEgtValues;
+    QList<qreal> currentEgtValues;
+    QList<qreal> currentRawEgtValues;
 	QList<double> betweenValues;
     bool isAlarmedRed = false;
     bool isAlarmedYellow = false;

@@ -29,8 +29,10 @@ ChtEgt::ChtEgt(QGraphicsObject *parent) : QGraphicsObject(parent)
   , minEgtValue(0.0)
   , maxEgtValue(0.0)
 {
-    currentChtValues << 0.0 << 0.0 << 0.0 << 0.0;
-    currentEgtValues << 0.0 << 0.0 << 0.0 << 0.0;
+    currentChtValues << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
+    currentEgtValues << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
+    currentRawChtValues << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
+    currentRawEgtValues << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0 << 0.0;
 
     chtGauge.setGauge("CHT");
 

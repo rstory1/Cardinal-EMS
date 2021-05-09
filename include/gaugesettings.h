@@ -12,8 +12,8 @@ public:
     explicit GaugeSettings(QObject *parent = nullptr);
 
     struct gaugeDef {
-        float start;
-        float end;
+        qreal start;
+        qreal end;
         QColor color;
     };
 

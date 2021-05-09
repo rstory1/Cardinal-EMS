@@ -106,11 +106,11 @@ void emsFull::setupBarGraphs()
     ampereMeter.setUnit("A");
     ampereMeter.addBetweenValue(0.0);
     ampereMeter.setGaugeType("Amp");
-    voltMeter.setSmoothBool(true);
+    ampereMeter.setSmoothBool(true);
     this->addItem(&ampereMeter);
 
     ampereMeter2.setPos(760, 205);
-    ampereMeter2.setTitle("LOAD");
+    ampereMeter2.setTitle("LOAD2");
     ampereMeter2.setUnit("A");
     ampereMeter2.addBetweenValue(0.0);
     ampereMeter2.setGaugeType("Amp");
@@ -378,9 +378,7 @@ void emsFull::demoFunction()
 
 }
 
-void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9
-                             ,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21
-                             , qreal val22, qreal val23, qreal val24, qreal val25, QDateTime messageTime) {
+void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9, qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21, qreal val22, qreal val23, qreal val24, qreal val25, QDateTime messageTime) {
 
     recordDateTime = messageTime;
 

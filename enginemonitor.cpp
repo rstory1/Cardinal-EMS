@@ -256,16 +256,11 @@ void EngineMonitor::connectSignals() {
     connect(&settings_scene, SIGNAL(fuelUpdated()), &ems_full.fuelDisplay, SLOT(onFuelAmountChange()));
 
     connect(&ems_full, SIGNAL(sendSerialData(QByteArray)), this, SLOT(onSendSerialData(QByteArray)));
+//    connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &dbHandler, SLOT(onReceiveTimeData(qreal, QString)));
 
-#ifdef USEDATABASE
-    connect(&ems_full, SIGNAL(sendTimeData(qreal, QString)), &dbHandler, SLOT(onReceiveTimeData(qreal, QString)));
-
-    connect(&ems_full.fuelDisplay, SIGNAL(saveFuelState(qreal)), &dbHandler, SLOT(onReceiveFuelLevel(qreal)));
-    connect(&ems_full.fuelDisplay, SIGNAL(getInitialFuelLevel()), &dbHandler, SLOT(onInitializeFuelLevel()));
-    connect(&dbHandler, SIGNAL(sendFuelLevel(qreal)), &ems_full.fuelDisplay, SLOT(onInitializeFuelLevel(qreal)));
-
-    emit ems_full.fuelDisplay.getInitialFuelLevel();
-#endif
+//    connect(&ems_full.fuelDisplay, SIGNAL(saveFuelState(qreal)), &dbHandler, SLOT(onReceiveFuelLevel(qreal)));
+//    connect(&ems_full.fuelDisplay, SIGNAL(getInitialFuelLevel()), &dbHandler, SLOT(onInitializeFuelLevel()));
+//    connect(&dbHandler, SIGNAL(sendFuelLevel(qreal)), &ems_full.fuelDisplay, SLOT(onInitializeFuelLevel(qreal)));
 
 }
 
