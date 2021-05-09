@@ -52,6 +52,7 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 
     connect(&rdac.sensorConvert, SIGNAL(updateValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onUpdateValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
+    rdac.moveToThread(&rdacWorkerThread);
     rdacWorkerThread.start();
 
     connect(this, SIGNAL(sendSerialData(QByteArray)), &rdac, SLOT(writeData(QByteArray)));

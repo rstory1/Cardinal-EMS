@@ -10,7 +10,7 @@ void DataSmoothing::setSampleSize(int sampleSize) {
     calcAlpha();
 }
 
-double DataSmoothing::dsp_ema_double(double in) {
+double DataSmoothing::dsp_ema_double(qreal in) {
 
     if ( alpha >= 1.0 ) {
         return average = in;

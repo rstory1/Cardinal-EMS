@@ -1,13 +1,14 @@
 #ifndef DATASMOOTHING_H
 #define DATASMOOTHING_H
 
+#include <QtCore>
 
 class DataSmoothing
 {
 public:
     explicit DataSmoothing();
     void setSampleSize(int sampleSize);
-    double dsp_ema_double(double in);
+    double dsp_ema_double(qreal in);
 
 private:
     int sampleSize;
