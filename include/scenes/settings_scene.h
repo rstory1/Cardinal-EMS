@@ -81,6 +81,8 @@ private:
 
     QSettings settingsINI;
 
+    QPushButton rawValuesButton;
+
 private slots:
     void onZeroCurrent() { emit zeroCurrent();}
     void showDateTime();
@@ -102,6 +104,7 @@ private slots:
     void getHobbsFromINI();
     void onChangeFuel();
     void getFuelFromINI();
+    void onRawValuesButtonClicked();
 
 signals:
     void zeroCurrent();

@@ -31,7 +31,6 @@ FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     , mpgRect(0, -80, 90, 55)
     , rangeRect(0, -75, 90, 55)
 {
-    connect(qApp, SIGNAL(aboutToQuit()), this, SLOT(saveFuelState()));
     fuelAmount = settings.value("Fueling/LastShutdown", 0.0).toDouble();
     fuelUnits = settings.value("Units/fuel", "gal").toString();
 

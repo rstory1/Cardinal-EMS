@@ -45,6 +45,8 @@ private:
 
     bool dataIsValid = false;
 
+    bool showRawValue = false;
+
 private slots:
     void updateFuelBurn();
 

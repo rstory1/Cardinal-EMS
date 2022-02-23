@@ -114,7 +114,8 @@ void emsFull::setupBarGraphs()
     ampereMeter2.setUnit("A");
     ampereMeter2.addBetweenValue(0.0);
     ampereMeter2.setGaugeType("Amp");
-    //this->addItem(&ampereMeter2);
+    this->addItem(&ampereMeter2);
+    ampereMeter2.setVisible(false);
 
     fuelFlow.setPos(690, 205);
     fuelFlow.setTitle("FF");
@@ -149,6 +150,7 @@ void emsFull::setupBarGraphs()
     outsideAirTemperature.setPrecision(1);
     outsideAirTemperature.setSmoothBool(true);
     this->addItem(&outsideAirTemperature);
+    outsideAirTemperature.setVisible(false);
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }
@@ -201,9 +203,6 @@ void emsFull::connectSignals() {
     connect(&clockTimer, SIGNAL(timeout()), &hobbs, SLOT(onTic()));
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(setEngineConds()));
     connect(&clockTimer, SIGNAL(timeout()), this, SLOT(onTic()));
-
-
-
 }
 
 void emsFull::setupHourMeter() {
@@ -238,7 +237,7 @@ void emsFull::setupStatusItem()
     this->addItem(&statusItem);
     statusItem.setFont(QFont("Arial", 18, QFont::Bold));
     statusItem.setDefaultTextColor(Qt::white);
-    statusItem.setVisible(true);
+    statusItem.setVisible(false);
 }
 
 void emsFull::onEngineValuesUpdate(qreal rpm, qreal fuelF, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP) {
@@ -401,7 +400,7 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
         fuelPressure.setValue(-999, -999);
     } else {
         statusItem.setDefaultTextColor(Qt::white);
-        statusItem.setPlainText("Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz"));
+        statusItem.setPlainText(""/*Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz")*/);
         rpmIndicator.setValue(val25, val12);
         fuelDisplay.setFuelFlow(val19);
         fuelFlow.setValue(val19, val6);
@@ -419,6 +418,13 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
     }
 
     statusItem.update();
+
+    emsSerialString = QString::number(val25) + "," + QString::number(val19) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(val23) + "," + QString::number(val17) + "," +
+                QString::number(val16) + "," + QString::number(val15) + "," + QString::number(val20) + "," + QString::number(val22) + "," + QString::number(val21)+ "," + QString::number(val14) + "," + QString::number(val18) + "," + QString::number(val13);
+
+    emsSerialStringByteArray = emsSerialString.toLocal8Bit();
+
+    emit sendSerialData(emsSerialStringByteArray);
 }
 
 emsFull::~emsFull() {

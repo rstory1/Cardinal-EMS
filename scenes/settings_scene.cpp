@@ -99,6 +99,11 @@ settingsScene::settingsScene(QObject* parent)  :
     addWidget(&button1);
 
     connect(&button1, SIGNAL(clicked(bool)), this, SLOT(onButton1Pressed()));
+
+    rawValuesButton.setText("Raw Sensor\r\nValues");
+    rawValuesButton.setFixedSize(130,50);
+    rawValuesButton.setGeometry(130,230,120,50);
+    addWidget(&rawValuesButton);
 }
 
 QRectF settingsScene::boundingRect() const
@@ -584,5 +589,9 @@ void settingsScene::getFuelFromINI() {
     }
 
     fuelLabel.setText(fuelText);
+}
+
+void settingsScene::onRawValuesButtonClicked() {
+
 }
 

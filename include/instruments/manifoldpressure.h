@@ -47,6 +47,11 @@ private:
 	double whiteGreenBorder, greenRedBorder;
 	double startAngle, spanAngle;
 	QList<double> beetweenValues;
+    QList<double> valueHistory;
+    QList<double> rawValueHistory;
+    bool showRawValue = false;
+    QString pressure;
 };
+
 
 #endif // MANIFOLDPRESSURE_H

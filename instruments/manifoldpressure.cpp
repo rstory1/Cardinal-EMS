@@ -104,7 +104,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 
 	//Draw the needle if value is in range
 	if((currentValue > minValue) &&
-			(currentValue < maxValue))
+            (currentValue < maxValue) && !showRawValue)
 	{
 		//Needle is white with 1px black border
 		painter->setPen(QPen(Qt::black, 1));
@@ -122,7 +122,7 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	}
 
 	//If number is in red range, draw it red
-	if(currentValue > greenRedBorder)
+    if(currentValue > greenRedBorder && showRawValue)
 	{
 		painter->setPen(Qt::red);
 	}
@@ -130,8 +130,14 @@ void ManifoldPressure::paint(QPainter *painter, const QStyleOptionGraphicsItem *
 	{
 		painter->setPen(Qt::white);
 	}
-	//Round value to the nearest 10
-    QString pressure = QString::number(currentValue, 'f', 1);
+
+    if (!showRawValue) {
+        //Round value to the nearest 10
+        pressure = QString::number(currentValue, 'f', 1);
+    } else {
+        pressure = QString::number(currentRawValue, 'f', 1);
+    }
+
 	//Set position and font for the value and draw it
 	QRectF textRect(-82, 25, 130, 25);
     painter->setFont(QFont("Arial", 20, 1));
@@ -170,5 +176,5 @@ void ManifoldPressure::setValue(qreal value, qreal rawValue)
 {
     currentValue = value;
     currentRawValue = rawValue;
-	update();
+    update();
 }
