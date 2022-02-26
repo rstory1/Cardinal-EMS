@@ -44,6 +44,9 @@ public:
     HourMeter hobbs;
     AlarmBox alarmWindow;
     QGraphicsTextItem statusItem;
+    TextBox tcSensor1;
+    TextBox tcSensor2;
+    TextBox tcSensor3;
 
 private:
     QSettings gaugeSettings;
@@ -88,7 +91,7 @@ private:
         void onAckAlarm() {button2.setVisible(false);}
         void onEngineValuesUpdate(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelP);
         void onTic() {emit sendTimeData(hobbs.getHobbsTime().toDouble(), hobbs.getFlightTime());}
-        void onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21, qreal val22, qreal val23, qreal val24, qreal val25, QDateTime messageTime);
+        void onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9,qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21, qreal val22, qreal val23, qreal val24, qreal val25, qreal val26, qreal val27, qreal val28, QDateTime messageTime);
 
     private slots:
         void onAlarmFlash() {emit alarmFlashing();

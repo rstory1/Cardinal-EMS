@@ -97,7 +97,7 @@ signals:
     void userMessage(QString,QString,bool);
     void updateMonitor(qreal rpm, qreal fuelFlow, qreal oilTemp, qreal oilPress, qreal amps, qreal amps2, qreal volts, qreal egt1, qreal egt2, qreal egt3, qreal egt4, qreal cht1, qreal cht2, qreal cht3, qreal cht4, qreal oat, qreal iat, qreal map, qreal fuelPress);
     void sendSerialData(QByteArray &data);
-    void updateValues(qreal intTempRaw, qreal coolantT, qreal voltsRaw, qreal fuelL2, qreal curr, qreal fuelL1, qreal fuelFlow1, qreal fuelP, qreal ax2, qreal ax1, qreal oilP, qreal oilT, qreal rpm1Raw, qreal intTemp, qreal oat, qreal volts, qreal current2, qreal current1, qreal manP, qreal fuelFlow, qreal fuelPress, qreal cht2, qreal cht1, qreal oilPress, qreal oilTemp, qreal rpm1, QDateTime lastMessageTime);
+    void updateValues(qreal intTempRaw, qreal coolantT, qreal voltsRaw, qreal fuelL2, qreal curr, qreal fuelL1, qreal fuelFlow1, qreal fuelP, qreal ax2, qreal ax1, qreal oilP, qreal oilT, qreal rpm1Raw, qreal intTemp, qreal oat, qreal volts, qreal current2, qreal current1, qreal manP, qreal fuelFlow, qreal fuelPress, qreal cht2, qreal cht1, qreal oilPress, qreal oilTemp, qreal rpm1, qreal tc1, qreal tc2, qreal tc3, QDateTime lastMessageTime);
     void updateRawValues(qreal intTempRaw, qreal coolantT, qreal voltsRaw, qreal fuelL2, qreal curr, qreal fuelL1, qreal fuelFlow1, qreal fuelP, qreal ax2, qreal ax1, qreal oilP, qreal oilT, qreal rpm1Raw, qreal intTemp, qreal oat, qreal volts, qreal current2, qreal current1, qreal manP, qreal fuelFlow, qreal fuelPress, qreal cht2, qreal cht1, qreal oilPress, qreal oilTemp, qreal rpm1, QDateTime lastMessageTime);
 
 public slots:

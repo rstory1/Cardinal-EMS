@@ -135,14 +135,35 @@ void emsFull::setupBarGraphs()
     this->addItem(&fuelPressure);
     fuelPressure.setVisible(true);
 
-//    insideAirTemperature.setPos(800, 205);
-//    insideAirTemperature.setTitle("IAT");
-//    insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
-//    insideAirTemperature.setPrecision(1);
-//    this->addItem(&insideAirTemperature);
-//    insideAirTemperature.setVisible(false);
+    insideAirTemperature.setPos(800, 205);
+    insideAirTemperature.setTitle("IAT");
+    insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
+    insideAirTemperature.setPrecision(1);
+    this->addItem(&insideAirTemperature);
+    insideAirTemperature.setVisible(false);
 //    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
 //    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
+
+    tcSensor1.setPos(55, 150);
+    tcSensor1.setTitle("TC1");
+    tcSensor1.setUnit(settings.value("Units/temp").toString().toLatin1());
+    tcSensor1.setPrecision(1);
+    this->addItem(&tcSensor1);
+    tcSensor1.setVisible(true);
+
+    tcSensor2.setPos(55, 225);
+    tcSensor2.setTitle("TC2");
+    tcSensor2.setUnit(settings.value("Units/temp").toString().toLatin1());
+    tcSensor2.setPrecision(1);
+    this->addItem(&tcSensor2);
+    tcSensor2.setVisible(true);
+
+    tcSensor3.setPos(55, 300);
+    tcSensor3.setTitle("TC3");
+    tcSensor3.setUnit(settings.value("Units/temp").toString().toLatin1());
+    tcSensor3.setPrecision(1);
+    this->addItem(&tcSensor3);
+    tcSensor3.setVisible(true);
 
     outsideAirTemperature.setPos(55, 300);
     outsideAirTemperature.setTitle("OAT");
@@ -377,7 +398,7 @@ void emsFull::demoFunction()
 
 }
 
-void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9, qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21, qreal val22, qreal val23, qreal val24, qreal val25, QDateTime messageTime) {
+void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9, qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21, qreal val22, qreal val23, qreal val24, qreal val25, qreal val26, qreal val27, qreal val28, QDateTime messageTime) {
 
     recordDateTime = messageTime;
 
@@ -398,6 +419,9 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
         insideAirTemperature.setValue(-999, -999);
         manifoldPressure.setValue(-999, -999);
         fuelPressure.setValue(-999, -999);
+        tcSensor1.setValue(-999, -999);
+        tcSensor2.setValue(-999, -999);
+        tcSensor3.setValue(-999, -999);
     } else {
         statusItem.setDefaultTextColor(Qt::white);
         statusItem.setPlainText(""/*Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz")*/);
@@ -415,12 +439,16 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
         insideAirTemperature.setValue(val13, val0);
         manifoldPressure.setValue(val18, val5);
         fuelPressure.setValue(val20, val7);
+        tcSensor1.setValue(val26, val26);
+        tcSensor2.setValue(val27, val27);
+        tcSensor3.setValue(val28, val28);
     }
 
     statusItem.update();
 
     emsSerialString = QString::number(val25) + "," + QString::number(val19) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(val23) + "," + QString::number(val17) + "," +
-                QString::number(val16) + "," + QString::number(val15) + "," + QString::number(val20) + "," + QString::number(val22) + "," + QString::number(val21)+ "," + QString::number(val14) + "," + QString::number(val18) + "," + QString::number(val13);
+                QString::number(val16) + "," + QString::number(val15) + "," + QString::number(val20) + "," + QString::number(val22) + "," + QString::number(val21)+ "," + QString::number(val14) + "," +
+                QString::number(val18) + "," + QString::number(val13) + "," + QString::number(val26) + "," + QString::number(val27) + "," + QString::number(val28);
 
     emsSerialStringByteArray = emsSerialString.toLocal8Bit();
 

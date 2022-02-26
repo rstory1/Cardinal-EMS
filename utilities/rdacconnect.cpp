@@ -165,7 +165,7 @@ RDACconnect::rdacResults RDACconnect::checkPatternValidity(QByteArray *data, qui
     }
     if(data->size() < requiredSize)
     {
-        qDebug() << "Message incomplete";
+        //qDebug() << "Message incomplete";
         return rdacResultMessageIncomplete;
     }
 
