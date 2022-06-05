@@ -10,7 +10,7 @@ emsFull::emsFull(QObject *parent)
     setupBarGraphs();
     setupManifoldPressure();
     setupChtEgt();
-    setupFuelManagement();
+    //setupFuelManagement();
     setupHourMeter();
     setupStatusItem();
 
@@ -149,21 +149,21 @@ void emsFull::setupBarGraphs()
     tcSensor1.setUnit(settings.value("Units/temp").toString().toLatin1());
     tcSensor1.setPrecision(1);
     this->addItem(&tcSensor1);
-    tcSensor1.setVisible(true);
+    tcSensor1.setVisible(false);
 
     tcSensor2.setPos(55, 225);
     tcSensor2.setTitle("TC2");
     tcSensor2.setUnit(settings.value("Units/temp").toString().toLatin1());
     tcSensor2.setPrecision(1);
     this->addItem(&tcSensor2);
-    tcSensor2.setVisible(true);
+    tcSensor2.setVisible(false);
 
     tcSensor3.setPos(55, 300);
     tcSensor3.setTitle("TC3");
     tcSensor3.setUnit(settings.value("Units/temp").toString().toLatin1());
     tcSensor3.setPrecision(1);
     this->addItem(&tcSensor3);
-    tcSensor3.setVisible(true);
+    tcSensor3.setVisible(false);
 
     outsideAirTemperature.setPos(55, 300);
     outsideAirTemperature.setTitle("OAT");
