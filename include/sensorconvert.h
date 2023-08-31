@@ -58,7 +58,7 @@ private:
     void setThermocoupleTypeCht(QString type); // K or J
     void setThermocoupleTypeEgt(QString type); // K or J
     void setTemperatureScale(QString scale); // K, C, R, or F
-    void convertThermocouple(int resistance);
+    qreal convertThermocouple(double tc);
 
     void convertEgt(double volt1, double volt2, double volt3, double volt4);
     void convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4);

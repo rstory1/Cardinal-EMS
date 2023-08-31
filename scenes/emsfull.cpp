@@ -171,7 +171,7 @@ void emsFull::setupBarGraphs()
     outsideAirTemperature.setPrecision(1);
     outsideAirTemperature.setSmoothBool(true);
     this->addItem(&outsideAirTemperature);
-    outsideAirTemperature.setVisible(false);
+    outsideAirTemperature.setVisible(true);
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeInvisible()));
 //    connect(&insideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeVisible()));
 }

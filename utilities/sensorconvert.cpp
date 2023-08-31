@@ -111,7 +111,12 @@ void SensorConvert::convertOAT(qreal adc)
 
 void SensorConvert::convertIat(double sensorValue)
 {
-    iat = sensorValue;
+    if (temperatureScale!= "C") {
+        iat = convertTemperature(sensorValue, 'F');
+    } else {
+        iat = sensorValue;
+    }
+
 }
 
 double SensorConvert::convertTemperature(qreal temp, char convertToUnits)
@@ -179,13 +184,17 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
 
     convertFuelFlow(fuelFlow1);
     convertOilPress(oilP);
-    convertCht(ax1, ax2, tc3, tc4);
+    convertCht(ax1, ax2, -999, -999);
     convertOilTemp(oilT);
     convertCurrent(curr,1);
     convertCurrent(fuelL2,2);
     convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensor integral to the RDAC
     convertOAT(coolantT);
     convertFuelP(fuelP);
+
+    tc1 = convertThermocouple(tc1) + iat;
+    tc2 = convertThermocouple(tc2) + iat;
+    tc3 = convertThermocouple(tc3) + iat;
 
     emit updateValues(intTemp /*0*/,coolantT /*1*/,volts /*2*/,fuelL2 /*3*/,curr /*4*/,fuelL1 /*5*/,fuelFlow1 /*6*/,fuelP /*7*/,ax2 /*8*/,ax1 /*9*/,oilP /*10*/,oilT /*11*/,rpm1 /*12*/,intTemp /*13*/,oat /*14*/,volts /*15*/,current2 /*16*/,current1 /*17*/,manP /*18*/,fuelFlow /*19*/,fuelPress /*20*/,cht[1] /*21*/,cht[0] /*22*/,oilPress /*23*/,oilTemp /*24*/,rpm1 /*25*/, tc1 /*26*/, tc2 /*27*/, tc3 /*28*/, lastMessageTime);
 }
@@ -234,4 +243,12 @@ qreal SensorConvert::filterReading(qreal inputVal, qreal preVal, qreal dt, qreal
 
 void SensorConvert::debugSend() {
     onRdacUpdate(4400, 1200, 0, 0, 0, 0, 0, 0, 0, 0, 4, 450, 4, 2.5, 2.5, 3.0, 2.3, 2.9, 2500, 0, 2.7, 2.8, 25, 14.2, QDateTime::currentDateTime());
+}
+
+qreal SensorConvert::convertThermocouple(double tc) {
+    if (temperatureScale != "C") {
+        tc = convertTemperature(tc, 'F');
+    }
+
+    return tc;
 }
