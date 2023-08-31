@@ -281,7 +281,9 @@ void RDACconnect::closeSerialPort()
 void RDACconnect::writeData(const QByteArray &data)
 {
     serial->write(data);
+
     qDebug() << "Writing data out";
+    qDebug() << data;
 }
 
 void RDACconnect::handleError(QSerialPort::SerialPortError error)

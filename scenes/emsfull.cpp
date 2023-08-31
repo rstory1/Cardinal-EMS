@@ -149,14 +149,14 @@ void emsFull::setupBarGraphs()
     tcSensor1.setUnit(settings.value("Units/temp").toString().toLatin1());
     tcSensor1.setPrecision(1);
     this->addItem(&tcSensor1);
-    tcSensor1.setVisible(false);
+    tcSensor1.setVisible(true);
 
     tcSensor2.setPos(55, 225);
     tcSensor2.setTitle("TC2");
     tcSensor2.setUnit(settings.value("Units/temp").toString().toLatin1());
     tcSensor2.setPrecision(1);
     this->addItem(&tcSensor2);
-    tcSensor2.setVisible(false);
+    tcSensor2.setVisible(true);
 
     tcSensor3.setPos(55, 300);
     tcSensor3.setTitle("TC3");
@@ -446,9 +446,10 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
 
     statusItem.update();
 
-    emsSerialString = QString::number(val25) + "," + QString::number(val19) + "," + QString::number(oilTemperature.getValue()) + "," + QString::number(val23) + "," + QString::number(val17) + "," +
-                QString::number(val16) + "," + QString::number(val15) + "," + QString::number(val20) + "," + QString::number(val22) + "," + QString::number(val21)+ "," + QString::number(val14) + "," +
-                QString::number(val18) + "," + QString::number(val13) + "," + QString::number(val26) + "," + QString::number(val27) + "," + QString::number(val28);
+    emsSerialString = QString::number(val25) /* rpm */ + "," + QString::number(val19) /* Fuel Flow */ + "," + QString::number(oilTemperature.getValue()) /* oil temp */ + "," + QString::number(val23) /* oil pressure */ + "," + QString::number(val17) /* amps 1 */ + "," +
+                QString::number(val16) /* amps 2 */ + "," + QString::number(val15) /* volts */ + "," + QString::number(val20) /* fuel pressure */ + "," + QString::number(val22) /* coolant 1 */ + "," + QString::number(val21) /* coolant 2 */ + "," + QString::number(val14) /* OAT */ + "," +
+                QString::number(val18) /* manifold pressure */ + "," + QString::number(val13) /* internal rdac temp */ + "," + QString::number(val26) /* thermocouple 1 */ + "," + QString::number(val27) /* thermocouple 2 */ + "," + QString::number(val28) /* thermo couple 3 */ + "," +
+                hobbs.getHobbsTime() + "," + hobbs.getFlightTime();
 
     emsSerialStringByteArray = emsSerialString.toLocal8Bit();
 

@@ -109,7 +109,7 @@ void RpmIndicator::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 	}
 
 	//Draw the center text
-	QRectF centerTextRect(-50, -50, 100, 100);
+    QRectF centerTextRect(-50, -50, 105, 100);
 	painter->drawText(centerTextRect, Qt::AlignCenter, "x 100 rpm");
 
 	//Draw the needle if value is in range

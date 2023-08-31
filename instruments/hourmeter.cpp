@@ -148,5 +148,5 @@ void HourMeter::onHobbsINIChanged() {
     double savedHobbs = settings.value("Time/hobbs", "0.0").toDouble();
     hobbs.hour = floor(savedHobbs);
     hobbs.min = (savedHobbs - floor(savedHobbs)) * 60.0;
-    hobbs.sec = (((savedHobbs - floor(savedHobbs)) * 60.0) - hobbs.min) * 60;
+    hobbs.sec = (((savedHobbs - floor(savedHobbs)) * 60.0) - hobbs.min) * 60.0;
 }
