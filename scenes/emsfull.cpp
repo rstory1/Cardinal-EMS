@@ -135,12 +135,12 @@ void emsFull::setupBarGraphs()
     this->addItem(&fuelPressure);
     fuelPressure.setVisible(true);
 
-    insideAirTemperature.setPos(800, 205);
-    insideAirTemperature.setTitle("IAT");
+    insideAirTemperature.setPos(125, 300);
+    insideAirTemperature.setTitle("INT T");
     insideAirTemperature.setUnit(settings.value("Units/temp").toString().toLatin1());
     insideAirTemperature.setPrecision(1);
     this->addItem(&insideAirTemperature);
-    insideAirTemperature.setVisible(false);
+    insideAirTemperature.setVisible(true);
 //    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &outsideAirTemperature, SLOT(makeInvisible()));
 //    connect(&outsideAirTemperature, SIGNAL(hasBeenClicked()), &insideAirTemperature, SLOT(makeVisible()));
 
