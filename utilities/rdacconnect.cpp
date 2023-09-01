@@ -224,7 +224,7 @@ void RDACconnect::handleMessageRDACXF(QByteArray *data)
 
     qDebug() << "RDAC Message Update Sent " + lastMessage1.toString("hh:mm:ss.zzz");
 
-    sensorConvert.onRdacUpdate(fuelFlow1, fuelFlow2, message.thermocouple[0], message.thermocouple[1], message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, message.aux1, message.aux2, message.fuelPress, message.coolant, message.fuelLevel1, message.fuelLevel1, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts, lastMessage1);
+    sensorConvert.onRdacUpdate(fuelFlow1, fuelFlow2, 200.0, 300.0, message.thermocouple[2], message.thermocouple[3], message.thermocouple[4], message.thermocouple[5], message.thermocouple[6], message.thermocouple[7], message.oilTemp, message.oilPress, message.aux1, message.aux2, message.fuelPress, message.coolant, message.fuelLevel1, message.fuelLevel1, message.rpm1, message.rpm2, message.map, message.current, message.internalTemp, volts, lastMessage1);
 }
 
 void RDACconnect::openSerialPort()
