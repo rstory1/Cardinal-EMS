@@ -147,28 +147,28 @@ void emsFull::setupBarGraphs()
     tcSensor1.setPos(55, 150);
     tcSensor1.setTitle("TC1");
     tcSensor1.setUnit(settings.value("Units/temp").toString().toLatin1());
-    tcSensor1.setPrecision(1);
+    tcSensor1.setPrecision(0);
     this->addItem(&tcSensor1);
     tcSensor1.setVisible(true);
 
     tcSensor2.setPos(55, 225);
     tcSensor2.setTitle("TC2");
     tcSensor2.setUnit(settings.value("Units/temp").toString().toLatin1());
-    tcSensor2.setPrecision(1);
+    tcSensor2.setPrecision(0);
     this->addItem(&tcSensor2);
     tcSensor2.setVisible(true);
 
     tcSensor3.setPos(55, 300);
     tcSensor3.setTitle("TC3");
     tcSensor3.setUnit(settings.value("Units/temp").toString().toLatin1());
-    tcSensor3.setPrecision(1);
+    tcSensor3.setPrecision(0);
     this->addItem(&tcSensor3);
     tcSensor3.setVisible(false);
 
     outsideAirTemperature.setPos(55, 300);
     outsideAirTemperature.setTitle("OAT");
     outsideAirTemperature.setUnit(QString::fromUtf8("°F") /*settings.value("Units/temp").toString().toLatin1()*/);
-    outsideAirTemperature.setPrecision(1);
+    outsideAirTemperature.setPrecision(0);
     outsideAirTemperature.setSmoothBool(true);
     this->addItem(&outsideAirTemperature);
     outsideAirTemperature.setVisible(true);

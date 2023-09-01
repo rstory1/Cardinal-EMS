@@ -122,9 +122,9 @@ void SensorConvert::convertIat(double sensorValue)
 double SensorConvert::convertTemperature(qreal temp, char convertToUnits)
 {
     if (convertToUnits == 'F') {
-        temp = temp * 1.8 + 32;
+        temp = temp * 1.8 + 32.0;
     } else {
-        temp = (temp - 32) * 0.5555;
+        temp = (temp - 32.0) * 0.5555;
     }
 
 
@@ -179,8 +179,7 @@ void SensorConvert::convertCht(qreal adc1, qreal adc2, qreal adc3, qreal adc4)
 
 //}
 
-void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts, QDateTime lastMessageTime) {
-
+void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts, QDateTime lastMessageTime) { 
 
     convertFuelFlow(fuelFlow1);
     convertOilPress(oilP);
@@ -189,13 +188,13 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     convertCurrent(curr,1);
     convertCurrent(fuelL2,2);
     convertMAP(fuelL1); // Using fuelL1 since the MAP message from the RDAC is dependent on having the sensor integral to the RDAC
-    convertOAT(coolantT);
+    convertOAT(-40.0);
     convertIat(intTemp);
     convertFuelP(fuelP);
 
-    tc1 = convertThermocouple(tc1) + iat;
-    tc2 = convertThermocouple(tc2) + iat;
-    tc3 = convertThermocouple(tc3) + iat;
+    tc1 = convertThermocouple(tc1);
+    tc2 = convertThermocouple(tc2);
+    tc3 = convertThermocouple(tc3);
 
     emit updateValues(intTemp /*0*/,coolantT /*1*/,volts /*2*/,fuelL2 /*3*/,curr /*4*/,fuelL1 /*5*/,fuelFlow1 /*6*/,fuelP /*7*/,ax2 /*8*/,ax1 /*9*/,oilP /*10*/,oilT /*11*/,rpm1 /*12*/,iat /*13*/,oat /*14*/,volts /*15*/,current2 /*16*/,current1 /*17*/,manP /*18*/,fuelFlow /*19*/,fuelPress /*20*/,cht[1] /*21*/,cht[0] /*22*/,oilPress /*23*/,oilTemp /*24*/,rpm1 /*25*/, tc1 /*26*/, tc2 /*27*/, tc3 /*28*/, lastMessageTime);
 }
