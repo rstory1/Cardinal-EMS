@@ -100,13 +100,14 @@ private:
     QDateTime lastMessage1;
     void handleMessageRDACXF(QByteArray *data);
     QSettings settings;
-    QSerialPort *serial;
+    QScopedPointer<QSerialPort> serial;
     QByteArray data;
     float numTries = 0.0;
     float numSuccess = 0.0;
     qreal volts;
     qreal fuelFlow1;
     qreal fuelFlow2;
+    QTimer reconnectTimer;
 
 public slots:
     void openSerialPort();
@@ -116,6 +117,7 @@ public slots:
 private slots:
     void readData();
     void handleError(QSerialPort::SerialPortError error);
+    void reconnectSerialPort();
 
 signals:
     void rdacUpdateMessage(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, quint16 tc2, quint16 tc3, quint16 tc4, quint16 tc5, quint16 tc6, quint16 tc7, quint16 tc8, qreal oilT, qreal oilP, qreal ax1, qreal ax2, qreal fuelP, qreal coolantT, qreal fuelL1, qreal fuelL2, quint16 rpm1, qreal rpm2, qreal map, qreal curr, quint16 intTemp, qreal volts, QDateTime lastMessage1);

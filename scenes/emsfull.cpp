@@ -1,9 +1,10 @@
 #include "scenes/emsfull.h"
+#include <emspaths.h>
 
 emsFull::emsFull(QObject *parent)
     :  QGraphicsScene(parent)
-    , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
-    , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
+    , gaugeSettings(EmsPaths::gaugeSettingsIni(), QSettings::IniFormat, parent)
+    , settings(EmsPaths::settingsIni(), QSettings::IniFormat, parent)
 {
     //Setting up the items to be displayed
     setupRpmIndicator();
@@ -398,11 +399,11 @@ void emsFull::demoFunction()
 
 }
 
-void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qreal val4, qreal val5, qreal val6, qreal val7, qreal val8, qreal val9, qreal val10, qreal val11, qreal val12, qreal val13, qreal val14, qreal val15, qreal val16, qreal val17, qreal val18, qreal val19, qreal val20, qreal val21, qreal val22, qreal val23, qreal val24, qreal val25, qreal val26, qreal val27, qreal val28, QDateTime messageTime) {
+void emsFull::onUpdateValues(EngineData data) {
 
-    recordDateTime = messageTime;
+    recordDateTime = data.lastMessageTime;
 
-    if (abs(messageTime.msecsTo(QDateTime::currentDateTime())) > 5000000000 /*17973121*/) {
+    if (abs(data.lastMessageTime.msecsTo(QDateTime::currentDateTime())) > 5000000000 /*17973121*/) {
         statusItem.setDefaultTextColor(Qt::red);
         statusItem.setPlainText("DATA NOT CURRENT");
         rpmIndicator.setValue(-999, -999);
@@ -425,30 +426,30 @@ void emsFull::onUpdateValues(qreal val0, qreal val1, qreal val2, qreal val3, qre
     } else {
         statusItem.setDefaultTextColor(Qt::white);
         statusItem.setPlainText(""/*Values Updated at:" + recordDateTime.toString("MM-dd-yy hh:mm:ss.zzz")*/);
-        rpmIndicator.setValue(val25, val12);
-        fuelDisplay.setFuelFlow(val19);
-        fuelFlow.setValue(val19, val6);
-        oilTemperature.setValue(val24, val11);
-        oilPressure.setValue(val23, val10);
-        ampereMeter.setValue(val17, val4);
-        ampereMeter2.setValue(val16, val3);
-        voltMeter.setValue(val15, val2);
+        rpmIndicator.setValue(data.rpm1, data.rpm1Raw);
+        fuelDisplay.setFuelFlow(data.fuelFlow);
+        fuelFlow.setValue(data.fuelFlow, data.fuelFlow1Raw);
+        oilTemperature.setValue(data.oilTemp, data.oilT);
+        oilPressure.setValue(data.oilPress, data.oilP);
+        ampereMeter.setValue(data.current1, data.curr);
+        ampereMeter2.setValue(data.current2, data.fuelL2);
+        voltMeter.setValue(data.volts, data.voltsRaw);
         chtEgt.setEgtValues(-999, -999, -999, -999,-999, -999, -999, -999);
-        chtEgt.setChtValues(val22, val9, val21, val8, -999, -999, -999, -999);
-        outsideAirTemperature.setValue(val14, val1);
-        insideAirTemperature.setValue(val13, val0);
-        manifoldPressure.setValue(val18, val5);
-        fuelPressure.setValue(val20, val7);
-        tcSensor1.setValue(val26, val26);
-        tcSensor2.setValue(val27, val27);
-        tcSensor3.setValue(val28, val28);
+        chtEgt.setChtValues(data.cht1, data.ax1, data.cht2, data.ax2, -999, -999, -999, -999);
+        outsideAirTemperature.setValue(data.oat, data.coolantT);
+        insideAirTemperature.setValue(data.iat, data.intTempRaw);
+        manifoldPressure.setValue(data.manP, data.fuelL1);
+        fuelPressure.setValue(data.fuelPress, data.fuelP);
+        tcSensor1.setValue(data.tc1, data.tc1);
+        tcSensor2.setValue(data.tc2, data.tc2);
+        tcSensor3.setValue(data.tc3, data.tc3);
     }
 
     statusItem.update();
 
-    emsSerialString = QString::number(val25) /* rpm */ + "," + QString::number(val19) /* Fuel Flow */ + "," + QString::number(oilTemperature.getValue()) /* oil temp */ + "," + QString::number(val23) /* oil pressure */ + "," + QString::number(val17) /* amps 1 */ + "," +
-                QString::number(val16) /* amps 2 */ + "," + QString::number(val15) /* volts */ + "," + QString::number(val20) /* fuel pressure */ + "," + QString::number(val22) /* coolant 1 */ + "," + QString::number(val21) /* coolant 2 */ + "," + QString::number(val14) /* OAT */ + "," +
-                QString::number(val18) /* manifold pressure */ + "," + QString::number(val13) /* internal rdac temp */ + "," + QString::number(val26) /* thermocouple 1 */ + "," + QString::number(val27) /* thermocouple 2 */ + "," + QString::number(val28) /* thermo couple 3 */ + "," +
+    emsSerialString = QString::number(data.rpm1) /* rpm */ + "," + QString::number(data.fuelFlow) /* Fuel Flow */ + "," + QString::number(oilTemperature.getValue()) /* oil temp */ + "," + QString::number(data.oilPress) /* oil pressure */ + "," + QString::number(data.current1) /* amps 1 */ + "," +
+                QString::number(data.current2) /* amps 2 */ + "," + QString::number(data.volts) /* volts */ + "," + QString::number(data.fuelPress) /* fuel pressure */ + "," + QString::number(data.cht1) /* CHT 1 */ + "," + QString::number(data.cht2) /* CHT 2 */ + "," + QString::number(data.oat) /* OAT */ + "," +
+                QString::number(data.manP) /* manifold pressure */ + "," + QString::number(data.iat) /* internal rdac temp */ + "," + QString::number(data.tc1) /* thermocouple 1 */ + "," + QString::number(data.tc2) /* thermocouple 2 */ + "," + QString::number(data.tc3) /* thermocouple 3 */ + "," +
                 hobbs.getHobbsTime() + "," + hobbs.getFlightTime();
 
     emsSerialStringByteArray = emsSerialString.toLocal8Bit();

@@ -22,7 +22,8 @@ QT       += core gui widgets serialport sql
 
 INCLUDEPATH += \
     include \
-    include/instruments
+    include/instruments \
+    include/scenes
 
 TARGET = EngineMonitor
 TEMPLATE = app
@@ -71,7 +72,9 @@ SOURCES += main.cpp \
     utilities/instrumentsettings.cpp \
     instruments/diagnosticwidget.cpp
 
-HEADERS  += include/enginemonitor.h \
+HEADERS  += include/enginedata.h \
+    include/emspaths.h \
+    include/enginemonitor.h \
     include/datasmoothing.h \
     include/instruments/bargraph.h \
     include/instruments/rpmindicator.h \

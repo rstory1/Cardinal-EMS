@@ -19,10 +19,11 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "fueldisplay.h"
+#include <emspaths.h>
 
 FuelDisplay::FuelDisplay(QGraphicsObject *parent)
     : QGraphicsObject(parent)
-    , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat)
+    , settings(EmsPaths::settingsIni(), QSettings::IniFormat)
     , fuelAmount(0.0)
     , fuelFlow(-1.0)
     , timeToDestination(-1.0)

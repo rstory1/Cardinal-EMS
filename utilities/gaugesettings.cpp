@@ -19,9 +19,10 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "gaugesettings.h"
+#include <emspaths.h>
 
 GaugeSettings::GaugeSettings(QObject *parent) : QObject(parent)
-  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
+  , settings(EmsPaths::gaugeSettingsIni(), QSettings::IniFormat)
 {
 
 }

@@ -43,14 +43,15 @@ RDACXFmessage::RDACXFmessage() : flow1(0),
 }
 
 RDACconnect::RDACconnect(QObject *parent) : QObject(parent)
+    , serial(new QSerialPort(this))
 {
-    serial = new QSerialPort(this);
-
-    connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
+    connect(serial.data(), SIGNAL(error(QSerialPort::SerialPortError)), this,
                 SLOT(handleError(QSerialPort::SerialPortError)));
 
+    connect(serial.data(), SIGNAL(readyRead()), this, SLOT(readData()));
 
-    connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+    reconnectTimer.setSingleShot(true);
+    connect(&reconnectTimer, SIGNAL(timeout()), this, SLOT(reconnectSerialPort()));
 
     openSerialPort();
 }
@@ -265,10 +266,11 @@ void RDACconnect::openSerialPort()
     serial->setFlowControl(QSerialPort::NoFlowControl);
     if (serial->open(QIODevice::ReadWrite)) {
         qDebug() << "Connected to /dev/ttyO4";
+        reconnectTimer.stop();
     } else {
         qCritical() << "Serial Port error:" << serial->errorString();
-
-        qDebug() << tr("Open error");
+        qDebug() << tr("Open error - will retry in 5 seconds");
+        reconnectTimer.start(5000);
     }
 }
 
@@ -291,5 +293,14 @@ void RDACconnect::handleError(QSerialPort::SerialPortError error)
     if (error == QSerialPort::ResourceError) {
         qCritical() << "Serial Port error:" << serial->errorString();
         closeSerialPort();
+        qWarning() << "Serial port disconnected - will attempt reconnect in 5 seconds";
+        reconnectTimer.start(5000);
     }
+}
+
+void RDACconnect::reconnectSerialPort()
+{
+    qDebug() << "Attempting serial port reconnect...";
+    data.clear();
+    openSerialPort();
 }

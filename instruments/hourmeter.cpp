@@ -19,8 +19,9 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "hourmeter.h"
+#include <emspaths.h>
 
-HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
+HourMeter::HourMeter(QGraphicsObject *parent) : QGraphicsObject(parent), settings(EmsPaths::settingsIni(), QSettings::IniFormat, parent)
 {
     hobbs.hour = 0;
     hobbs.min = 0;
