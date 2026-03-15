@@ -19,10 +19,11 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "sensorconvert.h"
+#include <emspaths.h>
 
 SensorConvert::SensorConvert(QObject *parent) : QObject(parent)
-  ,settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
-  ,gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  ,settings(EmsPaths::settingsIni(), QSettings::IniFormat, parent)
+  ,gaugeSettings(EmsPaths::gaugeSettingsIni(), QSettings::IniFormat, parent)
 {
     //Let's set what type of thermocouple we are using
     setThermocoupleTypeCht(settings.value("Sensors/chtThermocoupleType", "NTC").toString());
@@ -196,7 +197,38 @@ void SensorConvert::onRdacUpdate(qreal fuelFlow1, qreal fuelFlow2, quint16 tc1, 
     tc2 = convertThermocouple(tc2);
     tc3 = convertThermocouple(tc3);
 
-    emit updateValues(intTemp /*0*/,coolantT /*1*/,volts /*2*/,fuelL2 /*3*/,curr /*4*/,fuelL1 /*5*/,fuelFlow1 /*6*/,fuelP /*7*/,ax2 /*8*/,ax1 /*9*/,oilP /*10*/,oilT /*11*/,rpm1 /*12*/,iat /*13*/,oat /*14*/,volts /*15*/,current2 /*16*/,current1 /*17*/,manP /*18*/,fuelFlow /*19*/,fuelPress /*20*/,cht[1] /*21*/,cht[0] /*22*/,oilPress /*23*/,oilTemp /*24*/,rpm1 /*25*/, tc1 /*26*/, tc2 /*27*/, tc3 /*28*/, lastMessageTime);
+    EngineData data;
+    data.intTempRaw   = intTemp;      // val0
+    data.coolantT     = coolantT;     // val1
+    data.voltsRaw     = volts;        // val2
+    data.fuelL2       = fuelL2;       // val3
+    data.curr         = curr;         // val4
+    data.fuelL1       = fuelL1;       // val5
+    data.fuelFlow1Raw = fuelFlow1;    // val6
+    data.fuelP        = fuelP;        // val7
+    data.ax2          = ax2;          // val8
+    data.ax1          = ax1;          // val9
+    data.oilP         = oilP;         // val10
+    data.oilT         = oilT;         // val11
+    data.rpm1Raw      = rpm1;         // val12
+    data.iat          = iat;          // val13
+    data.oat          = oat;          // val14
+    data.volts        = volts;        // val15
+    data.current2     = current2;     // val16
+    data.current1     = current1;     // val17
+    data.manP         = manP;         // val18
+    data.fuelFlow     = fuelFlow;     // val19
+    data.fuelPress    = fuelPress;    // val20
+    data.cht2         = cht[1];       // val21
+    data.cht1         = cht[0];       // val22
+    data.oilPress     = oilPress;     // val23
+    data.oilTemp      = oilTemp;      // val24
+    data.rpm1         = rpm1;         // val25
+    data.tc1          = tc1;          // val26
+    data.tc2          = tc2;          // val27
+    data.tc3          = tc3;          // val28
+    data.lastMessageTime = lastMessageTime;
+    emit updateValues(data);
 }
 
 void SensorConvert::setKFactor(qreal kFac) {

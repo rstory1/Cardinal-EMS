@@ -21,10 +21,12 @@
 //#include <QtSvg>
 
 #include "enginemonitor.h"
+#include <enginedata.h>
+#include <emspaths.h>
 
 EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
-  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
-  , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat, parent)
+  , settings(EmsPaths::settingsIni(), QSettings::IniFormat, parent)
+  , gaugeSettings(EmsPaths::gaugeSettingsIni(), QSettings::IniFormat, parent)
 {
 
     //Initializing the window behaviour and it's scene
@@ -51,7 +53,10 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
     connectSignals();
     //qDebug() << "Returned from connectSignals(): enginemonitor.cpp";
 
-    connect(&rdac.sensorConvert, SIGNAL(updateValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)), &ems_full, SLOT(onUpdateValues(qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,qreal,QDateTime)));
+    qRegisterMetaType<EngineData>("EngineData");
+    // Explicit queued connection: sensorConvert runs in rdacWorkerThread, ems_full in the main thread.
+    // Qt::QueuedConnection ensures the EngineData struct is safely copied across the thread boundary.
+    connect(&rdac.sensorConvert, SIGNAL(updateValues(EngineData)), &ems_full, SLOT(onUpdateValues(EngineData)), Qt::QueuedConnection);
     rdac.moveToThread(&rdacWorkerThread);
     rdacWorkerThread.start();
 
@@ -60,7 +65,8 @@ EngineMonitor::EngineMonitor(QWidget *parent) : QGraphicsView(parent)
 
 EngineMonitor::~EngineMonitor()
 {
-    logFile->close();
+    if (logFile && logFile->isOpen())
+        logFile->close();
 
     rdacWorkerThread.quit();
     rdacWorkerThread.wait();
@@ -68,10 +74,10 @@ EngineMonitor::~EngineMonitor()
 
 void EngineMonitor::setupLogFile()
 {
-    QDir dir(QApplication::applicationDirPath() + "/ems/engineLogs");
+    QDir dir(EmsPaths::engineLogsDir());
     if (!dir.exists())
         dir.mkpath(".");
-    logFile = new QFile(QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ").append(QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm")).append(".csv"), this);
+    logFile.reset(new QFile(EmsPaths::engineLogsDir() + "/EngineData " + QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh.mm") + ".csv"));
     if(logFile->open(QIODevice::WriteOnly))
     {
         QTimer *writeLogFileTimer = new QTimer(this);
@@ -81,7 +87,7 @@ void EngineMonitor::setupLogFile()
     }
     else
     {
-        qDebug() << QString(QApplication::applicationDirPath() + "/ems/engineLogs/EngineData ");
+        qDebug() << EmsPaths::engineLogsDir() + "/EngineData ";
         userMessageHandler("Unable to open log file", "Unable to open log file, closing application.", true);
     }
 

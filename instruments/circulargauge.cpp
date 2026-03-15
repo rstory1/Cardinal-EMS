@@ -19,6 +19,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "circulargauge.h"
+#include <emspaths.h>
 
 circularGauge::circularGauge(QGraphicsItem *parent) : QGraphicsItem(parent)
   , minValue(0.0)
@@ -28,7 +29,7 @@ circularGauge::circularGauge(QGraphicsItem *parent) : QGraphicsItem(parent)
   , greenRedBorder(0.0)
   , startAngle(0.0)
   , spanAngle(0.0)
-  , gaugeSettings(QCoreApplication::applicationDirPath() + "/ems/settings/gaugeSettings.ini", QSettings::IniFormat)
+  , gaugeSettings(EmsPaths::gaugeSettingsIni(), QSettings::IniFormat)
 {
     isWarmup=true;
 }

@@ -65,7 +65,7 @@ private:
     void setupHourMeter();
     void setupuserSettings();
 
-    QFile *logFile;
+    QScopedPointer<QFile> logFile;
     QGraphicsScene graphicsScene;
     QGraphicsTextItem statusItem;
     QSettings settings;

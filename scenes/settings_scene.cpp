@@ -1,7 +1,8 @@
 #include "scenes/settings_scene.h"
+#include <emspaths.h>
 
 settingsScene::settingsScene(QObject* parent)  :
-    QGraphicsScene(parent), settingsINI(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
+    QGraphicsScene(parent), settingsINI(EmsPaths::settingsIni(), QSettings::IniFormat, parent)
 {
     //addItem(&userSet);
 

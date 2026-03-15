@@ -19,9 +19,10 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "nmeaconnect.h"
+#include <emspaths.h>
 
 NMEAconnect::NMEAconnect(QObject *parent) : QThread(parent)
-  , settings(QCoreApplication::applicationDirPath() + "/ems/settings/settings.ini", QSettings::IniFormat, parent)
+  , settings(EmsPaths::settingsIni(), QSettings::IniFormat, parent)
 {
 }
 
